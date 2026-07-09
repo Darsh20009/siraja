@@ -55,3 +55,16 @@ below is the contract the real implementation will follow.
 - [Multi-tenant blueprint](./05-multi-tenant-blueprint.md)
 - [API structure blueprint](./06-api-structure.md)
 - [Environment configuration](./07-environment-configuration.md)
+- [Schema diagrams (ER)](./08-schema-diagrams.md)
+
+## Phase progress
+
+- **Phase 1 (complete)**: folder architecture, module/feature skeletons,
+  configuration scaffolding.
+- **Phase 2 (complete)**: full MongoDB Atlas database architecture — all
+  33 Mongoose schemas implemented under
+  `backend/src/database/mongoose/schemas/`, shared-database +
+  `tenantId`-isolation model, indexing, validation, enums, soft delete.
+  Schema architecture only — no services/controllers/APIs. See
+  [database blueprint](./04-database-blueprint.md).
+- **Phase 3+**: not started — waiting on approval.

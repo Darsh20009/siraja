@@ -32,15 +32,26 @@ environment config) live in `docs/architecture/`. Start at
 
 ## Current status
 
-**Structure only** — folder architecture, module/feature skeletons, and
-configuration scaffolding are in place. No business logic, no database
-schemas, no working auth flow, and no run workflow have been implemented
-yet. Waiting on user approval before building any feature.
+- **Phase 1 (complete)**: folder architecture, module/feature skeletons,
+  configuration scaffolding.
+- **Phase 2 (complete)**: full MongoDB Atlas database architecture — all
+  33 Mongoose schemas (`backend/src/database/mongoose/schemas/`), shared
+  database + `tenantId` tenant isolation, indexes, validation, enums,
+  soft delete. See `docs/architecture/04-database-blueprint.md` and
+  `08-schema-diagrams.md`.
+- No services, controllers, APIs, or working auth flow exist yet — schema
+  architecture only. No run workflow configured. Waiting on approval
+  before Phase 3.
 
 ## Environment
 
-- Node.js 20 is installed in this workspace. `backend/node_modules` has
-  not been installed yet (no workflow/feature depends on it yet).
+- Node.js 20 is installed in this workspace. Backend npm dependencies are
+  installed at the **workspace root** (`/package.json`, `/node_modules`)
+  via Replit's package manager, not inside `backend/` — `backend/package.json`
+  documents the same dependency set for portability if the backend is
+  ever extracted to its own repo/deployment. `tsc --noEmit` against
+  `backend/tsconfig.json` passes cleanly using the root-installed
+  TypeScript.
 - Flutter/Dart SDK is not installed in this Replit workspace (not
   available as a Replit module); `frontend/` is structure-only and will
   need a Flutter-enabled environment to actually run.

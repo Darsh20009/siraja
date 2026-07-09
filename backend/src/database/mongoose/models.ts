@@ -1,0 +1,81 @@
+import { ModelDefinition } from '@nestjs/mongoose';
+import {
+  Achievement, AchievementSchema,
+  ActivityLog, ActivityLogSchema,
+  AiReport, AiReportSchema,
+  AiRequest, AiRequestSchema,
+  Assignment, AssignmentSchema,
+  Attendance, AttendanceSchema,
+  AuditLog, AuditLogSchema,
+  Badge, BadgeSchema,
+  Exam, ExamSchema,
+  Group, GroupSchema,
+  MemorizationRecord, MemorizationRecordSchema,
+  Notification, NotificationSchema,
+  Parent, ParentSchema,
+  Payment, PaymentSchema,
+  Permission, PermissionSchema,
+  Plan, PlanSchema,
+  PushSubscription, PushSubscriptionSchema,
+  QuranMistake, QuranMistakeSchema,
+  ReviewRecord, ReviewRecordSchema,
+  Role, RoleSchema,
+  Session, SessionSchema,
+  Sheikh, SheikhSchema,
+  Student, StudentSchema,
+  Subscription, SubscriptionSchema,
+  Supervisor, SupervisorSchema,
+  SupportMessage, SupportMessageSchema,
+  SupportTicket, SupportTicketSchema,
+  SystemSettings, SystemSettingsSchema,
+  Tenant, TenantSchema,
+  TenantSettings, TenantSettingsSchema,
+  Transaction, TransactionSchema,
+  User, UserSchema,
+  UserPermission, UserPermissionSchema,
+} from './schemas';
+
+/**
+ * Complete list of Mongoose model definitions for the Siraja database.
+ * Structure only — a future `DatabaseModule` would call:
+ *
+ *   MongooseModule.forFeature(mongooseModels)
+ *
+ * to register every collection at once, or each module can cherry-pick
+ * the definitions it owns.
+ */
+export const mongooseModels: ModelDefinition[] = [
+  { name: Tenant.name, schema: TenantSchema },
+  { name: TenantSettings.name, schema: TenantSettingsSchema },
+  { name: User.name, schema: UserSchema },
+  { name: Role.name, schema: RoleSchema },
+  { name: Permission.name, schema: PermissionSchema },
+  { name: UserPermission.name, schema: UserPermissionSchema },
+  { name: Student.name, schema: StudentSchema },
+  { name: Parent.name, schema: ParentSchema },
+  { name: Sheikh.name, schema: SheikhSchema },
+  { name: Supervisor.name, schema: SupervisorSchema },
+  { name: Group.name, schema: GroupSchema },
+  { name: Session.name, schema: SessionSchema },
+  { name: Attendance.name, schema: AttendanceSchema },
+  { name: MemorizationRecord.name, schema: MemorizationRecordSchema },
+  { name: ReviewRecord.name, schema: ReviewRecordSchema },
+  { name: QuranMistake.name, schema: QuranMistakeSchema },
+  { name: Exam.name, schema: ExamSchema },
+  { name: Assignment.name, schema: AssignmentSchema },
+  { name: Notification.name, schema: NotificationSchema },
+  { name: PushSubscription.name, schema: PushSubscriptionSchema },
+  { name: SupportTicket.name, schema: SupportTicketSchema },
+  { name: SupportMessage.name, schema: SupportMessageSchema },
+  { name: Subscription.name, schema: SubscriptionSchema },
+  { name: Plan.name, schema: PlanSchema },
+  { name: Payment.name, schema: PaymentSchema },
+  { name: Transaction.name, schema: TransactionSchema },
+  { name: Achievement.name, schema: AchievementSchema },
+  { name: Badge.name, schema: BadgeSchema },
+  { name: AiRequest.name, schema: AiRequestSchema },
+  { name: AiReport.name, schema: AiReportSchema },
+  { name: AuditLog.name, schema: AuditLogSchema },
+  { name: ActivityLog.name, schema: ActivityLogSchema },
+  { name: SystemSettings.name, schema: SystemSettingsSchema },
+];
