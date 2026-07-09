@@ -1,0 +1,64 @@
+name: siraja
+description: Siraja - Quran education & memorization platform (Flutter app)
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+# Structure only — dependency versions to be pinned when features are implemented.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+
+  # Dependency injection
+  get_it: ^7.7.0
+  injectable: ^2.4.4
+
+  # Networking
+  dio: ^5.7.0
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Local storage / secure token storage
+  shared_preferences: ^2.3.3
+  flutter_secure_storage: ^9.2.2
+
+  # Localization / RTL
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+  # Auth (Google/Apple)
+  google_sign_in: ^6.2.2
+  sign_in_with_apple: ^6.1.4
+
+  # Functional error handling
+  dartz: ^0.10.1
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.13
+  injectable_generator: ^2.6.2
+
+flutter:
+  uses-material-design: true
+  generate: true # enables gen-l10n from lib/l10n
+  assets:
+    - assets/images/
+    - assets/icons/
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Regular.ttf
+        - asset: assets/fonts/Cairo-Bold.ttf
+          weight: 700

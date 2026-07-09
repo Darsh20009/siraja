@@ -1,0 +1,28 @@
+# Backend (Node.js/NestJS)
+backend/node_modules/
+backend/dist/
+backend/coverage/
+backend/.env
+backend/*.log
+
+# Frontend (Flutter/Dart)
+frontend/.dart_tool/
+frontend/.flutter-plugins
+frontend/.flutter-plugins-dependencies
+frontend/.packages
+frontend/build/
+frontend/.pub-cache/
+frontend/.pub/
+frontend/pubspec.lock
+frontend/**/*.g.dart
+frontend/**/*.freezed.dart
+frontend/lib/app/di/injection.config.dart
+frontend/lib/l10n/app_localizations*.dart
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Replit
+.cache/
+.local/state/
