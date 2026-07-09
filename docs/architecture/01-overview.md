@@ -56,6 +56,7 @@ below is the contract the real implementation will follow.
 - [API structure blueprint](./06-api-structure.md)
 - [Environment configuration](./07-environment-configuration.md)
 - [Schema diagrams (ER)](./08-schema-diagrams.md)
+- [Authorization blueprint (RBAC)](./09-authorization-blueprint.md)
 
 ## Phase progress
 
@@ -67,4 +68,11 @@ below is the contract the real implementation will follow.
   `tenantId`-isolation model, indexing, validation, enums, soft delete.
   Schema architecture only — no services/controllers/APIs. See
   [database blueprint](./04-database-blueprint.md).
-- **Phase 3+**: not started — waiting on approval.
+- **Phase 3 (complete)**: full RBAC authorization architecture — permission
+  registry (18 categories × 7 actions), permission seeder, role
+  permission matrix (6 system roles), permission/tenant-scope/resource-
+  ownership guards, `@RequirePermissions()`/`@CheckOwnership()`
+  decorators, Super Admin bypass, per-role ownership rules. Architecture
+  only — no controllers/APIs/business logic. See
+  [authorization blueprint](./09-authorization-blueprint.md).
+- **Phase 4+**: not started — waiting on approval.

@@ -59,8 +59,12 @@ export class User extends BaseSchema {
   @Prop({ type: String, enum: Gender, required: false })
   gender?: Gender;
 
-  @Prop({ type: String, enum: PlatformRole, required: true })
-  role: PlatformRole;
+  // A user may hold more than one role in a tenant (e.g. a Sheikh who is
+  // also a Supervisor) — `roles` is always non-empty; the RBAC layer
+  // (Phase 3) unions permissions/ownership across every role in the
+  // array rather than assuming a single primary role.
+  @Prop({ type: [String], enum: PlatformRole, required: true, validate: [(v: string[]) => v.length > 0, 'roles must not be empty'] })
+  roles: PlatformRole[];
 
   @Prop({ type: String, enum: UserStatus, required: true, default: UserStatus.PENDING_VERIFICATION })
   status: UserStatus;
@@ -88,7 +92,7 @@ export const UserSchema = SchemaFactory.createForClass(User);
 // human could have separate accounts in two different tenants).
 UserSchema.index({ tenantId: 1, email: 1 }, { unique: true, sparse: true });
 UserSchema.index({ tenantId: 1, phone: 1 }, { unique: true, sparse: true });
-UserSchema.index({ tenantId: 1, role: 1 });
+UserSchema.index({ tenantId: 1, roles: 1 });
 UserSchema.index({ tenantId: 1, status: 1 });
 UserSchema.index({ tenantId: 1, 'linkedProviders.provider': 1, 'linkedProviders.providerUserId': 1 });
 UserSchema.index({ tenantId: 1, isDeleted: 1, createdAt: -1 });

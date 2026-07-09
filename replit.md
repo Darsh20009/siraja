@@ -39,9 +39,18 @@ environment config) live in `docs/architecture/`. Start at
   database + `tenantId` tenant isolation, indexes, validation, enums,
   soft delete. See `docs/architecture/04-database-blueprint.md` and
   `08-schema-diagrams.md`.
-- No services, controllers, APIs, or working auth flow exist yet — schema
+- **Phase 3 (complete)**: full RBAC authorization architecture —
+  permission registry/seeder (`shared/authorization/`,
+  `database/seeders/`), role permission matrix, permission/tenant-scope/
+  resource-ownership guards (`common/guards/`), `@RequirePermissions()`/
+  `@CheckOwnership()` decorators, `AuthorizationModule` wiring them as
+  global guards. Super Admin bypasses all checks; Tenant Admin is
+  tenant-scoped but otherwise unrestricted; Supervisor/Sheikh/Parent/
+  Student are ownership-restricted. See
+  `docs/architecture/09-authorization-blueprint.md`.
+- No controllers, APIs, or working end-to-end auth flow exist yet —
   architecture only. No run workflow configured. Waiting on approval
-  before Phase 3.
+  before Phase 4.
 
 ## Environment
 

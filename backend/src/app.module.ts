@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import configuration from './config/configuration';
 import { validate } from './config/env.validation';
 
+import { TenantMiddleware } from './core/infrastructure/tenancy/tenant.middleware';
+import { PermissionContextMiddleware } from './core/infrastructure/authorization/permission-context.middleware';
+import { AuthorizationModule } from './modules/authorization/authorization.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
 import { UsersModule } from './modules/users/users.module';
@@ -39,6 +42,10 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
       }),
     }),
 
+    // Cross-cutting infrastructure — registers global guards (JwtAuthGuard,
+    // RolesGuard, PermissionsGuard, TenantScopeGuard, ResourceOwnershipGuard).
+    AuthorizationModule,
+
     // Bounded-context modules
     AuthModule,
     TenantsModule,
@@ -53,4 +60,10 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
     SubscriptionsModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // Order matters: resolve the tenant from the URL before initializing
+    // the per-request authorization state.
+    consumer.apply(TenantMiddleware, PermissionContextMiddleware).forRoutes('*');
+  }
+}

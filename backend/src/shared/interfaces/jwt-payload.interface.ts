@@ -7,7 +7,10 @@ import { Role } from '../enums/roles.enum';
 export interface JwtPayload {
   sub: string; // user id
   tenantId: string;
-  role: Role;
+  // Non-empty — a user may hold more than one role (see `User.roles` on
+  // the `User` schema); every RBAC guard/resolver reads this array, not
+  // a single role, so this must never be narrowed back to `role: Role`.
+  roles: Role[];
   iat?: number;
   exp?: number;
 }
