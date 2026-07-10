@@ -1,0 +1,1 @@
+- [Siraja RBAC architecture](siraja-rbac-architecture.md) — permission key/resolution model, super-admin bypass rule, multi-role design; read before touching authorization code.
