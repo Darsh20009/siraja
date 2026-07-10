@@ -1,5 +1,7 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { Role } from '@shared/enums/roles.enum';
+import { IS_PUBLIC_KEY } from '@modules/auth/infrastructure/decorators/public.decorator';
 
 /**
  * Enforces "Tenant Admin (and every non-super role) only controls their
@@ -21,7 +23,15 @@ import { Role } from '@shared/enums/roles.enum';
  */
 @Injectable()
 export class TenantScopeGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+
   canActivate(context: ExecutionContext): boolean {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) return true; // e.g. register/login — no authenticated user yet.
+
     const request = context.switchToHttp().getRequest();
     const user = request.user;
     if (!user) return false; // JwtAuthGuard must run first.

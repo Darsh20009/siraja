@@ -1,6 +1,8 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import configuration from './config/configuration';
 import { validate } from './config/env.validation';
 
@@ -42,6 +44,19 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
       }),
     }),
 
+    // Global IP-based rate limiting (Phase 4 "Rate Limiting" requirement)
+    // — auth-specific brute-force/lockout logic (BruteForceGuardService)
+    // is a second, identity-aware layer on top of this generic one.
+    ThrottlerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => [
+        {
+          ttl: configService.get<number>('throttle.ttl', 60) * 1000,
+          limit: configService.get<number>('throttle.limit', 100),
+        },
+      ],
+    }),
+
     // Cross-cutting infrastructure — registers global guards (JwtAuthGuard,
     // RolesGuard, PermissionsGuard, TenantScopeGuard, ResourceOwnershipGuard).
     AuthorizationModule,
@@ -59,6 +74,7 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
     NotificationsModule,
     SubscriptionsModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

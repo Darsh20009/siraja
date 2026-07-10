@@ -12,7 +12,8 @@ every tenant.
 - **Frontend**: Flutter (Material 3, responsive, RTL-first)
 - **Backend**: Node.js + NestJS + TypeScript
 - **Database**: MongoDB Atlas (Mongoose ODM)
-- **Auth**: Email, Phone (OTP), Google, Apple — JWT access + refresh tokens
+- **Auth**: Email + Password, Phone + Password (identity only, no OTP),
+  Google, Apple — JWT access + refresh tokens
 
 ## Architecture
 
@@ -48,9 +49,19 @@ environment config) live in `docs/architecture/`. Start at
   tenant-scoped but otherwise unrestricted; Supervisor/Sheikh/Parent/
   Student are ownership-restricted. See
   `docs/architecture/09-authorization-blueprint.md`.
-- No controllers, APIs, or working end-to-end auth flow exist yet —
-  architecture only. No run workflow configured. Waiting on approval
-  before Phase 4.
+- **Phase 4 (complete)**: full Authentication, Session, and Device
+  modules — working code (`backend/src/modules/auth/`), not just
+  structure. Email+password, phone+password (identity only, no SMS),
+  Google OAuth, Apple Sign In; email-only verification/reset; Argon2
+  password hashing + password history; opaque refresh tokens with
+  rotation + reuse detection; multi-device session tracking and
+  revocation (`/auth/sessions`, `/auth/devices`); brute-force lockout +
+  global rate limiting (`@nestjs/throttler`); future-ready hooks for
+  MFA/Passkeys (unused fields/packages, not enforced). `tsc --noEmit`
+  passes. See `docs/architecture/10-authentication-blueprint.md`.
+- No business/domain feature APIs (Quran circles, memorization, etc.)
+  exist yet. No run workflow configured (Flutter frontend still needs a
+  Flutter-enabled environment to run). Waiting on approval before Phase 5.
 
 ## Environment
 

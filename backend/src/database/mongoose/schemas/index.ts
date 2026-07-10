@@ -18,6 +18,13 @@ export * from './role.schema';
 export * from './permission.schema';
 export * from './user-permission.schema';
 
+// Auth & sessions (Phase 4)
+export * from './refresh-token.schema';
+export * from './device.schema';
+export * from './verification-token.schema';
+export * from './password-history.schema';
+export * from './login-attempt.schema';
+
 // People
 export * from './student.schema';
 export * from './parent.schema';

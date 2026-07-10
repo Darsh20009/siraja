@@ -1,1 +1,2 @@
 - [Siraja RBAC architecture](siraja-rbac-architecture.md) — permission key/resolution model, super-admin bypass rule, multi-role design; read before touching authorization code.
+- [Siraja auth architecture](siraja-auth-architecture.md) — opaque refresh token strategy, phone-is-identity-only scope, public-route guard bypass; read before touching AuthModule or global guards.

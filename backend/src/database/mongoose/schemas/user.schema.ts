@@ -83,6 +83,28 @@ export class User extends BaseSchema {
 
   @Prop({ type: Date, required: false, default: null })
   lastLoginAt?: Date | null;
+
+  @Prop({ type: String, required: false })
+  lastLoginIp?: string;
+
+  // --- Brute-force / account lockout (Phase 4) ---
+  // `LoginAttempt` is the append-only audit trail; these two fields are
+  // the cheap, denormalized counters actually consulted on the hot login
+  // path so a lock decision never requires scanning login_attempts.
+  @Prop({ type: Number, required: true, default: 0 })
+  failedLoginCount: number;
+
+  @Prop({ type: Date, required: false, default: null })
+  lockedUntil?: Date | null;
+
+  // --- Future ready (Phase 4 "Future Ready" requirement) ---
+  // No enrollment flow exists yet for any of these; reserved fields so
+  // 2FA/passkeys/biometric can be added without a schema migration.
+  @Prop({ type: Boolean, default: false })
+  isMfaEnabled: boolean;
+
+  @Prop({ type: [String], required: false, default: [] })
+  mfaMethods?: string[];
 }
 
 export type UserDocument = HydratedDocument<User>;
