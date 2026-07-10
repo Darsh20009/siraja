@@ -123,6 +123,32 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.APPROVE, // accept an AI report into the record
   ],
   [PermissionCategory.SETTINGS]: [PermissionAction.READ, PermissionAction.UPDATE],
+
+  // Quran content (Surahs/Ayahs/Tafsir/metadata/search) is shared,
+  // platform-global reference data — everyone with an authenticated
+  // session can READ it; CREATE/UPDATE/DELETE is reserved for platform
+  // content curation (Super Admin / Tenant Admin only, see the matrix).
+  [PermissionCategory.QURAN]: [
+    PermissionAction.CREATE,
+    PermissionAction.READ,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+  ],
+  // Bookmarks/Notes are personal, user-owned data — every role manages
+  // its own; ownership is enforced in the use case itself (always
+  // scoped to `request.user.sub`), not via `ResourceOwnershipGuard`.
+  [PermissionCategory.QURAN_BOOKMARKS]: [
+    PermissionAction.CREATE,
+    PermissionAction.READ,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+  ],
+  [PermissionCategory.QURAN_NOTES]: [
+    PermissionAction.CREATE,
+    PermissionAction.READ,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+  ],
 };
 
 export interface PermissionDefinition {

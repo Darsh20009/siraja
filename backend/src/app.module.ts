@@ -20,6 +20,13 @@ import { ParentsModule } from './modules/parents/parents.module';
 import { MemorizationModule } from './modules/memorization/memorization.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
+import { SurahsModule } from './modules/surahs/surahs.module';
+import { AyahsModule } from './modules/ayahs/ayahs.module';
+import { QuranMetadataModule } from './modules/quran-metadata/quran-metadata.module';
+import { TafsirModule } from './modules/tafsir/tafsir.module';
+import { QuranSearchModule } from './modules/quran-search/quran-search.module';
+import { QuranBookmarksModule } from './modules/quran-bookmarks/quran-bookmarks.module';
+import { QuranNotesModule } from './modules/quran-notes/quran-notes.module';
 
 /**
  * Root application module.
@@ -73,6 +80,15 @@ import { SubscriptionsModule } from './modules/subscriptions/subscriptions.modul
     MemorizationModule,
     NotificationsModule,
     SubscriptionsModule,
+
+    // Quran Foundation Engine (Phase 5)
+    SurahsModule,
+    AyahsModule,
+    QuranMetadataModule,
+    TafsirModule,
+    QuranSearchModule,
+    QuranBookmarksModule,
+    QuranNotesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

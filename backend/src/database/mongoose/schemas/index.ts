@@ -67,3 +67,15 @@ export * from './ai-report.schema';
 export * from './audit-log.schema';
 export * from './activity-log.schema';
 export * from './system-settings.schema';
+
+// Quran Foundation Engine (Phase 5) — surahs/ayahs/tafsir/metadata are
+// platform-global reference content; bookmarks/last-read/notes are
+// tenant + user scoped personal data.
+export * from './surah.schema';
+export * from './ayah.schema';
+export * from './juz.schema';
+export * from './quran-page.schema';
+export * from './tafsir.schema';
+export * from './quran-bookmark.schema';
+export * from './quran-last-read.schema';
+export * from './quran-note.schema';

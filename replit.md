@@ -59,9 +59,22 @@ environment config) live in `docs/architecture/`. Start at
   global rate limiting (`@nestjs/throttler`); future-ready hooks for
   MFA/Passkeys (unused fields/packages, not enforced). `tsc --noEmit`
   passes. See `docs/architecture/10-authentication-blueprint.md`.
-- No business/domain feature APIs (Quran circles, memorization, etc.)
-  exist yet. No run workflow configured (Flutter frontend still needs a
-  Flutter-enabled environment to run). Waiting on approval before Phase 5.
+- **Phase 5 (complete)**: full Quran Foundation Engine — working code,
+  not just structure. Surahs, Ayahs, Quran Metadata (Juz/Page
+  navigation), Tafsir (all platform-global reference data, no
+  `tenantId`), Quran Search (diacritic-normalized `$text` search across
+  Surah names + Ayah text, composed over the Surah/Ayah repositories —
+  no schema of its own), Quran Bookmarks (+ Favorites + Last Read
+  Position), and Quran Notes (Ayah/Surah-scoped, tenant + user scoped,
+  ownership enforced directly by `(tenantId, userId)` rather than the
+  Phase 3 `ResourceOwnershipGuard`). New `quran`/`quran_bookmarks`/
+  `quran_notes` permission categories granted to every authenticated
+  role. `tsc --noEmit` passes. See
+  `docs/architecture/11-quran-blueprint.md`. AI features, the
+  Memorization Engine, and Teacher Features are explicitly out of scope
+  for this phase.
+- No run workflow configured (Flutter frontend still needs a
+  Flutter-enabled environment to run). Waiting on approval before Phase 6.
 
 ## Environment
 

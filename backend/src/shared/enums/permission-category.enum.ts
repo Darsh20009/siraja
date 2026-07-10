@@ -22,4 +22,7 @@ export enum PermissionCategory {
   BILLING = 'billing',
   AI = 'ai',
   SETTINGS = 'settings',
+  QURAN = 'quran',
+  QURAN_BOOKMARKS = 'quran_bookmarks',
+  QURAN_NOTES = 'quran_notes',
 }

@@ -40,6 +40,9 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
   [Role.TENANT_ADMIN]: PERMISSION_REGISTRY.map((d) => d.key),
 
   [Role.SUPERVISOR]: [
+    ...pick(C.QURAN, [READ]),
+    ...pick(C.QURAN_BOOKMARKS, [CREATE, READ, UPDATE, DELETE]),
+    ...pick(C.QURAN_NOTES, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.STUDENTS, [READ]),
     ...pick(C.SHEIKHS, [READ]),
     ...pick(C.GROUPS, [READ, UPDATE, ASSIGN]),
@@ -55,6 +58,9 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
   ],
 
   [Role.SHEIKH]: [
+    ...pick(C.QURAN, [READ]),
+    ...pick(C.QURAN_BOOKMARKS, [CREATE, READ, UPDATE, DELETE]),
+    ...pick(C.QURAN_NOTES, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.STUDENTS, [READ]),
     ...pick(C.GROUPS, [READ]),
     ...pick(C.SESSIONS, [CREATE, READ, UPDATE]),
@@ -68,6 +74,9 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
   ],
 
   [Role.PARENT]: [
+    ...pick(C.QURAN, [READ]),
+    ...pick(C.QURAN_BOOKMARKS, [CREATE, READ, UPDATE, DELETE]),
+    ...pick(C.QURAN_NOTES, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.STUDENTS, [READ]),
     ...pick(C.ATTENDANCE, [READ]),
     ...pick(C.MEMORIZATION, [READ]),
@@ -79,6 +88,9 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
   ],
 
   [Role.STUDENT]: [
+    ...pick(C.QURAN, [READ]),
+    ...pick(C.QURAN_BOOKMARKS, [CREATE, READ, UPDATE, DELETE]),
+    ...pick(C.QURAN_NOTES, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.ATTENDANCE, [READ]),
     ...pick(C.MEMORIZATION, [READ]),
     ...pick(C.REVIEWS, [READ]),
