@@ -17,6 +17,15 @@ export class Student extends BaseSchema {
   @Prop({ type: Types.ObjectId, ref: 'Group', required: false, default: null })
   group?: Types.ObjectId | null;
 
+  /**
+   * Direct one-on-one sheikh assignment — set when a student is taught
+   * privately by a sheikh outside of a circle, or in addition to their
+   * circle membership. Distinct from the implicit sheikh link via
+   * `Student.group → Group.sheikh` (which covers the common in-circle case).
+   */
+  @Prop({ type: Types.ObjectId, ref: 'Sheikh', required: false, default: null })
+  sheikh?: Types.ObjectId | null;
+
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
   parents: Types.ObjectId[]; // Users with role PARENT
 

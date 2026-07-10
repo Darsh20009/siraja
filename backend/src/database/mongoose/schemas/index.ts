@@ -68,6 +68,9 @@ export * from './audit-log.schema';
 export * from './activity-log.schema';
 export * from './system-settings.schema';
 
+// People Domain (Phase 6) — assignment history
+export * from './student-enrollment.schema';
+
 // Quran Foundation Engine (Phase 5) — surahs/ayahs/tafsir/metadata are
 // platform-global reference content; bookmarks/last-read/notes are
 // tenant + user scoped personal data.
