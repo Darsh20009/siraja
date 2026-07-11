@@ -11,17 +11,32 @@ import { AttendanceStatus } from '@shared/enums/attendance-status.enum';
  * independently per student (e.g. a student's attendance history across
  * many sessions) and a session can have many students — an unbounded
  * embedded array would risk the 16MB document limit at scale.
+ *
+ * Phase 8: added `group`, `sheikh`, and explicit `date` fields for richer
+ * circle-level attendance tracking and cross-circle reporting.
  */
 @Schema({ timestamps: true, collection: 'attendance' })
 export class Attendance extends BaseSchema {
-  @Prop({ type: Types.ObjectId, ref: 'Session', required: true })
-  session: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Session', required: false })
+  session?: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Student', required: true })
   student: Types.ObjectId;
 
+  /** Circle/group the student attended — denormalised for query performance. */
+  @Prop({ type: Types.ObjectId, ref: 'Group', required: false })
+  group?: Types.ObjectId;
+
+  /** Sheikh (User reference) who took the attendance. */
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false })
+  sheikh?: Types.ObjectId;
+
   @Prop({ type: String, enum: AttendanceStatus, required: true, default: AttendanceStatus.PRESENT })
   status: AttendanceStatus;
+
+  /** Explicit date the attendance was taken (may differ from session date). */
+  @Prop({ type: Date, required: true, default: () => new Date() })
+  date: Date;
 
   @Prop({ type: Date, required: false })
   checkedInAt?: Date;
@@ -30,12 +45,14 @@ export class Attendance extends BaseSchema {
   recordedBy?: Types.ObjectId;
 
   @Prop({ type: String, required: false, trim: true })
-  remarks?: string;
+  notes?: string;
 }
 
 export type AttendanceDocument = HydratedDocument<Attendance>;
 export const AttendanceSchema = SchemaFactory.createForClass(Attendance);
 
-AttendanceSchema.index({ tenantId: 1, session: 1, student: 1 }, { unique: true });
-AttendanceSchema.index({ tenantId: 1, student: 1, createdAt: -1 });
+AttendanceSchema.index({ tenantId: 1, session: 1, student: 1 }, { unique: true, sparse: true });
+AttendanceSchema.index({ tenantId: 1, student: 1, date: -1 });
+AttendanceSchema.index({ tenantId: 1, group: 1, date: -1 });
+AttendanceSchema.index({ tenantId: 1, sheikh: 1, date: -1 });
 AttendanceSchema.index({ tenantId: 1, status: 1 });

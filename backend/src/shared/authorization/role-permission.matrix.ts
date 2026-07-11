@@ -70,6 +70,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.REVIEWS, [CREATE, READ, UPDATE, APPROVE]),
     ...pick(C.EXAMS, [CREATE, READ, UPDATE, APPROVE]),
     ...pick(C.ASSIGNMENTS, [CREATE, READ, UPDATE, APPROVE]),
+    // Sheikhs may view reports for their circles (ownership enforced in use-case layer).
+    ...pick(C.REPORTS, [READ]),
     ...pick(C.NOTIFICATIONS, [CREATE, READ]),
     ...pick(C.SUPPORT, [CREATE, READ]),
   ],
@@ -84,6 +86,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.REVIEWS, [READ]),
     ...pick(C.EXAMS, [READ]),
     ...pick(C.ASSIGNMENTS, [READ]),
+    // Parents may view reports for their linked children (ownership enforced in use-case layer).
+    ...pick(C.REPORTS, [READ]),
     ...pick(C.NOTIFICATIONS, [READ]),
     ...pick(C.SUPPORT, [CREATE, READ]),
   ],
@@ -99,6 +103,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.REVIEWS, [READ]),
     ...pick(C.EXAMS, [READ]),
     ...pick(C.ASSIGNMENTS, [READ]),
+    // Students may view their own reports (ownership enforced in use-case layer).
+    ...pick(C.REPORTS, [READ]),
     ...pick(C.NOTIFICATIONS, [READ]),
     ...pick(C.SUPPORT, [CREATE, READ]),
   ],

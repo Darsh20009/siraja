@@ -24,6 +24,11 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { MistakesModule } from './modules/mistakes/mistakes.module';
 import { ProgressModule } from './modules/progress/progress.module';
 import { ForecastModule } from './modules/forecast/forecast.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
+import { ExamsModule } from './modules/exams/exams.module';
+import { AssignmentsModule } from './modules/assignments/assignments.module';
+import { AssessmentsModule } from './modules/assessments/assessments.module';
+import { ReportingModule } from './modules/reporting/reporting.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { SurahsModule } from './modules/surahs/surahs.module';
@@ -90,6 +95,14 @@ import { QuranNotesModule } from './modules/quran-notes/quran-notes.module';
     MistakesModule,
     ProgressModule,
     ForecastModule,
+
+    // Attendance, Exams, Assignments & Reporting Engine (Phase 8)
+    AttendanceModule,
+    ExamsModule,
+    AssignmentsModule,
+    AssessmentsModule,
+    ReportingModule,
+
     NotificationsModule,
     SubscriptionsModule,
 
