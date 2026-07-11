@@ -91,6 +91,30 @@ environment config) live in `docs/architecture/`. Start at
   `tsc --noEmit` passes. See `docs/architecture/` for blueprints. AI,
   Smart Mushaf, and Notifications explicitly out of scope for this
   phase.
+- **Phase 11 (complete, approved 2026-07-11)**: AI Learning Intelligence
+  Architecture — text/data-grounded AI only, ASR/speech-to-text explicitly
+  deferred to a later phase. One `AiModule` covering Mistake Intelligence,
+  Revision Recommendation, Memorization Recommendation, Forecast
+  Explanation, Sheikh AI Report, Parent AI Report, plus an AI Insights
+  history endpoint and Sheikh/Admin acknowledgement. Moonshot AI is the
+  sole LLM vendor (`MOONSHOT_API_KEY`, plain HTTPS calls, no Replit
+  connector exists for it), called only through the single
+  `AiInsightOrchestratorService` choke point: cache-by-source-data-hash →
+  availability check → `AiCostGuardService` daily/monthly budget check
+  (new `ai_usage_ledger` collection) → LLM call → usage-ledger record →
+  persist. Reused/extended the pre-existing `AiRequest`/`AiReport`
+  schemas rather than adding a parallel collection. `AI.READ` (auto-
+  generate on cache miss) is open to Student/Parent/Sheikh/Supervisor/
+  Admin; `force=true` regeneration requires `AI.CREATE` (Sheikh/
+  Supervisor/Admin only), re-checked inside every use-case, not just the
+  controller guard. AI is advisory only — never writes back to
+  authoritative records; `AI.APPROVE` lets Sheikh/Admin acknowledge a
+  report. Boots cleanly with or without `MOONSHOT_API_KEY` set (degrades
+  gracefully). `tsc --noEmit` passes, all `/api/v1/ai/*` routes verified
+  live. Full audit: `docs/audits/phase-11-audit-2026-07-11.md`. No live
+  Moonshot smoke test yet (no seeded tenant/user in this environment) and
+  no cost-guard boundary unit tests — both accepted as non-blocking,
+  deferred to a future QA pass.
 - **Phase 10 (complete)**: full Communication & Notification Platform — five NestJS modules.
   NotificationsModule (inbox with read/unread, mark-all-read, archive, priority levels, deep links;
   in-app + email delivery via provider abstraction), NotificationTemplatesModule (reusable
