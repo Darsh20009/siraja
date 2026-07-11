@@ -21,14 +21,12 @@ export interface CreateEnrollmentInput {
   previousCircleId?: string | null;
   sheikhId?: string | null;
   assignedById: string;
-  effectiveDate?: Date;
   notes?: string;
 }
 
 export interface IStudentEnrollmentRepository {
   create(input: CreateEnrollmentInput): Promise<StudentEnrollmentRecord>;
-  findHistoryForStudent(tenantId: string, studentId: string): Promise<StudentEnrollmentRecord[]>;
-  findHistoryForCircle(tenantId: string, circleId: string, limit?: number): Promise<StudentEnrollmentRecord[]>;
+  findByStudent(tenantId: string, studentId: string): Promise<StudentEnrollmentRecord[]>;
 }
 
 export const STUDENT_ENROLLMENT_REPOSITORY = Symbol('STUDENT_ENROLLMENT_REPOSITORY');

@@ -19,6 +19,26 @@ export class Group extends BaseSchema {
   @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
   sheikh?: Types.ObjectId | null;
 
+  /**
+   * Supervisor assigned to oversee this circle. Stored here (in addition to
+   * `Supervisor.supervisedGroups`) so `findBySupervisor` is a single indexed
+   * query rather than a two-step lookup through the supervisor document.
+   */
+  @Prop({ type: Types.ObjectId, ref: 'Supervisor', required: false, default: null })
+  supervisor?: Types.ObjectId | null;
+
+  /**
+   * Maximum number of students this circle can accommodate.
+   */
+  @Prop({ type: Number, required: false, min: 1 })
+  capacity?: number;
+
+  /**
+   * Short human-readable description of the circle's focus or curriculum.
+   */
+  @Prop({ type: String, required: false, trim: true })
+  description?: string;
+
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Student' }], default: [] })
   students: Types.ObjectId[];
 
@@ -40,4 +60,5 @@ export const GroupSchema = SchemaFactory.createForClass(Group);
 
 GroupSchema.index({ tenantId: 1, name: 1 });
 GroupSchema.index({ tenantId: 1, sheikh: 1 });
+GroupSchema.index({ tenantId: 1, supervisor: 1 });
 GroupSchema.index({ tenantId: 1, isActive: 1, isDeleted: 1 });

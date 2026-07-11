@@ -17,6 +17,8 @@ import { CirclesModule } from './modules/circles/circles.module';
 import { SheikhsModule } from './modules/sheikhs/sheikhs.module';
 import { StudentsModule } from './modules/students/students.module';
 import { ParentsModule } from './modules/parents/parents.module';
+import { SupervisorsModule } from './modules/supervisors/supervisors.module';
+import { StudentAssignmentsModule } from './modules/student-assignments/student-assignments.module';
 import { MemorizationModule } from './modules/memorization/memorization.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
@@ -77,6 +79,8 @@ import { QuranNotesModule } from './modules/quran-notes/quran-notes.module';
     SheikhsModule,
     StudentsModule,
     ParentsModule,
+    SupervisorsModule,
+    StudentAssignmentsModule,
     MemorizationModule,
     NotificationsModule,
     SubscriptionsModule,

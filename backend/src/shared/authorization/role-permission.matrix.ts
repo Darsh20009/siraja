@@ -44,6 +44,7 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.QURAN_BOOKMARKS, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.QURAN_NOTES, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.STUDENTS, [READ]),
+    ...pick(C.PARENTS, [READ]),  // Supervisors need to view parent contact info for their circles
     ...pick(C.SHEIKHS, [READ]),
     ...pick(C.GROUPS, [READ, UPDATE, ASSIGN]),
     ...pick(C.SESSIONS, [READ, UPDATE]),
@@ -91,6 +92,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.QURAN, [READ]),
     ...pick(C.QURAN_BOOKMARKS, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.QURAN_NOTES, [CREATE, READ, UPDATE, DELETE]),
+    // Students may read their own profile (ownership enforced in the use-case layer).
+    ...pick(C.STUDENTS, [READ]),
     ...pick(C.ATTENDANCE, [READ]),
     ...pick(C.MEMORIZATION, [READ]),
     ...pick(C.REVIEWS, [READ]),

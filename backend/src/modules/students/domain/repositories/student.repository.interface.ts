@@ -36,7 +36,13 @@ export interface IStudentRepository {
   findAll(tenantId: string, filter?: { isActive?: boolean; groupId?: string; sheikhId?: string }): Promise<StudentRecord[]>;
   findByCircle(tenantId: string, groupId: string): Promise<StudentRecord[]>;
   findByParent(tenantId: string, parentId: string): Promise<StudentRecord[]>;
-  findBySheikh(tenantId: string, sheikhId: string): Promise<StudentRecord[]>;
+  /**
+   * Returns students directly assigned to this sheikh AND students in the
+   * sheikh's circles. `circleIds` should be the sheikh's `groupIds` from
+   * their SheikhRecord — the caller resolves them so the repository stays
+   * single-model (no cross-schema join needed).
+   */
+  findBySheikh(tenantId: string, sheikhId: string, circleIds?: string[]): Promise<StudentRecord[]>;
   update(tenantId: string, studentId: string, input: UpdateStudentInput): Promise<StudentRecord>;
   /** Soft-delete. */
   remove(tenantId: string, studentId: string): Promise<void>;
@@ -44,6 +50,10 @@ export interface IStudentRepository {
   setGroup(tenantId: string, studentId: string, groupId: string | null): Promise<void>;
   /** Internal: set direct sheikh (called by StudentAssignmentsModule). */
   setSheikh(tenantId: string, studentId: string, sheikhId: string | null): Promise<void>;
+  /** Internal: add parent link — syncs the inverse side of Parent.students. */
+  addParent?(tenantId: string, studentId: string, parentId: string): Promise<void>;
+  /** Internal: remove parent link. */
+  removeParent?(tenantId: string, studentId: string, parentId: string): Promise<void>;
 }
 
 export const STUDENT_REPOSITORY = Symbol('STUDENT_REPOSITORY');

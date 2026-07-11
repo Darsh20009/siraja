@@ -59,6 +59,7 @@ environment config) live in `docs/architecture/`. Start at
   global rate limiting (`@nestjs/throttler`); future-ready hooks for
   MFA/Passkeys (unused fields/packages, not enforced). `tsc --noEmit`
   passes. See `docs/architecture/10-authentication-blueprint.md`.
+- **Phase 6 (complete)**: full People Domain — Students, Parents, Sheikhs, Supervisors, Circles, and Student Assignments. Six NestJS modules with full Clean Architecture (domain → application → infrastructure). Role-scoped RBAC enforced in use-cases (sheikh/parent ownership, supervisor circle-scoping). Bidirectional relationship management for circle↔sheikh, circle↔supervisor, student↔parent. Immutable StudentEnrollment audit trail for every assignment event. `tsc --noEmit` passes. See `docs/architecture/` for blueprints. Waiting on approval before Phase 7.
 - **Phase 5 (complete)**: full Quran Foundation Engine — working code,
   not just structure. Surahs, Ayahs, Quran Metadata (Juz/Page
   navigation), Tafsir (all platform-global reference data, no

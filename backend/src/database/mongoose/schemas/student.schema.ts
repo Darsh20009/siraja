@@ -26,8 +26,14 @@ export class Student extends BaseSchema {
   @Prop({ type: Types.ObjectId, ref: 'Sheikh', required: false, default: null })
   sheikh?: Types.ObjectId | null;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] })
-  parents: Types.ObjectId[]; // Users with role PARENT
+  /**
+   * Parent profile IDs — references the `parents` collection, not `users`.
+   * Always store and compare using Parent profile ObjectIds (the `_id` of a
+   * Parent document), not User IDs, so lookups stay consistent with
+   * `LinkParentToStudentUseCase` and `IParentRepository.findById`.
+   */
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Parent' }], default: [] })
+  parents: Types.ObjectId[];
 
   @Prop({ type: Date, required: false })
   dateOfBirth?: Date;
