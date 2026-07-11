@@ -130,10 +130,13 @@ environment config) live in `docs/architecture/`. Start at
   Access must allow Replit's dev IP (0.0.0.0/0 recommended, since the
   dev environment IP isn't static) or connections fail with
   `MongooseServerSelectionError`. All routes mapped and verified
-  reachable (e.g. `GET /api/v1/quran/surahs` returns 401 Unauthorized
-  as expected — auth guard is active). The Flutter frontend still needs
-  a Flutter-enabled environment to run (not available in this Replit
-  workspace).
+  reachable (e.g. `GET /api/v1/quran/surahs` and `GET
+  /api/v1/notifications` both return 401 Unauthorized as expected —
+  auth guard is active). Re-verified after a project re-import
+  (2026-07-11): ran `npm install` at the workspace root and restored
+  the three secrets, workflow booted cleanly with no code changes
+  needed. The Flutter frontend still needs a Flutter-enabled
+  environment to run (not available in this Replit workspace).
 
 ## Environment
 
