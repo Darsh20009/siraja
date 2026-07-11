@@ -71,6 +71,9 @@ export * from './system-settings.schema';
 // People Domain (Phase 6) — assignment history
 export * from './student-enrollment.schema';
 
+// Memorization & Review Engine (Phase 7)
+export * from './student-progress.schema';
+
 // Quran Foundation Engine (Phase 5) — surahs/ayahs/tafsir/metadata are
 // platform-global reference content; bookmarks/last-read/notes are
 // tenant + user scoped personal data.

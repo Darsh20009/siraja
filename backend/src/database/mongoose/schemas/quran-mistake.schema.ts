@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { BaseSchema } from './base.schema';
-import { MistakeSeverity, MistakeType } from '@shared/enums/memorization.enum';
+import { MistakeResolutionStatus, MistakeSeverity, MistakeType } from '@shared/enums/memorization.enum';
 
 /**
  * Collection: quran_mistakes
@@ -10,7 +10,7 @@ import { MistakeSeverity, MistakeType } from '@shared/enums/memorization.enum';
  * `review_records` document (exactly one of `memorizationRecord` /
  * `reviewRecord` is set). Kept as its own collection — not embedded —
  * because a single evaluation can log many mistakes and mistakes are
- * independently aggregated/reported (e.g. "most common Tajweed mistakes
+ * independently aggregated/reported (e.g. "most repeated-word mistakes
  * for this student this month").
  */
 @Schema({ timestamps: true, collection: 'quran_mistakes' })
@@ -38,6 +38,20 @@ export class QuranMistake extends BaseSchema {
 
   @Prop({ type: String, required: false, trim: true })
   note?: string;
+
+  @Prop({
+    type: String,
+    enum: MistakeResolutionStatus,
+    required: true,
+    default: MistakeResolutionStatus.OPEN,
+  })
+  resolutionStatus: MistakeResolutionStatus;
+
+  @Prop({ type: Date, default: null })
+  resolvedAt: Date | null;
+
+  @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
+  resolvedBy: Types.ObjectId | null;
 }
 
 export type QuranMistakeDocument = HydratedDocument<QuranMistake>;
@@ -47,3 +61,5 @@ QuranMistakeSchema.index({ tenantId: 1, student: 1, createdAt: -1 });
 QuranMistakeSchema.index({ tenantId: 1, memorizationRecord: 1 });
 QuranMistakeSchema.index({ tenantId: 1, reviewRecord: 1 });
 QuranMistakeSchema.index({ tenantId: 1, type: 1 });
+QuranMistakeSchema.index({ tenantId: 1, student: 1, resolutionStatus: 1 });
+QuranMistakeSchema.index({ tenantId: 1, student: 1, surahNumber: 1 });

@@ -20,6 +20,10 @@ import { ParentsModule } from './modules/parents/parents.module';
 import { SupervisorsModule } from './modules/supervisors/supervisors.module';
 import { StudentAssignmentsModule } from './modules/student-assignments/student-assignments.module';
 import { MemorizationModule } from './modules/memorization/memorization.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
+import { MistakesModule } from './modules/mistakes/mistakes.module';
+import { ProgressModule } from './modules/progress/progress.module';
+import { ForecastModule } from './modules/forecast/forecast.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { SurahsModule } from './modules/surahs/surahs.module';
@@ -82,6 +86,10 @@ import { QuranNotesModule } from './modules/quran-notes/quran-notes.module';
     SupervisorsModule,
     StudentAssignmentsModule,
     MemorizationModule,
+    ReviewsModule,
+    MistakesModule,
+    ProgressModule,
+    ForecastModule,
     NotificationsModule,
     SubscriptionsModule,
 

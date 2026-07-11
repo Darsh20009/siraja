@@ -12,17 +12,26 @@ export enum EvaluationGrade {
   WEAK = 'weak',
 }
 
+/**
+ * Structural mistake types — what kind of error occurred during recitation.
+ * These model the surface form of the mistake, not its Tajweed classification.
+ */
 export enum MistakeType {
-  TAJWEED = 'tajweed',
-  PRONUNCIATION = 'pronunciation',
-  ORDER = 'order',
-  OMISSION = 'omission',
-  ADDITION = 'addition',
-  STOPPING = 'stopping',
+  MISSING_WORD = 'missing_word',
+  WRONG_WORD = 'wrong_word',
+  REPEATED_WORD = 'repeated_word',
+  SKIPPED_AYAH = 'skipped_ayah',
+  ORDER_MISTAKE = 'order_mistake',
+  OTHER = 'other',
 }
 
 export enum MistakeSeverity {
   MINOR = 'minor',
   MODERATE = 'moderate',
   MAJOR = 'major',
+}
+
+export enum MistakeResolutionStatus {
+  OPEN = 'open',
+  RESOLVED = 'resolved',
 }
