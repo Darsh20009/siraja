@@ -9,11 +9,15 @@ every tenant.
 
 ## Stack
 
-- **Frontend**: Flutter (Material 3, responsive, RTL-first)
-- **Backend**: Node.js + NestJS + TypeScript
-- **Database**: MongoDB Atlas (Mongoose ODM)
+- **Frontend**: Flutter (Material 3, responsive, RTL-first) — lives in
+  `frontend/`, not wired into the Replit workflow (Flutter isn't run via
+  a Replit workflow in this environment).
+- **Backend**: Node.js + NestJS + TypeScript — lives in `backend/`, this
+  is what the "Start application" workflow runs.
+- **Database**: MongoDB Atlas (Mongoose ODM) — external, not a Replit
+  built-in database. Connection string lives in the `MONGODB_URI` secret.
 - **Auth**: Email + Password, Phone + Password (identity only, no OTP),
-  Google, Apple — JWT access + refresh tokens
+  Google, Apple — JWT access + refresh tokens.
 
 ## Architecture
 
@@ -30,6 +34,33 @@ Clean Architecture + Domain-Driven Design on both sides:
 Full blueprints (backend, frontend, database, multi-tenancy, API,
 environment config) live in `docs/architecture/`. Start at
 `docs/architecture/01-overview.md`.
+
+## Running on Replit
+
+- Dependencies are installed at the **repo root** (`npm install` at
+  `/`), not inside `backend/`. The "Start application" workflow runs
+  `cd backend && nest start` with the root `node_modules/.bin` on
+  `PATH` — Node's module resolution walks up to the root
+  `node_modules/` for everything `backend/` imports, so there's no
+  separate `backend/node_modules`. If you add a backend dependency,
+  install it at the repo root, not inside `backend/`.
+- The server listens on `PORT` (shared env var, set to `5000` to match
+  the Replit-exposed port) and is mounted under `API_PREFIX`
+  (`api/v1`), so routes are e.g. `/api/v1/quran/surahs`.
+- Required configuration (see `backend/src/config/env.validation.ts`):
+  - `MONGODB_URI` (secret) — MongoDB Atlas connection string, provided
+    by the user.
+  - `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` (shared env vars) —
+    generated during setup; rotate if you need to invalidate all
+    sessions.
+  - Optional: Google/Apple OAuth credentials, SMTP email vars, and
+    `MOONSHOT_API_KEY` (Phase 11 AI features) are all unset — the
+    corresponding features no-op/503 gracefully rather than crashing
+    the app (see `configuration.ts` comments).
+- This project is backend-only in Replit; there is no web frontend
+  served here to screenshot. Verify the API with `curl` against
+  `/api/v1/...` routes or the workflow logs' `RouterExplorer` route
+  list.
 
 ## Current status
 
@@ -59,132 +90,28 @@ environment config) live in `docs/architecture/`. Start at
   global rate limiting (`@nestjs/throttler`); future-ready hooks for
   MFA/Passkeys (unused fields/packages, not enforced). `tsc --noEmit`
   passes. See `docs/architecture/10-authentication-blueprint.md`.
-- **Phase 6 (complete)**: full People Domain — Students, Parents, Sheikhs, Supervisors, Circles, and Student Assignments. Six NestJS modules with full Clean Architecture (domain → application → infrastructure). Role-scoped RBAC enforced in use-cases (sheikh/parent ownership, supervisor circle-scoping). Bidirectional relationship management for circle↔sheikh, circle↔supervisor, student↔parent. Immutable StudentEnrollment audit trail for every assignment event. `tsc --noEmit` passes. See `docs/architecture/` for blueprints.
-- **Phase 7 (complete)**: full Memorization & Review Engine — five NestJS modules with full Clean Architecture. MemorizationModule (record lifecycle: create → approve, COMPLETED + grade), ReviewsModule (murājaʿah sessions with retention grading and due-date scheduling), MistakesModule (per-ayah mistake tracking with type/severity/resolution status, frequency analytics), ProgressModule (materialised StudentProgress document, streak tracking, memorization/revision percentages), ForecastModule (estimated completion date, weekly/monthly projections, consistency score from last-30-days pace). Role-scoped RBAC throughout: Student sees own, Sheikh sees what they evaluated, Supervisor/Admin sees all. `tsc --noEmit` passes. Waiting on approval before Phase 8.
-- **Phase 5 (complete)**: full Quran Foundation Engine — working code,
-  not just structure. Surahs, Ayahs, Quran Metadata (Juz/Page
-  navigation), Tafsir (all platform-global reference data, no
-  `tenantId`), Quran Search (diacritic-normalized `$text` search across
-  Surah names + Ayah text, composed over the Surah/Ayah repositories —
-  no schema of its own), Quran Bookmarks (+ Favorites + Last Read
-  Position), and Quran Notes (Ayah/Surah-scoped, tenant + user scoped,
-  ownership enforced directly by `(tenantId, userId)` rather than the
-  Phase 3 `ResourceOwnershipGuard`). New `quran`/`quran_bookmarks`/
-  `quran_notes` permission categories granted to every authenticated
-  role. `tsc --noEmit` passes. See
-  `docs/architecture/11-quran-blueprint.md`. AI features, the
-  Memorization Engine, and Teacher Features are explicitly out of scope
-  for this phase.
+- **Phase 5 (complete)**: full Quran Foundation Engine — Surahs, Ayahs,
+  Quran Metadata (Juz/Page navigation), Tafsir (all platform-global
+  reference data, no `tenantId`), Quran Search (diacritic-normalized
+  `$text` search), Quran Bookmarks (+ Favorites + Last Read Position),
+  and Quran Notes. See `docs/architecture/11-quran-blueprint.md`.
+- **Phase 6 (complete)**: full People Domain — Students, Parents,
+  Sheikhs, Supervisors, Circles, and Student Assignments.
+- **Phase 7 (complete)**: full Memorization & Review Engine —
+  Memorization, Reviews, Mistakes, Progress, Forecast modules.
 - **Phase 8 (complete)**: full Operational Engine — Attendance, Exams,
-  Assessments, Assignments, and Reporting modules with full Clean
-  Architecture. Attendance (present/absent/excused/late, tracked by
-  student/circle/sheikh/session/date/notes), Exams (memorization/
-  revision/completion categories, score/grade/result status), Assessments
-  (weekly/monthly/custom periodic evaluations), Assignments (homework/
-  revision/memorization tasks with assigned/due dates, completion status,
-  submission notes), Reporting (student/parent/sheikh/circle/supervisor
-  reports with attendance/memorization/revision rates, exam performance,
-  student/circle ranking — read-only aggregation over the other modules,
-  no schema of its own). Role-scoped RBAC: Student views own, Parent
-  views linked children, Sheikh manages assigned students, Supervisor
-  views supervised circles, Tenant Admin has full tenant access.
-  `tsc --noEmit` passes. See `docs/architecture/` for blueprints. AI,
-  Smart Mushaf, and Notifications explicitly out of scope for this
-  phase.
+  Assessments, Assignments, and Reporting modules.
+- **Phase 9 (complete)**: Smart Mushaf Engine — ayah-level performance
+  tracking, ayah notes, mistakes overlay, memorization heatmap.
+- **Phase 10 (complete)**: Notifications, Messaging, Announcements,
+  User Preferences, email delivery (provider-agnostic SMTP).
 - **Phase 11 (complete, approved 2026-07-11)**: AI Learning Intelligence
-  Architecture — text/data-grounded AI only, ASR/speech-to-text explicitly
-  deferred to a later phase. One `AiModule` covering Mistake Intelligence,
+  Architecture — text/data-grounded AI only, ASR/speech-to-text
+  explicitly deferred. One `AiModule` covering Mistake Intelligence,
   Revision Recommendation, Memorization Recommendation, Forecast
-  Explanation, Sheikh AI Report, Parent AI Report, plus an AI Insights
-  history endpoint and Sheikh/Admin acknowledgement. Moonshot AI is the
-  sole LLM vendor (`MOONSHOT_API_KEY`, plain HTTPS calls, no Replit
-  connector exists for it), called only through the single
-  `AiInsightOrchestratorService` choke point: cache-by-source-data-hash →
-  availability check → `AiCostGuardService` daily/monthly budget check
-  (new `ai_usage_ledger` collection) → LLM call → usage-ledger record →
-  persist. Reused/extended the pre-existing `AiRequest`/`AiReport`
-  schemas rather than adding a parallel collection. `AI.READ` (auto-
-  generate on cache miss) is open to Student/Parent/Sheikh/Supervisor/
-  Admin; `force=true` regeneration requires `AI.CREATE` (Sheikh/
-  Supervisor/Admin only), re-checked inside every use-case, not just the
-  controller guard. AI is advisory only — never writes back to
-  authoritative records; `AI.APPROVE` lets Sheikh/Admin acknowledge a
-  report. Boots cleanly with or without `MOONSHOT_API_KEY` set (degrades
-  gracefully). `tsc --noEmit` passes, all `/api/v1/ai/*` routes verified
-  live. Full audit: `docs/audits/phase-11-audit-2026-07-11.md`. No live
-  Moonshot smoke test yet (no seeded tenant/user in this environment) and
-  no cost-guard boundary unit tests — both accepted as non-blocking,
-  deferred to a future QA pass.
-- **Phase 10 (complete)**: full Communication & Notification Platform — five NestJS modules.
-  NotificationsModule (inbox with read/unread, mark-all-read, archive, priority levels, deep links;
-  in-app + email delivery via provider abstraction), NotificationTemplatesModule (reusable
-  {{variable}} templates, global or tenant-specific, tenant overrides global for same type+channel),
-  InAppMessagingModule (four thread types: Sheikh→Student, Sheikh→Parent, Admin→User,
-  Supervisor→Circle; per-participant unread counts), AnnouncementsModule (GLOBAL/TENANT/CIRCLE
-  scopes, DRAFT→PUBLISHED→ARCHIVED lifecycle), UserPreferencesModule (per-user channel/type/
-  email/announcement preferences, upserted on first access). Email delivery is abstracted behind
-  IEmailProvider (EMAIL_PROVIDER token); SmtpEmailProvider (Nodemailer) is the default — swap by
-  re-binding the token in EmailModule. Configure via EMAIL_HOST, EMAIL_PORT, EMAIL_SECURE,
-  EMAIL_USER, EMAIL_PASS, EMAIL_FROM, EMAIL_FROM_NAME env vars; absent EMAIL_HOST disables email
-  silently. Three new permission categories (MESSAGING, ANNOUNCEMENTS, USER_PREFERENCES) added to
-  registry and role matrix. `tsc --noEmit` passes cleanly. Waiting on approval before Phase 11.
-- **Phase 9 (complete)**: full Smart Mushaf Engine — five NestJS modules.
-  AyahPerformanceModule owns the materialised `ayah_performance`
-  collection (one doc per student+ayah ever touched; `heatmapLevel`
-  derived from `confidenceScore` at write time — Excellent/Good/Needs
-  Review/Weak). AyahNotesModule owns `ayah_notes` (teacher/admin-authored
-  notes on a student's ayah — distinct from the self-owned Phase 5
-  `quran_notes`). AyahMistakesOverlayModule and MemorizationHeatmapModule
-  have no schema of their own — they read Phase 7's `quran_mistakes` and
-  this phase's `ayah_performance` respectively. SmartMushafModule is a
-  facade (no schema) merging ayah text + performance + notes + mistakes
-  per student+surah. Wired into Memorization/Reviews/Mistakes via the
-  same fire-and-forget cross-module pattern Phase 7's ProgressModule
-  established. Role-scoped RBAC (new `SMART_MUSHAF` permission category):
-  Sheikh/Admin write, Student/Parent/Supervisor read-only, ownership
-  enforced via the new shared `assertCanAccessStudent` helper
-  (`shared/authorization/student-scope.util.ts`). `tsc --noEmit` passes,
-  workflow boots cleanly with all routes mapped. AI, Notifications, and
-  Payments explicitly out of scope. Waiting on approval before Phase 10.
-- **Backend is running.** The `Start application` workflow runs
-  `cd backend && nest start` (using the root-installed `nest` CLI/
-  node_modules) on port 5000, connected to a real MongoDB Atlas cluster.
-  Requires `MONGODB_URI`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`
-  secrets (configured) and `PORT=5000` env var (set). Atlas Network
-  Access must allow Replit's dev IP (0.0.0.0/0 recommended, since the
-  dev environment IP isn't static) or connections fail with
-  `MongooseServerSelectionError`. All routes mapped and verified
-  reachable (e.g. `GET /api/v1/quran/surahs` and `GET
-  /api/v1/notifications` both return 401 Unauthorized as expected —
-  auth guard is active). Re-verified after a project re-import
-  (2026-07-11): ran `npm install` at the workspace root and restored
-  the three secrets, workflow booted cleanly with no code changes
-  needed. The Flutter frontend still needs a Flutter-enabled
-  environment to run (not available in this Replit workspace).
-
-## Environment
-
-- Node.js 20 is installed in this workspace. Backend npm dependencies are
-  installed at the **workspace root** (`/package.json`, `/node_modules`)
-  via Replit's package manager, not inside `backend/` — `backend/package.json`
-  documents the same dependency set for portability if the backend is
-  ever extracted to its own repo/deployment. `tsc --noEmit` against
-  `backend/tsconfig.json` passes cleanly using the root-installed
-  TypeScript.
-- Flutter/Dart SDK is not installed in this Replit workspace (not
-  available as a Replit module); `frontend/` is structure-only and will
-  need a Flutter-enabled environment to actually run.
-- `MONGODB_URI`, `JWT_ACCESS_SECRET`, and `JWT_REFRESH_SECRET` secrets are
-  required to start the backend. Configure them via Replit's secrets manager.
-  Email delivery additionally requires `EMAIL_HOST` (and optionally
-  `EMAIL_PORT`, `EMAIL_SECURE`, `EMAIL_USER`, `EMAIL_PASS`, `EMAIL_FROM`,
-  `EMAIL_FROM_NAME`) — absent `EMAIL_HOST` disables email silently without
-  crashing the server.
+  Explanation, Sheikh/Parent AI Reports, AI Insights history. Moonshot
+  AI is the sole LLM vendor (`MOONSHOT_API_KEY`).
 
 ## User preferences
 
-- Enterprise-grade Clean Architecture / DDD is a hard requirement, not
-  optional — keep the domain/application/infrastructure separation strict
-  as features are added.
-- Wait for explicit approval before implementing any feature beyond
-  structure/scaffolding.
+None recorded yet.
