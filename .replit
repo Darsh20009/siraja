@@ -9,6 +9,11 @@ channel = "stable-25_05"
 
 [userenv.shared]
 PORT = "5000"
+API_PREFIX = "api/v1"
+CORS_ORIGINS = "*"
+JWT_ACCESS_SECRET = "9fbced6ce37eebee5065a0ad2e8237148f9711fe1cb418cc515d6538aca0ef1a851586ccf4e2d3b891cd0d2892f9d9eb"
+JWT_REFRESH_SECRET = "2b334163812025a3f87d330d5be31609096a96cd8a12e8ba9538e87515f582436bae93f6d8154e13c8d82ec0235b4868"
+NODE_ENV = "development"
 
 [[ports]]
 localPort = 5000
