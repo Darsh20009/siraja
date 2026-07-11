@@ -30,4 +30,8 @@ export enum PermissionCategory {
   // permission category (they are read/write facets of the same
   // per-ayah learning-progress resource, not separate aggregates).
   SMART_MUSHAF = 'smart_mushaf',
+  // Phase 10 — Communication & Notification Platform
+  MESSAGING = 'messaging',
+  ANNOUNCEMENTS = 'announcements',
+  USER_PREFERENCES = 'user_preferences',
 }

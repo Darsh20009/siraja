@@ -46,6 +46,13 @@ import { AyahMistakesOverlayModule } from './modules/ayah-mistakes-overlay/ayah-
 import { MemorizationHeatmapModule } from './modules/memorization-heatmap/memorization-heatmap.module';
 import { SmartMushafModule } from './modules/smart-mushaf/smart-mushaf.module';
 
+// Communication & Notification Platform (Phase 10)
+import { EmailModule } from './shared/email/email.module';
+import { NotificationTemplatesModule } from './modules/notification-templates/notification-templates.module';
+import { InAppMessagingModule } from './modules/in-app-messaging/in-app-messaging.module';
+import { AnnouncementsModule } from './modules/announcements/announcements.module';
+import { UserPreferencesModule } from './modules/user-preferences/user-preferences.module';
+
 /**
  * Root application module.
  *
@@ -128,6 +135,13 @@ import { SmartMushafModule } from './modules/smart-mushaf/smart-mushaf.module';
     AyahMistakesOverlayModule,
     MemorizationHeatmapModule,
     SmartMushafModule,
+
+    // Communication & Notification Platform (Phase 10)
+    EmailModule,
+    NotificationTemplatesModule,
+    InAppMessagingModule,
+    AnnouncementsModule,
+    UserPreferencesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

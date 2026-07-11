@@ -58,6 +58,10 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.SUPPORT, [CREATE, READ]),
     // Supervisors view Smart Mushaf data (view only) for their circles.
     ...pick(C.SMART_MUSHAF, [READ]),
+    // Phase 10: Supervisors can message and announce to their circles.
+    ...pick(C.MESSAGING, [CREATE, READ, DELETE]),
+    ...pick(C.ANNOUNCEMENTS, [CREATE, READ, UPDATE, DELETE]),
+    ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
   ],
 
   [Role.SHEIKH]: [
@@ -79,6 +83,10 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     // Sheikhs write teacher notes and adjust per-ayah performance for
     // their assigned students; ownership enforced in the use-case layer.
     ...pick(C.SMART_MUSHAF, [CREATE, READ, UPDATE]),
+    // Phase 10: Sheikhs can message students/parents and post circle announcements.
+    ...pick(C.MESSAGING, [CREATE, READ, DELETE]),
+    ...pick(C.ANNOUNCEMENTS, [CREATE, READ, UPDATE, DELETE]),
+    ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
   ],
 
   [Role.PARENT]: [
@@ -97,6 +105,10 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.SUPPORT, [CREATE, READ]),
     // Parents may view Smart Mushaf data for their linked children.
     ...pick(C.SMART_MUSHAF, [READ]),
+    // Phase 10: Parents can read messages sent to them and read announcements.
+    ...pick(C.MESSAGING, [READ]),
+    ...pick(C.ANNOUNCEMENTS, [READ]),
+    ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
   ],
 
   [Role.STUDENT]: [
@@ -116,6 +128,10 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.SUPPORT, [CREATE, READ]),
     // Students may view their own Smart Mushaf data (own-profile check in use-case layer).
     ...pick(C.SMART_MUSHAF, [READ]),
+    // Phase 10: Students can read messages sent to them and read announcements.
+    ...pick(C.MESSAGING, [READ]),
+    ...pick(C.ANNOUNCEMENTS, [READ]),
+    ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
   ],
 };
 

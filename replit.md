@@ -91,6 +91,19 @@ environment config) live in `docs/architecture/`. Start at
   `tsc --noEmit` passes. See `docs/architecture/` for blueprints. AI,
   Smart Mushaf, and Notifications explicitly out of scope for this
   phase.
+- **Phase 10 (complete)**: full Communication & Notification Platform — five NestJS modules.
+  NotificationsModule (inbox with read/unread, mark-all-read, archive, priority levels, deep links;
+  in-app + email delivery via provider abstraction), NotificationTemplatesModule (reusable
+  {{variable}} templates, global or tenant-specific, tenant overrides global for same type+channel),
+  InAppMessagingModule (four thread types: Sheikh→Student, Sheikh→Parent, Admin→User,
+  Supervisor→Circle; per-participant unread counts), AnnouncementsModule (GLOBAL/TENANT/CIRCLE
+  scopes, DRAFT→PUBLISHED→ARCHIVED lifecycle), UserPreferencesModule (per-user channel/type/
+  email/announcement preferences, upserted on first access). Email delivery is abstracted behind
+  IEmailProvider (EMAIL_PROVIDER token); SmtpEmailProvider (Nodemailer) is the default — swap by
+  re-binding the token in EmailModule. Configure via EMAIL_HOST, EMAIL_PORT, EMAIL_SECURE,
+  EMAIL_USER, EMAIL_PASS, EMAIL_FROM, EMAIL_FROM_NAME env vars; absent EMAIL_HOST disables email
+  silently. Three new permission categories (MESSAGING, ANNOUNCEMENTS, USER_PREFERENCES) added to
+  registry and role matrix. `tsc --noEmit` passes cleanly. Waiting on approval before Phase 11.
 - **Phase 9 (complete)**: full Smart Mushaf Engine — five NestJS modules.
   AyahPerformanceModule owns the materialised `ayah_performance`
   collection (one doc per student+ayah ever touched; `heatmapLevel`
@@ -134,9 +147,12 @@ environment config) live in `docs/architecture/`. Start at
 - Flutter/Dart SDK is not installed in this Replit workspace (not
   available as a Replit module); `frontend/` is structure-only and will
   need a Flutter-enabled environment to actually run.
-- `MONGODB_URI` and JWT secrets are not yet configured — see
-  `backend/.env.example` for the full list to be requested via Replit's
-  secrets manager when auth/database features are implemented.
+- `MONGODB_URI`, `JWT_ACCESS_SECRET`, and `JWT_REFRESH_SECRET` secrets are
+  required to start the backend. Configure them via Replit's secrets manager.
+  Email delivery additionally requires `EMAIL_HOST` (and optionally
+  `EMAIL_PORT`, `EMAIL_SECURE`, `EMAIL_USER`, `EMAIL_PASS`, `EMAIL_FROM`,
+  `EMAIL_FROM_NAME`) — absent `EMAIL_HOST` disables email silently without
+  crashing the server.
 
 ## User preferences
 

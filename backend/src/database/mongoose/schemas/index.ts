@@ -95,3 +95,10 @@ export * from './quran-note.schema';
 // `ayah_performance` collection respectively — no schema of their own.
 export * from './ayah-performance.schema';
 export * from './ayah-note.schema';
+
+// Communication & Notification Platform (Phase 10)
+export * from './notification-template.schema';
+export * from './message-thread.schema';
+export * from './message.schema';
+export * from './announcement.schema';
+export * from './user-preferences.schema';

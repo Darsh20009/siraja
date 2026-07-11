@@ -161,6 +161,25 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.UPDATE,
     PermissionAction.DELETE,
   ],
+  // Phase 10 — Communication & Notification Platform
+  [PermissionCategory.MESSAGING]: [
+    PermissionAction.CREATE,
+    PermissionAction.READ,
+    PermissionAction.DELETE,
+  ],
+  [PermissionCategory.ANNOUNCEMENTS]: [
+    PermissionAction.CREATE,
+    PermissionAction.READ,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+  ],
+  // USER_PREFERENCES: every authenticated user can read/update their own
+  // preferences; no CREATE/DELETE — preferences are upserted, not created
+  // afresh, and cannot be deleted (they are reset to defaults instead).
+  [PermissionCategory.USER_PREFERENCES]: [
+    PermissionAction.READ,
+    PermissionAction.UPDATE,
+  ],
 };
 
 export interface PermissionDefinition {

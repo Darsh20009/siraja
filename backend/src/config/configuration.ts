@@ -48,6 +48,19 @@ export default () => ({
     fromNumber: process.env.SMS_PROVIDER_FROM_NUMBER,
   },
 
+  // Phase 10 — Email delivery (provider-agnostic SMTP abstraction).
+  // Switch providers by pointing these variables at any SMTP relay
+  // (SendGrid, Mailgun, SES, Postmark, etc.) — no code changes required.
+  email: {
+    host: process.env.EMAIL_HOST || '',
+    port: parseInt(process.env.EMAIL_PORT || '587', 10),
+    secure: process.env.EMAIL_SECURE === 'true',
+    user: process.env.EMAIL_USER || '',
+    pass: process.env.EMAIL_PASS || '',
+    from: process.env.EMAIL_FROM || 'noreply@siraja.com',
+    fromName: process.env.EMAIL_FROM_NAME || 'Siraja',
+  },
+
   throttle: {
     ttl: parseInt(process.env.THROTTLE_TTL || '60', 10),
     limit: parseInt(process.env.THROTTLE_LIMIT || '100', 10),
