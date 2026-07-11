@@ -75,8 +75,28 @@ environment config) live in `docs/architecture/`. Start at
   `docs/architecture/11-quran-blueprint.md`. AI features, the
   Memorization Engine, and Teacher Features are explicitly out of scope
   for this phase.
-- No run workflow configured (Flutter frontend still needs a
-  Flutter-enabled environment to run). Waiting on approval before Phase 6.
+- **Phase 8 (complete)**: full Operational Engine — Attendance, Exams,
+  Assessments, Assignments, and Reporting modules with full Clean
+  Architecture. Attendance (present/absent/excused/late, tracked by
+  student/circle/sheikh/session/date/notes), Exams (memorization/
+  revision/completion categories, score/grade/result status), Assessments
+  (weekly/monthly/custom periodic evaluations), Assignments (homework/
+  revision/memorization tasks with assigned/due dates, completion status,
+  submission notes), Reporting (student/parent/sheikh/circle/supervisor
+  reports with attendance/memorization/revision rates, exam performance,
+  student/circle ranking — read-only aggregation over the other modules,
+  no schema of its own). Role-scoped RBAC: Student views own, Parent
+  views linked children, Sheikh manages assigned students, Supervisor
+  views supervised circles, Tenant Admin has full tenant access.
+  `tsc --noEmit` passes. See `docs/architecture/` for blueprints. AI,
+  Smart Mushaf, and Notifications explicitly out of scope for this
+  phase. Waiting on approval before Phase 9.
+- No run workflow configured yet. The backend (NestJS) requires
+  `MONGODB_URI` (MongoDB Atlas connection string), `JWT_ACCESS_SECRET`,
+  and `JWT_REFRESH_SECRET` env vars to boot (validated at startup,
+  fails fast if missing) — not yet provided. The Flutter frontend still
+  needs a Flutter-enabled environment to run (not available in this
+  Replit workspace).
 
 ## Environment
 
