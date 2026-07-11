@@ -91,12 +91,18 @@ environment config) live in `docs/architecture/`. Start at
   `tsc --noEmit` passes. See `docs/architecture/` for blueprints. AI,
   Smart Mushaf, and Notifications explicitly out of scope for this
   phase. Waiting on approval before Phase 9.
-- No run workflow configured yet. The backend (NestJS) requires
-  `MONGODB_URI` (MongoDB Atlas connection string), `JWT_ACCESS_SECRET`,
-  and `JWT_REFRESH_SECRET` env vars to boot (validated at startup,
-  fails fast if missing) — not yet provided. The Flutter frontend still
-  needs a Flutter-enabled environment to run (not available in this
-  Replit workspace).
+- **Backend is running.** The `Start application` workflow runs
+  `cd backend && nest start` (using the root-installed `nest` CLI/
+  node_modules) on port 5000, connected to a real MongoDB Atlas cluster.
+  Requires `MONGODB_URI`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`
+  secrets (configured) and `PORT=5000` env var (set). Atlas Network
+  Access must allow Replit's dev IP (0.0.0.0/0 recommended, since the
+  dev environment IP isn't static) or connections fail with
+  `MongooseServerSelectionError`. All routes mapped and verified
+  reachable (e.g. `GET /api/v1/quran/surahs` returns 401 Unauthorized
+  as expected — auth guard is active). The Flutter frontend still needs
+  a Flutter-enabled environment to run (not available in this Replit
+  workspace).
 
 ## Environment
 
