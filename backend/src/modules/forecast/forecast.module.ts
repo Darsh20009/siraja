@@ -29,5 +29,8 @@ import { ProgressModule } from '@modules/progress/progress.module';
   ],
   controllers: [ForecastController],
   providers: [GetCompletionForecastUseCase],
+  // Exported so AiModule (Phase 11) can wrap the deterministic forecast
+  // with an AI-generated narrative explanation without recomputing it.
+  exports: [GetCompletionForecastUseCase],
 })
 export class ForecastModule {}

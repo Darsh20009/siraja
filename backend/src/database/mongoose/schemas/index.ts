@@ -59,9 +59,10 @@ export * from './transaction.schema';
 export * from './achievement.schema';
 export * from './badge.schema';
 
-// AI
+// AI (Phase 11 — AI Learning Intelligence Architecture)
 export * from './ai-request.schema';
 export * from './ai-report.schema';
+export * from './ai-usage-ledger.schema';
 
 // Platform observability
 export * from './audit-log.schema';

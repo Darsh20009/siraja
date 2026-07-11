@@ -66,6 +66,32 @@ export default () => ({
     limit: parseInt(process.env.THROTTLE_LIMIT || '100', 10),
   },
 
+  // Phase 11 — AI Learning Intelligence Architecture. Moonshot AI is the
+  // only LLM vendor (see docs/architecture/13-phase-11-ai-learning-intelligence-plan.md).
+  // If MOONSHOT_API_KEY is unset, MoonshotProvider logs a warning and every
+  // AI endpoint responds 503 AI_UNAVAILABLE — the app still boots cleanly,
+  // mirroring the SmtpEmailProvider no-op-when-unconfigured pattern.
+  moonshot: {
+    apiKey: process.env.MOONSHOT_API_KEY || '',
+    baseUrl: process.env.MOONSHOT_BASE_URL || 'https://api.moonshot.ai/v1',
+    model: process.env.MOONSHOT_MODEL || 'moonshot-v1-8k',
+    // Approximate USD price per 1M tokens — used only to estimate cost for
+    // the usage ledger/budget guard, not billed directly by this app.
+    // Adjust to match Moonshot's current published pricing.
+    pricePerMillionInputTokensUsd: parseFloat(process.env.MOONSHOT_PRICE_PER_M_INPUT_USD || '2'),
+    pricePerMillionOutputTokensUsd: parseFloat(process.env.MOONSHOT_PRICE_PER_M_OUTPUT_USD || '10'),
+    requestTimeoutMs: parseInt(process.env.MOONSHOT_TIMEOUT_MS || '15000', 10),
+  },
+
+  // Conservative platform-wide default per approved Phase 11 decisions:
+  // start of the approved $50–100/month range, tune after real usage data.
+  ai: {
+    dailyBudgetUsd: parseFloat(process.env.AI_DAILY_BUDGET_USD || '3'),
+    monthlyBudgetUsd: parseFloat(process.env.AI_MONTHLY_BUDGET_USD || '75'),
+    cacheEnabled: process.env.AI_CACHE_ENABLED !== 'false',
+    maxCompletionTokens: parseInt(process.env.AI_MAX_COMPLETION_TOKENS || '700', 10),
+  },
+
   cors: {
     origins: (process.env.CORS_ORIGINS || '').split(',').filter(Boolean),
   },

@@ -62,6 +62,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.MESSAGING, [CREATE, READ, DELETE]),
     ...pick(C.ANNOUNCEMENTS, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
+    // Phase 11: Supervisors have read-only oversight of AI insights/reports.
+    ...pick(C.AI, [READ]),
   ],
 
   [Role.SHEIKH]: [
@@ -87,6 +89,9 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.MESSAGING, [CREATE, READ, DELETE]),
     ...pick(C.ANNOUNCEMENTS, [CREATE, READ, UPDATE, DELETE]),
     ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
+    // Phase 11: Sheikhs can trigger/regenerate AI insights for their
+    // students and acknowledge AI-generated reports into the record.
+    ...pick(C.AI, [CREATE, READ, APPROVE]),
   ],
 
   [Role.PARENT]: [
@@ -109,6 +114,10 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.MESSAGING, [READ]),
     ...pick(C.ANNOUNCEMENTS, [READ]),
     ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
+    // Phase 11: Parents may read AI reports/insights for linked children
+    // (read-only — generation is triggered by Sheikh/Admin to keep AI
+    // spend controllable, see AI Safety & Cost Control strategy).
+    ...pick(C.AI, [READ]),
   ],
 
   [Role.STUDENT]: [
@@ -132,6 +141,9 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.MESSAGING, [READ]),
     ...pick(C.ANNOUNCEMENTS, [READ]),
     ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
+    // Phase 11: Students may read their own AI insights/recommendations
+    // (read-only — same rationale as Parent, see above).
+    ...pick(C.AI, [READ]),
   ],
 };
 

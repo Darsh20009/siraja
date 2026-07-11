@@ -53,6 +53,10 @@ import { InAppMessagingModule } from './modules/in-app-messaging/in-app-messagin
 import { AnnouncementsModule } from './modules/announcements/announcements.module';
 import { UserPreferencesModule } from './modules/user-preferences/user-preferences.module';
 
+// AI Learning Intelligence Architecture (Phase 11)
+import { AiProviderModule } from './shared/ai/ai-provider.module';
+import { AiModule } from './modules/ai/ai.module';
+
 /**
  * Root application module.
  *
@@ -142,6 +146,10 @@ import { UserPreferencesModule } from './modules/user-preferences/user-preferenc
     InAppMessagingModule,
     AnnouncementsModule,
     UserPreferencesModule,
+
+    // AI Learning Intelligence Architecture (Phase 11)
+    AiProviderModule,
+    AiModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
