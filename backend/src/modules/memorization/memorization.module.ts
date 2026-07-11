@@ -17,6 +17,8 @@ import { StudentsModule } from '@modules/students/students.module';
 import { SheikhsModule } from '@modules/sheikhs/sheikhs.module';
 import { ParentsModule } from '@modules/parents/parents.module';
 import { ProgressModule } from '@modules/progress/progress.module';
+import { AyahPerformanceModule } from '@modules/ayah-performance/ayah-performance.module';
+import { AyahsModule } from '@modules/ayahs/ayahs.module';
 
 /**
  * Memorization Module — Phase 7.
@@ -38,6 +40,8 @@ import { ProgressModule } from '@modules/progress/progress.module';
     SheikhsModule,
     ParentsModule,
     ProgressModule,
+    AyahPerformanceModule,
+    AyahsModule,
   ],
   controllers: [MemorizationController],
   providers: [

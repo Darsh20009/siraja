@@ -149,6 +149,18 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.UPDATE,
     PermissionAction.DELETE,
   ],
+  // Smart Mushaf Engine (Phase 9): per-ayah performance/confidence,
+  // teacher-authored ayah notes, mistakes overlay, and memorization
+  // heatmap. CREATE/UPDATE cover teacher-authored notes and manual
+  // performance overrides; READ covers all five views (mushaf overlay,
+  // performance, notes, mistakes overlay, heatmap) — ownership per role
+  // is enforced in the use-case layer (see `assertCanAccessStudent`).
+  [PermissionCategory.SMART_MUSHAF]: [
+    PermissionAction.CREATE,
+    PermissionAction.READ,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+  ],
 };
 
 export interface PermissionDefinition {

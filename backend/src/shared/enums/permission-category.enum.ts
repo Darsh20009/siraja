@@ -25,4 +25,9 @@ export enum PermissionCategory {
   QURAN = 'quran',
   QURAN_BOOKMARKS = 'quran_bookmarks',
   QURAN_NOTES = 'quran_notes',
+  // Phase 9 — Smart Mushaf Engine: per-ayah performance, teacher notes,
+  // mistakes overlay, and memorization heatmap all share this one
+  // permission category (they are read/write facets of the same
+  // per-ayah learning-progress resource, not separate aggregates).
+  SMART_MUSHAF = 'smart_mushaf',
 }

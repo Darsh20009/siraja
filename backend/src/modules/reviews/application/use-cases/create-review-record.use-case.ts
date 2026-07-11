@@ -9,6 +9,12 @@ import { IStudentRepository, STUDENT_REPOSITORY } from '@modules/students/domain
 import { ISheikhRepository, SHEIKH_REPOSITORY } from '@modules/sheikhs/domain/repositories/sheikh.repository.interface';
 import { UpdateStudentProgressUseCase } from '@modules/progress/application/use-cases/update-student-progress.use-case';
 import { Role } from '@shared/enums/roles.enum';
+import {
+  AYAH_PERFORMANCE_REPOSITORY,
+  IAyahPerformanceRepository,
+} from '@modules/ayah-performance/domain/repositories/ayah-performance.repository.interface';
+import { AYAH_REPOSITORY, IAyahRepository } from '@modules/ayahs/domain/repositories/ayah.repository.interface';
+import { resolveAyahsInRange } from '@shared/utils/quran-range.util';
 
 /**
  * CreateReviewRecordUseCase
@@ -26,6 +32,10 @@ export class CreateReviewRecordUseCase {
     @Inject(SHEIKH_REPOSITORY)
     private readonly sheikhRepo: ISheikhRepository,
     private readonly updateProgress: UpdateStudentProgressUseCase,
+    @Inject(AYAH_PERFORMANCE_REPOSITORY)
+    private readonly ayahPerformanceRepo: IAyahPerformanceRepository,
+    @Inject(AYAH_REPOSITORY)
+    private readonly ayahRepo: IAyahRepository,
   ) {}
 
   async execute(user: AccessTokenPayload, dto: CreateReviewRecordDto) {
@@ -59,6 +69,18 @@ export class CreateReviewRecordUseCase {
     });
 
     this.updateProgress.execute(user.tenantId, dto.studentId).catch(() => {});
+
+    // Smart Mushaf: materialise per-ayah performance for every ayah this
+    // revision session covers (fire-and-forget).
+    resolveAyahsInRange(this.ayahRepo, dto.range)
+      .then((ayahs) =>
+        Promise.all(
+          ayahs.map(({ surahNumber, ayahNumber }) =>
+            this.ayahPerformanceRepo.recordRevision(user.tenantId, dto.studentId, surahNumber, ayahNumber, dto.retentionGrade),
+          ),
+        ),
+      )
+      .catch(() => {});
 
     return record;
   }

@@ -90,7 +90,25 @@ environment config) live in `docs/architecture/`. Start at
   views supervised circles, Tenant Admin has full tenant access.
   `tsc --noEmit` passes. See `docs/architecture/` for blueprints. AI,
   Smart Mushaf, and Notifications explicitly out of scope for this
-  phase. Waiting on approval before Phase 9.
+  phase.
+- **Phase 9 (complete)**: full Smart Mushaf Engine — five NestJS modules.
+  AyahPerformanceModule owns the materialised `ayah_performance`
+  collection (one doc per student+ayah ever touched; `heatmapLevel`
+  derived from `confidenceScore` at write time — Excellent/Good/Needs
+  Review/Weak). AyahNotesModule owns `ayah_notes` (teacher/admin-authored
+  notes on a student's ayah — distinct from the self-owned Phase 5
+  `quran_notes`). AyahMistakesOverlayModule and MemorizationHeatmapModule
+  have no schema of their own — they read Phase 7's `quran_mistakes` and
+  this phase's `ayah_performance` respectively. SmartMushafModule is a
+  facade (no schema) merging ayah text + performance + notes + mistakes
+  per student+surah. Wired into Memorization/Reviews/Mistakes via the
+  same fire-and-forget cross-module pattern Phase 7's ProgressModule
+  established. Role-scoped RBAC (new `SMART_MUSHAF` permission category):
+  Sheikh/Admin write, Student/Parent/Supervisor read-only, ownership
+  enforced via the new shared `assertCanAccessStudent` helper
+  (`shared/authorization/student-scope.util.ts`). `tsc --noEmit` passes,
+  workflow boots cleanly with all routes mapped. AI, Notifications, and
+  Payments explicitly out of scope. Waiting on approval before Phase 10.
 - **Backend is running.** The `Start application` workflow runs
   `cd backend && nest start` (using the root-installed `nest` CLI/
   node_modules) on port 5000, connected to a real MongoDB Atlas cluster.

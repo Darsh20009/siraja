@@ -56,6 +56,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.REPORTS, [READ, EXPORT]),
     ...pick(C.NOTIFICATIONS, [CREATE, READ]),
     ...pick(C.SUPPORT, [CREATE, READ]),
+    // Supervisors view Smart Mushaf data (view only) for their circles.
+    ...pick(C.SMART_MUSHAF, [READ]),
   ],
 
   [Role.SHEIKH]: [
@@ -74,6 +76,9 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.REPORTS, [READ]),
     ...pick(C.NOTIFICATIONS, [CREATE, READ]),
     ...pick(C.SUPPORT, [CREATE, READ]),
+    // Sheikhs write teacher notes and adjust per-ayah performance for
+    // their assigned students; ownership enforced in the use-case layer.
+    ...pick(C.SMART_MUSHAF, [CREATE, READ, UPDATE]),
   ],
 
   [Role.PARENT]: [
@@ -90,6 +95,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.REPORTS, [READ]),
     ...pick(C.NOTIFICATIONS, [READ]),
     ...pick(C.SUPPORT, [CREATE, READ]),
+    // Parents may view Smart Mushaf data for their linked children.
+    ...pick(C.SMART_MUSHAF, [READ]),
   ],
 
   [Role.STUDENT]: [
@@ -107,6 +114,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.REPORTS, [READ]),
     ...pick(C.NOTIFICATIONS, [READ]),
     ...pick(C.SUPPORT, [CREATE, READ]),
+    // Students may view their own Smart Mushaf data (own-profile check in use-case layer).
+    ...pick(C.SMART_MUSHAF, [READ]),
   ],
 };
 

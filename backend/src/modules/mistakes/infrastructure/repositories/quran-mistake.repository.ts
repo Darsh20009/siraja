@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { QuranMistake, QuranMistakeDocument } from '@database/mongoose/schemas';
 import {
+  AyahMistakeOverlayItem,
   IQuranMistakeRepository,
   LogMistakeInput,
   MistakeFrequencyItem,
@@ -128,6 +129,58 @@ export class QuranMistakeRepository implements IQuranMistakeRepository {
       surahNumber: r._id.surahNumber,
     }));
   }
+
+  async getOverlayByStudent(
+    tenantId: string,
+    studentId: string,
+    surahNumber?: number,
+  ): Promise<AyahMistakeOverlayItem[]> {
+    if (!Types.ObjectId.isValid(studentId)) return [];
+
+    const match: Record<string, unknown> = {
+      tenantId: new Types.ObjectId(tenantId),
+      student: new Types.ObjectId(studentId),
+      isDeleted: false,
+    };
+    if (surahNumber) match.surahNumber = surahNumber;
+
+    const results = await this.model.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: { surahNumber: '$surahNumber', ayahNumber: '$ayahNumber' },
+          mistakeCount: { $sum: 1 },
+          openCount: {
+            $sum: { $cond: [{ $eq: ['$resolutionStatus', MistakeResolutionStatus.OPEN] }, 1, 0] },
+          },
+          types: { $push: '$type' },
+        },
+      },
+      { $sort: { '_id.surahNumber': 1, '_id.ayahNumber': 1 } },
+    ]);
+
+    return results.map((r) => ({
+      surahNumber: r._id.surahNumber,
+      ayahNumber: r._id.ayahNumber,
+      mistakeCount: r.mistakeCount,
+      openCount: r.openCount,
+      mostFrequentType: mostFrequent(r.types),
+    }));
+  }
+}
+
+function mostFrequent<T>(values: T[]): T {
+  const counts = new Map<T, number>();
+  for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
+  let best = values[0];
+  let bestCount = 0;
+  for (const [value, count] of counts) {
+    if (count > bestCount) {
+      best = value;
+      bestCount = count;
+    }
+  }
+  return best;
 }
 
 function toRecord(doc: any): QuranMistakeItem {

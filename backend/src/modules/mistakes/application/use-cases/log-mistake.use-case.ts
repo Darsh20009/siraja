@@ -8,6 +8,10 @@ import { LogMistakeDto } from '../dto/log-mistake.dto';
 import { IStudentRepository, STUDENT_REPOSITORY } from '@modules/students/domain/repositories/student.repository.interface';
 import { ISheikhRepository, SHEIKH_REPOSITORY } from '@modules/sheikhs/domain/repositories/sheikh.repository.interface';
 import { Role } from '@shared/enums/roles.enum';
+import {
+  AYAH_PERFORMANCE_REPOSITORY,
+  IAyahPerformanceRepository,
+} from '@modules/ayah-performance/domain/repositories/ayah-performance.repository.interface';
 
 /**
  * LogMistakeUseCase
@@ -24,6 +28,8 @@ export class LogMistakeUseCase {
     private readonly studentRepo: IStudentRepository,
     @Inject(SHEIKH_REPOSITORY)
     private readonly sheikhRepo: ISheikhRepository,
+    @Inject(AYAH_PERFORMANCE_REPOSITORY)
+    private readonly ayahPerformanceRepo: IAyahPerformanceRepository,
   ) {}
 
   async execute(user: AccessTokenPayload, dto: LogMistakeDto) {
@@ -50,7 +56,7 @@ export class LogMistakeUseCase {
       }
     }
 
-    return this.mistakeRepo.log({
+    const mistake = await this.mistakeRepo.log({
       tenantId: user.tenantId,
       studentId: dto.studentId,
       memorizationRecordId: dto.memorizationRecordId,
@@ -61,5 +67,12 @@ export class LogMistakeUseCase {
       severity: dto.severity,
       note: dto.note,
     });
+
+    // Smart Mushaf: materialise per-ayah performance for this ayah (fire-and-forget).
+    this.ayahPerformanceRepo
+      .recordMistake(user.tenantId, dto.studentId, dto.surahNumber, dto.ayahNumber)
+      .catch(() => {});
+
+    return mistake;
   }
 }

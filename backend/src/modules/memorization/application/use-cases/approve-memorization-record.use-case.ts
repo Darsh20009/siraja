@@ -8,6 +8,12 @@ import { ApproveMemorizationRecordDto } from '../dto/approve-memorization-record
 import { MemorizationStatus } from '@shared/enums/memorization.enum';
 import { UpdateStudentProgressUseCase } from '@modules/progress/application/use-cases/update-student-progress.use-case';
 import { Role } from '@shared/enums/roles.enum';
+import {
+  AYAH_PERFORMANCE_REPOSITORY,
+  IAyahPerformanceRepository,
+} from '@modules/ayah-performance/domain/repositories/ayah-performance.repository.interface';
+import { AYAH_REPOSITORY, IAyahRepository } from '@modules/ayahs/domain/repositories/ayah.repository.interface';
+import { resolveAyahsInRange } from '@shared/utils/quran-range.util';
 
 /**
  * ApproveMemorizationRecordUseCase
@@ -26,6 +32,10 @@ export class ApproveMemorizationRecordUseCase {
     @Inject(MEMORIZATION_RECORD_REPOSITORY)
     private readonly memorizationRepo: IMemorizationRecordRepository,
     private readonly updateProgress: UpdateStudentProgressUseCase,
+    @Inject(AYAH_PERFORMANCE_REPOSITORY)
+    private readonly ayahPerformanceRepo: IAyahPerformanceRepository,
+    @Inject(AYAH_REPOSITORY)
+    private readonly ayahRepo: IAyahRepository,
   ) {}
 
   async execute(user: AccessTokenPayload, id: string, dto: ApproveMemorizationRecordDto) {
@@ -54,6 +64,18 @@ export class ApproveMemorizationRecordUseCase {
 
     // Completing a record changes the memorized ayah count — refresh progress.
     this.updateProgress.execute(user.tenantId, record.studentId).catch(() => {});
+
+    // Smart Mushaf: materialise per-ayah performance for every ayah this
+    // record covers (fire-and-forget, same pattern as progress refresh above).
+    resolveAyahsInRange(this.ayahRepo, record.range)
+      .then((ayahs) =>
+        Promise.all(
+          ayahs.map(({ surahNumber, ayahNumber }) =>
+            this.ayahPerformanceRepo.recordMemorization(user.tenantId, record.studentId, surahNumber, ayahNumber, dto.grade),
+          ),
+        ),
+      )
+      .catch(() => {});
 
     return updated;
   }

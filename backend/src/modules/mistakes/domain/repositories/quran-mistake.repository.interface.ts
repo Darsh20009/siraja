@@ -46,6 +46,15 @@ export interface MistakeFrequencyItem {
   surahNumber?: number;
 }
 
+/** Phase 9 Smart Mushaf: per-ayah mistake summary for the overlay view. */
+export interface AyahMistakeOverlayItem {
+  surahNumber: number;
+  ayahNumber: number;
+  mistakeCount: number;
+  mostFrequentType: MistakeType;
+  openCount: number;
+}
+
 export interface IQuranMistakeRepository {
   log(input: LogMistakeInput): Promise<QuranMistakeItem>;
   findById(tenantId: string, id: string): Promise<QuranMistakeItem | null>;
@@ -65,6 +74,16 @@ export interface IQuranMistakeRepository {
     studentId: string,
     surahNumber?: number,
   ): Promise<MistakeFrequencyItem[]>;
+  /**
+   * Groups mistakes by ayah for the Smart Mushaf mistakes-overlay view
+   * (Phase 9) — used to highlight which ayahs on the page have
+   * outstanding mistakes and what kind.
+   */
+  getOverlayByStudent(
+    tenantId: string,
+    studentId: string,
+    surahNumber?: number,
+  ): Promise<AyahMistakeOverlayItem[]>;
 }
 
 export const QURAN_MISTAKE_REPOSITORY = Symbol('QURAN_MISTAKE_REPOSITORY');

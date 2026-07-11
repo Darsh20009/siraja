@@ -39,6 +39,13 @@ import { QuranSearchModule } from './modules/quran-search/quran-search.module';
 import { QuranBookmarksModule } from './modules/quran-bookmarks/quran-bookmarks.module';
 import { QuranNotesModule } from './modules/quran-notes/quran-notes.module';
 
+// Smart Mushaf Engine (Phase 9)
+import { AyahPerformanceModule } from './modules/ayah-performance/ayah-performance.module';
+import { AyahNotesModule } from './modules/ayah-notes/ayah-notes.module';
+import { AyahMistakesOverlayModule } from './modules/ayah-mistakes-overlay/ayah-mistakes-overlay.module';
+import { MemorizationHeatmapModule } from './modules/memorization-heatmap/memorization-heatmap.module';
+import { SmartMushafModule } from './modules/smart-mushaf/smart-mushaf.module';
+
 /**
  * Root application module.
  *
@@ -114,6 +121,13 @@ import { QuranNotesModule } from './modules/quran-notes/quran-notes.module';
     QuranSearchModule,
     QuranBookmarksModule,
     QuranNotesModule,
+
+    // Smart Mushaf Engine (Phase 9)
+    AyahPerformanceModule,
+    AyahNotesModule,
+    AyahMistakesOverlayModule,
+    MemorizationHeatmapModule,
+    SmartMushafModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

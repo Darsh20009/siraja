@@ -88,3 +88,10 @@ export * from './tafsir.schema';
 export * from './quran-bookmark.schema';
 export * from './quran-last-read.schema';
 export * from './quran-note.schema';
+
+// Smart Mushaf Engine (Phase 9) — per-ayah performance/heatmap and
+// teacher-authored ayah notes. Mistakes overlay and the heatmap view
+// reuse the Phase 7 `quran_mistakes` collection and this module's own
+// `ayah_performance` collection respectively — no schema of their own.
+export * from './ayah-performance.schema';
+export * from './ayah-note.schema';

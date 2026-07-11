@@ -11,6 +11,7 @@ import { MistakesController } from './infrastructure/controllers/mistakes.contro
 import { StudentsModule } from '@modules/students/students.module';
 import { SheikhsModule } from '@modules/sheikhs/sheikhs.module';
 import { ParentsModule } from '@modules/parents/parents.module';
+import { AyahPerformanceModule } from '@modules/ayah-performance/ayah-performance.module';
 
 /**
  * Mistakes Module — Phase 7.
@@ -24,6 +25,7 @@ import { ParentsModule } from '@modules/parents/parents.module';
     StudentsModule,
     SheikhsModule,
     ParentsModule,
+    AyahPerformanceModule,
   ],
   controllers: [MistakesController],
   providers: [
