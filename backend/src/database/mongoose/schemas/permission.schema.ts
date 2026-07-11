@@ -28,5 +28,5 @@ export class Permission extends BaseGlobalSchema {
 export type PermissionDocument = HydratedDocument<Permission>;
 export const PermissionSchema = SchemaFactory.createForClass(Permission);
 
-PermissionSchema.index({ key: 1 }, { unique: true });
+// `key` is already uniquely indexed via `unique: true` on the @Prop above.
 PermissionSchema.index({ module: 1 });

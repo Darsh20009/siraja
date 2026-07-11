@@ -40,5 +40,9 @@ export class TenantSettings extends BaseSchema {
 export type TenantSettingsDocument = HydratedDocument<TenantSettings>;
 export const TenantSettingsSchema = SchemaFactory.createForClass(TenantSettings);
 
-TenantSettingsSchema.index({ tenantId: 1 }, { unique: true });
-TenantSettingsSchema.index({ tenant: 1 }, { unique: true });
+// `tenant` is already uniquely indexed via `unique: true` on the @Prop
+// above, which enforces the intended one-settings-document-per-tenant
+// invariant (every document's `tenant` must equal its `tenantId`). The
+// inherited `tenantId` field from BaseSchema already has its own
+// (non-unique) index, so no separate `{ tenantId: 1 }` index is declared
+// here to avoid duplicating it.

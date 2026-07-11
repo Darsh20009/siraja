@@ -39,5 +39,5 @@ export class Surah extends BaseGlobalSchema {
 export type SurahDocument = HydratedDocument<Surah>;
 export const SurahSchema = SchemaFactory.createForClass(Surah);
 
-SurahSchema.index({ surahNumber: 1 }, { unique: true });
+// `surahNumber` is already uniquely indexed via `unique: true` on the @Prop above.
 SurahSchema.index({ arabicName: 'text', englishName: 'text', englishTranslationName: 'text' });

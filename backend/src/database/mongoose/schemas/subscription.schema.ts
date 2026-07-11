@@ -45,8 +45,16 @@ export const SubscriptionSchema = SchemaFactory.createForClass(Subscription);
 // Partial unique index: only one *active* (non-deleted) subscription per
 // tenant — deliberately NOT a bare `{ tenantId: 1 }` unique index, so a
 // soft-deleted (superseded) subscription can coexist with history intact.
+// Named explicitly: its key shape is identical to the inherited
+// `tenantId` floor index from BaseSchema (same key, different options —
+// partial + unique), which Mongoose's duplicate-index check only compares
+// by key and would otherwise flag as a false-positive duplicate.
 SubscriptionSchema.index(
   { tenantId: 1 },
-  { unique: true, partialFilterExpression: { isDeleted: false } },
+  {
+    unique: true,
+    partialFilterExpression: { isDeleted: false },
+    name: 'tenantId_1_active_unique_partial',
+  },
 );
 SubscriptionSchema.index({ tenantId: 1, status: 1, currentPeriodEnd: 1 });

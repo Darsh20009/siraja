@@ -31,4 +31,4 @@ export class Juz extends BaseGlobalSchema {
 export type JuzDocument = HydratedDocument<Juz>;
 export const JuzSchema = SchemaFactory.createForClass(Juz);
 
-JuzSchema.index({ juzNumber: 1 }, { unique: true });
+// `juzNumber` is already uniquely indexed via `unique: true` on the @Prop above.

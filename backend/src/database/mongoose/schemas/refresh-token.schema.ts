@@ -62,7 +62,7 @@ export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);
 
 RefreshTokenSchema.index({ tenantId: 1, userId: 1, revokedAt: 1 });
 RefreshTokenSchema.index({ tenantId: 1, deviceId: 1 });
-RefreshTokenSchema.index({ familyId: 1 });
+// `familyId` is already indexed via `index: true` on the @Prop above.
 // TTL cleanup: Mongo purges the document itself once expired, independent
 // of application-level revocation bookkeeping above.
 RefreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });

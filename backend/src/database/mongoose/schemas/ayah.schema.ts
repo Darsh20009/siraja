@@ -45,7 +45,7 @@ export type AyahDocument = HydratedDocument<Ayah>;
 export const AyahSchema = SchemaFactory.createForClass(Ayah);
 
 AyahSchema.index({ surahNumber: 1, ayahNumber: 1 }, { unique: true });
-AyahSchema.index({ globalAyahNumber: 1 }, { unique: true });
+// `globalAyahNumber` is already uniquely indexed via `unique: true` on the @Prop above.
 AyahSchema.index({ pageNumber: 1 });
 AyahSchema.index({ juzNumber: 1 });
 AyahSchema.index({ hizbNumber: 1 });

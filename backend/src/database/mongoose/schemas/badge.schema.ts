@@ -37,5 +37,5 @@ export class Badge extends BaseGlobalSchema {
 export type BadgeDocument = HydratedDocument<Badge>;
 export const BadgeSchema = SchemaFactory.createForClass(Badge);
 
-BadgeSchema.index({ code: 1 }, { unique: true });
+// `code` is already uniquely indexed via `unique: true` on the @Prop above.
 BadgeSchema.index({ category: 1, tier: 1 });

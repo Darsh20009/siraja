@@ -25,4 +25,4 @@ export class SystemSettings extends BaseGlobalSchema {
 export type SystemSettingsDocument = HydratedDocument<SystemSettings>;
 export const SystemSettingsSchema = SchemaFactory.createForClass(SystemSettings);
 
-SystemSettingsSchema.index({ key: 1 }, { unique: true });
+// `key` is already uniquely indexed via `unique: true` on the @Prop above.

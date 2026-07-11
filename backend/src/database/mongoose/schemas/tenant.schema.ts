@@ -56,6 +56,6 @@ export const TenantSchema = SchemaFactory.createForClass(Tenant);
 
 // Reserved platform slugs (api, admin, auth, ...) are enforced at the
 // application layer, not the schema layer — kept here only as documentation.
-TenantSchema.index({ slug: 1 }, { unique: true });
+// `slug` is already uniquely indexed via `unique: true` on the @Prop above.
 TenantSchema.index({ status: 1 });
 TenantSchema.index({ isDeleted: 1, createdAt: -1 });

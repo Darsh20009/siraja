@@ -46,5 +46,5 @@ export class Plan extends BaseGlobalSchema {
 export type PlanDocument = HydratedDocument<Plan>;
 export const PlanSchema = SchemaFactory.createForClass(Plan);
 
-PlanSchema.index({ code: 1 }, { unique: true });
+// `code` is already uniquely indexed via `unique: true` on the @Prop above.
 PlanSchema.index({ isActive: 1 });

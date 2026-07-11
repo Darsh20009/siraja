@@ -27,5 +27,5 @@ export class QuranPage extends BaseGlobalSchema {
 export type QuranPageDocument = HydratedDocument<QuranPage>;
 export const QuranPageSchema = SchemaFactory.createForClass(QuranPage);
 
-QuranPageSchema.index({ pageNumber: 1 }, { unique: true });
+// `pageNumber` is already uniquely indexed via `unique: true` on the @Prop above.
 QuranPageSchema.index({ juzNumber: 1 });
