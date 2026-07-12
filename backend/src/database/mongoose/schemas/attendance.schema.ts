@@ -51,7 +51,15 @@ export class Attendance extends BaseSchema {
 export type AttendanceDocument = HydratedDocument<Attendance>;
 export const AttendanceSchema = SchemaFactory.createForClass(Attendance);
 
-AttendanceSchema.index({ tenantId: 1, session: 1, student: 1 }, { unique: true, sparse: true });
+// `partialFilterExpression`, not `sparse: true` — see the identical note
+// on `UserSchema`'s email/phone indexes: `student` (and `tenantId`) are
+// always present here, so a plain sparse compound index would never
+// actually exclude session-less attendance records, letting only ONE
+// session-less attendance record per student per tenant ever be created.
+AttendanceSchema.index(
+  { tenantId: 1, session: 1, student: 1 },
+  { unique: true, partialFilterExpression: { session: { $type: 'objectId' } } },
+);
 AttendanceSchema.index({ tenantId: 1, student: 1, date: -1 });
 AttendanceSchema.index({ tenantId: 1, group: 1, date: -1 });
 AttendanceSchema.index({ tenantId: 1, sheikh: 1, date: -1 });

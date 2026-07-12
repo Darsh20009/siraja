@@ -15,8 +15,11 @@ export default () => ({
     dbName: process.env.MONGODB_DB_NAME || 'siraja',
   },
 
+  // Not currently read by any code path — TenantMiddleware always resolves
+  // via the `X-Tenant-Slug` header (see tenant.middleware.ts). Kept as a
+  // documented placeholder for when a subdomain-based strategy is added.
   tenancy: {
-    strategy: process.env.TENANCY_STRATEGY || 'path',
+    strategy: process.env.TENANCY_STRATEGY || 'header',
     defaultTenantSlug: process.env.DEFAULT_TENANT_SLUG || 'platform',
   },
 

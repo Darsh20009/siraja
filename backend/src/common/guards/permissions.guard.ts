@@ -35,7 +35,7 @@ export class PermissionsGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    if (!user?.id) {
+    if (!user?.sub) {
       throw new ForbiddenException('No authenticated user on request — PermissionsGuard requires JwtAuthGuard to run first.');
     }
 
@@ -54,7 +54,7 @@ export class PermissionsGuard implements CanActivate {
 
     let effective = permissionContext?.effective;
     if (!effective) {
-      effective = await this.permissionResolver.resolveForUser(user.id, tenantId);
+      effective = await this.permissionResolver.resolveForUser(user.sub, tenantId);
       permissionContext?.set(effective);
     }
 

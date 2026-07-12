@@ -112,8 +112,24 @@ export const UserSchema = SchemaFactory.createForClass(User);
 
 // A person's login identity is unique per tenant membership (the same
 // human could have separate accounts in two different tenants).
-UserSchema.index({ tenantId: 1, email: 1 }, { unique: true, sparse: true });
-UserSchema.index({ tenantId: 1, phone: 1 }, { unique: true, sparse: true });
+//
+// Deliberately `partialFilterExpression`, NOT `sparse: true`: these are
+// COMPOUND indexes, and MongoDB only treats a sparse compound index entry
+// as "missing" when the document lacks EVERY indexed field. `tenantId` is
+// always present, so a plain `sparse: true` here never actually excludes
+// a phone-less (or email-less) user — it indexes `phone: null` for every
+// one of them, and the *second* such user in any tenant fails to
+// register with an E11000 duplicate key error. A partial filter that
+// requires the optional field to actually exist is the correct way to
+// express "unique only when present" for a compound index.
+UserSchema.index(
+  { tenantId: 1, email: 1 },
+  { unique: true, partialFilterExpression: { email: { $type: 'string' } } },
+);
+UserSchema.index(
+  { tenantId: 1, phone: 1 },
+  { unique: true, partialFilterExpression: { phone: { $type: 'string' } } },
+);
 UserSchema.index({ tenantId: 1, roles: 1 });
 UserSchema.index({ tenantId: 1, status: 1 });
 UserSchema.index({ tenantId: 1, 'linkedProviders.provider': 1, 'linkedProviders.providerUserId': 1 });

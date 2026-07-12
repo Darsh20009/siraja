@@ -52,7 +52,7 @@ export class ResourceOwnershipGuard implements CanActivate {
     // A user holding multiple roles owns the resource if ANY one of
     // their roles satisfies that role's ownership rule.
     const isOwner = await this.ownershipResolver.isOwner({
-      userId: user.id,
+      userId: user.sub,
       tenantId,
       roles: userRoles,
       resourceType: metadata.resourceType,

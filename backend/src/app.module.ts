@@ -8,6 +8,7 @@ import { validate } from './config/env.validation';
 
 import { TenantMiddleware } from './core/infrastructure/tenancy/tenant.middleware';
 import { PermissionContextMiddleware } from './core/infrastructure/authorization/permission-context.middleware';
+import { HealthController } from './core/infrastructure/health/health.controller';
 import { AuthorizationModule } from './modules/authorization/authorization.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
@@ -151,12 +152,14 @@ import { AiModule } from './modules/ai/ai.module';
     AiProviderModule,
     AiModule,
   ],
-  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
+  controllers: [HealthController],
+  providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // Order matters: resolve the tenant from the URL before initializing
-    // the per-request authorization state.
+    // Order matters: resolve the tenant (from the X-Tenant-Slug header —
+    // see tenant.middleware.ts) before initializing the per-request
+    // authorization state.
     consumer.apply(TenantMiddleware, PermissionContextMiddleware).forRoutes('*');
   }
 }

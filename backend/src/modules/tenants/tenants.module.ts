@@ -1,4 +1,8 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Tenant, TenantSchema } from '@database/mongoose/schemas';
+import { TENANT_REPOSITORY } from './domain/repositories/tenant.repository.interface';
+import { TenantRepository } from './infrastructure/repositories/tenant.repository';
 
 /**
  * Tenants Module
@@ -8,13 +12,14 @@ import { Module } from '@nestjs/common';
  * - application: use cases (business rules) and DTOs
  * - infrastructure: controllers, Mongoose schemas/repositories, external adapters
  *
- * Structure scaffolded only. Providers/controllers to be wired when
- * features for this module are implemented.
+ * `TENANT_REPOSITORY` is exported so `TenantMiddleware` (wired directly in
+ * `AppModule`, which imports this module) can resolve a tenant by slug
+ * without reaching into Mongoose models itself.
  */
 @Module({
-  imports: [],
+  imports: [MongooseModule.forFeature([{ name: Tenant.name, schema: TenantSchema }])],
   controllers: [],
-  providers: [],
-  exports: [],
+  providers: [{ provide: TENANT_REPOSITORY, useClass: TenantRepository }],
+  exports: [TENANT_REPOSITORY],
 })
 export class TenantsModule {}

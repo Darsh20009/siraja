@@ -9,9 +9,9 @@ import { IS_PUBLIC_KEY } from '@modules/auth/infrastructure/decorators/public.de
  *
  * Two checks, both required:
  *   1. The authenticated user's `tenantId` must match the tenant resolved
- *      from the URL path (`TenantMiddleware` → `request.tenant`) — a
- *      Tenant Admin (or any non-super-admin) token issued for tenant A
- *      cannot be replayed against `/tenant-b/...` routes.
+ *      from the `X-Tenant-Slug` header (`TenantMiddleware` → `request.tenant`)
+ *      — a Tenant Admin (or any non-super-admin) token issued for tenant A
+ *      cannot be replayed against a request carrying tenant B's slug.
  *   2. Any `tenantId` explicitly present in the request body/query must
  *      also match — prevents a payload from smuggling a different
  *      tenant's id into a create/update call the URL alone wouldn't catch.

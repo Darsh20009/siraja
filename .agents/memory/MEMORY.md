@@ -6,3 +6,6 @@
 - [Siraja Phase 8 Operational Engine](siraja-phase8-operational-engine.md) — interface field name gotchas (studentIds/supervisedGroupIds), schema changes, new enums, RBAC mapping, markOverdue gap; read before touching Attendance/Exams/Assignments/Assessments/Reporting modules.
 - [Siraja Phase 9 Smart Mushaf Engine](siraja-phase9-smart-mushaf.md) — materialised ayah-performance strategy, ayah-notes vs quran-notes distinction, shared assertCanAccessStudent helper; read before touching Smart Mushaf modules.
 - [Siraja Phase 11 AI Learning Intelligence Architecture](siraja-phase11-ai-architecture.md) — central orchestrator choke point, 3-layer cost control, read-vs-force RBAC split, advisory-only boundary; read before touching or extending the AI module.
+- [Siraja tenant resolution architecture](siraja-tenant-resolution.md) — header-based (X-Tenant-Slug) resolution, permissive-if-absent design, enforcement pushed to consumers; read before touching tenancy/middleware.
+- [Siraja compound sparse index gotcha](siraja-index-sparse-compound-gotcha.md) — sparse:true on compound unique indexes only skips docs missing ALL fields; use partialFilterExpression instead.
+- [Siraja AccessTokenPayload field name](siraja-authz-guard-user-id-bug.md) — JWT user id claim is `sub`, not `id`; guards/resolvers must read request.user.sub.

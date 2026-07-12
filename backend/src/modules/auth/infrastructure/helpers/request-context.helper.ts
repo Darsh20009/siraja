@@ -9,10 +9,9 @@ export function extractRequestContext(req: Request): { ipAddress: string; userAg
 
 /**
  * Resolves the acting tenant for an auth request. `TenantMiddleware`
- * (Phase 1) already populates `request.tenant` from the URL path for
- * every request — auth routes are no exception, since registration/login
- * are always performed against a specific tenant
- * (`siraja.website/:tenantSlug/auth/...`).
+ * populates `request.tenant` from the `X-Tenant-Slug` header — auth
+ * routes are no exception, since registration/login are always performed
+ * against a specific tenant. Callers must send that header.
  */
 export function extractTenantId(req: Request): string {
   const tenantId = (req as any).tenant?.id;
