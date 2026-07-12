@@ -112,6 +112,21 @@ environment config) live in `docs/architecture/`. Start at
   Explanation, Sheikh/Parent AI Reports, AI Insights history. Moonshot
   AI is the sole LLM vendor (`MOONSHOT_API_KEY`).
 
+## Known follow-ups (deferred, not project tasks)
+
+- **NestJS v11 upgrade & security remediation** (deferred until after Beta
+  Testing, decided 2026-07-11): `npm audit` reports 24 vulnerabilities (7
+  high, 14 moderate, 3 low, 0 critical), all fixable only via
+  `npm audit fix --force`, which upgrades `@nestjs/cli`, `@nestjs/config`,
+  `@nestjs/common`, and `@nestjs/platform-express` to NestJS v11 — a
+  breaking change for this v10 codebase. Vulnerable packages are mostly
+  build/dev tooling (glob, picomatch, tmp, inquirer, webpack via
+  `@nestjs/cli`) or transitive runtime deps with low real-world exposure
+  (lodash, file-type, qs, multer). Decision: ship Beta first, then take
+  this on as an isolated, fully regression-tested upgrade across all 11
+  phases. (Could not be filed as a formal project task from Build mode —
+  add it via Planning mode when ready to schedule.)
+
 ## User preferences
 
 None recorded yet.
