@@ -55,7 +55,7 @@ export class TenantMiddleware implements NestMiddleware {
       throw new ForbiddenException(`This tenant is ${tenant.status} and cannot be accessed.`);
     }
 
-    (req as Request & { tenant?: { id: string; slug: string; status: TenantStatus } }).tenant = {
+    req.tenant = {
       id: String(tenant._id),
       slug: tenant.slug,
       status: tenant.status,

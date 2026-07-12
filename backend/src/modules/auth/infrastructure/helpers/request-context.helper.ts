@@ -14,7 +14,7 @@ export function extractRequestContext(req: Request): { ipAddress: string; userAg
  * against a specific tenant. Callers must send that header.
  */
 export function extractTenantId(req: Request): string {
-  const tenantId = (req as any).tenant?.id;
+  const tenantId = req.tenant?.id;
   if (!tenantId) {
     throw new Error('No tenant resolved for this request — TenantMiddleware must run before auth routes.');
   }
