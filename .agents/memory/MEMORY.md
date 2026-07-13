@@ -9,3 +9,4 @@
 - [Siraja tenant resolution architecture](siraja-tenant-resolution.md) — header-based (X-Tenant-Slug) resolution, permissive-if-absent design, enforcement pushed to consumers; read before touching tenancy/middleware.
 - [Siraja compound sparse index gotcha](siraja-index-sparse-compound-gotcha.md) — sparse:true on compound unique indexes only skips docs missing ALL fields; use partialFilterExpression instead.
 - [Siraja AccessTokenPayload field name](siraja-authz-guard-user-id-bug.md) — JWT user id claim is `sub`, not `id`; guards/resolvers must read request.user.sub.
+- [Siraja Phase 12A Platform Foundation](siraja-phase12a-architecture.md) — Users module, Tenant management, Email templates, Storage layer (S3/R2), Quran seeder; read before touching those areas.

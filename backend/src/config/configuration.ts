@@ -100,4 +100,17 @@ export default () => ({
   },
 
   logLevel: process.env.LOG_LEVEL || 'debug',
+
+  // Phase 12A — File Storage Layer
+  // Works with AWS S3, Cloudflare R2, Backblaze B2, MinIO.
+  // STORAGE_DRIVER=s3 enables S3StorageProvider; anything else → NoopStorageProvider (dev-safe).
+  storage: {
+    driver: process.env.STORAGE_DRIVER || 'noop',
+    bucket: process.env.STORAGE_BUCKET || 'siraja-media',
+    region: process.env.STORAGE_REGION || 'auto',
+    endpoint: process.env.STORAGE_ENDPOINT || '',
+    accessKeyId: process.env.STORAGE_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.STORAGE_SECRET_ACCESS_KEY || '',
+    publicUrl: process.env.STORAGE_PUBLIC_URL || '',
+  },
 });

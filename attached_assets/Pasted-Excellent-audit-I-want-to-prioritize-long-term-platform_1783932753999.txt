@@ -1,0 +1,165 @@
+Excellent audit.
+
+I want to prioritize long-term platform quality, scalability, and completeness before frontend work.
+
+Please create and execute Phase 12 Backend Completion according to the audit findings.
+
+Execution order:
+
+PHASE 12A — Platform Foundation (Highest Priority)
+1. Implement full Users Module
+   - GET /users/me
+   - PATCH /users/me
+   - profile management
+   - language preferences
+   - accessibility preferences
+   - notification preferences
+
+2. Implement Tenant Management Module
+   - create tenant
+   - update tenant
+   - tenant branding
+   - logo management
+   - tenant settings API
+   - tenant onboarding flow
+
+3. Complete Email Infrastructure
+   - welcome emails
+   - verification emails
+   - password reset emails
+   - notification emails
+   - branded HTML templates
+   - delivery tracking
+
+4. Implement File Storage Layer
+   - S3-compatible abstraction
+   - Cloudflare R2 support
+   - tenant logo uploads
+   - future audio uploads
+   - presigned URLs
+
+5. Seed Quran Foundation Data
+   - all surahs
+   - all ayahs
+   - juz metadata
+   - page metadata
+   - searchable normalized text
+
+PHASE 12B — Learning Intelligence Core
+
+1. Ayah Performance Auto-Update
+   connect:
+   - memorization
+   - review
+   - mistakes
+   - progress
+
+2. Mastery Score Engine
+   per ayah
+   per page
+   per surah
+   per student
+
+3. SM-2 Revision Engine
+   production-grade spaced repetition
+
+4. Weakness Heatmap Engine
+   deterministic
+   no AI cost
+
+5. Quran Matching Engine
+   normalized Arabic matching
+   Levenshtein-based
+
+PHASE 12C — Scalability Foundation
+
+1. Redis
+   - cache
+   - throttling
+   - sessions
+
+2. BullMQ
+   - AI jobs
+   - email jobs
+   - notification jobs
+
+3. Compression
+4. Connection pool tuning
+5. Distributed caching
+
+PHASE 12D — Siraja Differentiation Layer
+
+Design and implement:
+
+1. Reward Points System
+2. Student Levels
+3. Achievements
+4. Badges
+5. Certificates
+6. Parent Engagement Metrics
+7. Sheikh Performance Metrics
+8. Circle Leaderboards
+9. Donation Tracking System
+10. Public Presentation Module
+
+Presentation Module Requirements:
+- explain Siraja vision
+- roadmap
+- features
+- statistics
+- donation progress
+- transparency dashboard
+- multilingual support
+
+PHASE 12E — AI Expansion (Moonshot + Open Source)
+
+No paid speech providers.
+
+Use:
+- Faster-Whisper
+- Whisper models
+- open-source Arabic NLP
+
+Implement architecture for:
+
+1. Quran Matching
+2. Mistake Detection
+3. Mastery Scoring
+4. Weakness Analysis
+5. Similar Verses Engine
+6. Memorization DNA
+7. Virtual Sheikh preparation layer
+
+Important constraints:
+
+- mobile-first
+- accessibility-first
+- multilingual
+- tenant branding support
+- age-adaptive experience
+- child mode
+- teen mode
+- adult mode
+- senior mode
+
+Performance targets:
+
+- p95 API < 300ms
+- Lighthouse > 95
+- Core Web Vitals optimized
+- horizontal scalability
+- ready for 1M+ users architecture
+
+Before writing code:
+Create:
+docs/architecture/phase-12-master-plan.md
+
+Then implement Phase 12A completely.
+
+After Phase 12A finishes:
+run audit
+run tests
+run build
+produce completion report
+
+Do not start frontend yet.

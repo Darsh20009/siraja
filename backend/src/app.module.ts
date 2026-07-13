@@ -58,6 +58,9 @@ import { UserPreferencesModule } from './modules/user-preferences/user-preferenc
 import { AiProviderModule } from './shared/ai/ai-provider.module';
 import { AiModule } from './modules/ai/ai.module';
 
+// Platform Foundation (Phase 12A)
+import { StorageModule } from './shared/storage/storage.module';
+
 /**
  * Root application module.
  *
@@ -151,6 +154,9 @@ import { AiModule } from './modules/ai/ai.module';
     // AI Learning Intelligence Architecture (Phase 11)
     AiProviderModule,
     AiModule,
+
+    // Platform Foundation (Phase 12A)
+    StorageModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],
