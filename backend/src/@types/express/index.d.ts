@@ -1,17 +1,29 @@
 /**
  * Global Express Request augmentation.
  *
- * Adds `req.tenant` populated by `TenantMiddleware` from the `X-Tenant-Slug`
- * header. Using an inline `import()` type keeps this file ambient (no
- * top-level import → not a module) so TypeScript applies the augmentation
- * automatically to every file that imports from 'express'.
+ * Adds `req.tenant` (populated by TenantMiddleware from the X-Tenant-Slug
+ * header) and `req.user` (populated by JwtAuthGuard after token validation).
+ *
+ * `export {}` makes this a module file so that `declare module` below is
+ * treated as a proper module augmentation (merges with the real
+ * express-serve-static-core types) rather than an ambient declaration that
+ * would shadow and replace them.
  */
+export {};
+
 declare module 'express-serve-static-core' {
   interface Request {
     tenant?: {
       id: string;
       slug: string;
       status: import('../../shared/enums/tenant-status.enum').TenantStatus;
+    };
+    user?: {
+      sub: string;
+      tenantId: string;
+      roles: string[];
+      email: string;
+      sessionId: string;
     };
   }
 }

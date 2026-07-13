@@ -37,30 +37,29 @@ environment config) live in `docs/architecture/`. Start at
 
 ## Running on Replit
 
-- Dependencies are installed at the **repo root** (`npm install` at
-  `/`), not inside `backend/`. The "Start application" workflow runs
-  `cd backend && nest start` with the root `node_modules/.bin` on
-  `PATH` — Node's module resolution walks up to the root
-  `node_modules/` for everything `backend/` imports, so there's no
-  separate `backend/node_modules`. If you add a backend dependency,
-  install it at the repo root, not inside `backend/`.
+- Dependencies are installed in **two places**: `npm install` at the
+  repo root (`/`) for the `nest` CLI binary, and `npm install` inside
+  `backend/` for all runtime dependencies. The "Start application"
+  workflow runs `cd backend && nest start` with the root
+  `node_modules/.bin` on `PATH` so the `nest` binary is found. If you
+  add a backend dependency, install it inside `backend/`.
+- `backend/tsconfig.json` pins `typeRoots` to `./node_modules/@types`
+  and uses `esModuleInterop: true` + TypeScript 5.7.3. This is
+  intentional — TypeScript 5.9 had type-resolution issues with the
+  Express ambient augmentation in `src/@types/express/index.d.ts`.
 - The server listens on `PORT` (shared env var, set to `5000` to match
   the Replit-exposed port) and is mounted under `API_PREFIX`
   (`api/v1`), so routes are e.g. `/api/v1/quran/surahs`.
-- Required configuration (see `backend/src/config/env.validation.ts`):
-  - `MONGODB_URI` (secret) — MongoDB Atlas connection string, provided
-    by the user.
-  - `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` (shared env vars) —
-    generated during setup; rotate if you need to invalidate all
-    sessions.
+- Swagger UI (API explorer) is available at `/docs` in development.
+- Required secrets (see `backend/src/config/env.validation.ts`):
+  - `MONGODB_URI` — MongoDB Atlas connection string.
+  - `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` — rotate to invalidate
+    all active sessions.
   - Optional: Google/Apple OAuth credentials, SMTP email vars, and
-    `MOONSHOT_API_KEY` (Phase 11 AI features) are all unset — the
-    corresponding features no-op/503 gracefully rather than crashing
-    the app (see `configuration.ts` comments).
-- This project is backend-only in Replit; there is no web frontend
-  served here to screenshot. Verify the API with `curl` against
-  `/api/v1/...` routes or the workflow logs' `RouterExplorer` route
-  list.
+    `MOONSHOT_API_KEY` (Phase 11 AI features) — all optional; the
+    corresponding features no-op/503 gracefully if unset.
+- This project is backend-only in Replit; verify the API at `/docs` or
+  with `curl` against `/api/v1/...` routes.
 
 ## Current status
 

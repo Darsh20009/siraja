@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
-import * as jwksClient from 'jwks-rsa';
+import jwksClient from 'jwks-rsa';
 import { AuthProvider } from '@shared/enums/auth-provider.enum';
 import { VerifiedOAuthProfile } from '../../application/use-cases/oauth-login.use-case';
 
