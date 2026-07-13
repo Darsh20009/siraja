@@ -12,6 +12,12 @@ PORT = "5000"
 API_PREFIX = "api/v1"
 CORS_ORIGINS = "*"
 NODE_ENV = "development"
+JWT_ACCESS_EXPIRES_IN = "15m"
+JWT_REFRESH_EXPIRES_IN = "30d"
+LOG_LEVEL = "debug"
+MONGODB_DB_NAME = "siraja"
+THROTTLE_LIMIT = "100"
+THROTTLE_TTL = "60"
 
 [[ports]]
 localPort = 5000
