@@ -101,6 +101,23 @@ export default () => ({
 
   logLevel: process.env.LOG_LEVEL || 'debug',
 
+  // Phase 12C — Redis & Queue Infrastructure
+  // REDIS_URL=redis://localhost:6379 (or rediss:// for TLS)
+  // Leave unset to use in-process cache fallback and disabled queues.
+  redis: {
+    url: process.env.REDIS_URL || '',
+    keyPrefix: process.env.REDIS_KEY_PREFIX || 'siraja:',
+    ttl: {
+      default: parseInt(process.env.REDIS_TTL_DEFAULT || '300', 10),   // 5 min
+      session: parseInt(process.env.REDIS_TTL_SESSION || '86400', 10), // 24 h
+      ai: parseInt(process.env.REDIS_TTL_AI || '3600', 10),            // 1 h
+      weakness: parseInt(process.env.REDIS_TTL_WEAKNESS || '300', 10), // 5 min
+      quran: parseInt(process.env.REDIS_TTL_QURAN || '86400', 10),     // 24 h
+      tenant: parseInt(process.env.REDIS_TTL_TENANT || '600', 10),     // 10 min
+      userProfile: parseInt(process.env.REDIS_TTL_USER_PROFILE || '300', 10),
+    },
+  },
+
   // Phase 12A — File Storage Layer
   // Works with AWS S3, Cloudflare R2, Backblaze B2, MinIO.
   // STORAGE_DRIVER=s3 enables S3StorageProvider; anything else → NoopStorageProvider (dev-safe).

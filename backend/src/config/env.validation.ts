@@ -29,6 +29,11 @@ class EnvironmentVariables {
 
   @IsString()
   JWT_REFRESH_SECRET: string;
+
+  // Phase 12C — optional; graceful fallback if absent
+  @IsString()
+  @IsOptional()
+  REDIS_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

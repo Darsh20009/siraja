@@ -11,3 +11,4 @@
 - [Siraja AccessTokenPayload field name](siraja-authz-guard-user-id-bug.md) — JWT user id claim is `sub`, not `id`; guards/resolvers must read request.user.sub.
 - [Siraja Phase 12A Platform Foundation](siraja-phase12a-architecture.md) — Users module, Tenant management, Email templates, Storage layer (S3/R2), Quran seeder; read before touching those areas.
 - [Siraja Phase 12B Learning Intelligence](siraja-phase12b-learning-intelligence.md) — MasteryScoreEngine, Sm2Engine, WeaknessHeatmapService, QuranMatcherService, MistakeDetectorService, Forecast upgrade; read before touching any learning-intelligence code.
+- [Siraja Phase 12C Infrastructure](siraja-phase12c-infrastructure.md) — Redis/CacheService graceful fallback, QueuesModule conditional registration, EventsModule wiring, health endpoint, compression; read before touching infra/cache/queue/event code.

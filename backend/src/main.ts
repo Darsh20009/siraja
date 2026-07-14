@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
+import compression from 'compression';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
@@ -16,6 +17,10 @@ async function bootstrap() {
   const config = app.get(ConfigService);
 
   app.use(helmet());
+
+  // Phase 12C — HTTP compression (gzip/brotli for responses > 1KB)
+  app.use(compression());
+
   app.setGlobalPrefix(config.get<string>('apiPrefix', 'api/v1'));
   app.enableCors({ origin: config.get<string[]>('cors.origins', []) });
   app.useGlobalPipes(

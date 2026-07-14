@@ -4,6 +4,7 @@ import { welcomeEmailTemplate, WelcomeTemplateData } from './templates/welcome.t
 import { verificationEmailTemplate, VerificationTemplateData } from './templates/verification.template';
 import { passwordResetEmailTemplate, PasswordResetTemplateData } from './templates/password-reset.template';
 import { notificationEmailTemplate, NotificationTemplateData } from './templates/notification.template';
+import { systemAlertEmailTemplate, SystemAlertTemplateData } from './templates/system-alert.template';
 
 /**
  * EmailTemplateService — high-level email sending with branded HTML templates.
@@ -39,6 +40,11 @@ export class EmailTemplateService {
   async sendNotification(to: string, data: NotificationTemplateData): Promise<void> {
     const { subject, html, text } = notificationEmailTemplate(data);
     await this.send('notification', to, subject, html, text);
+  }
+
+  async sendSystemAlert(to: string, data: SystemAlertTemplateData): Promise<void> {
+    const { subject, html, text } = systemAlertEmailTemplate(data);
+    await this.send('system-alert', to, subject, html, text);
   }
 
   private async send(

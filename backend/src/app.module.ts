@@ -61,6 +61,12 @@ import { AiModule } from './modules/ai/ai.module';
 // Platform Foundation (Phase 12A)
 import { StorageModule } from './shared/storage/storage.module';
 
+// Infrastructure, Reliability & Production Readiness (Phase 12C)
+import { RedisModule } from './shared/redis/redis.module';
+import { QueuesModule } from './shared/queues/queues.module';
+import { EventsModule } from './shared/events/events.module';
+import { SystemModule } from './modules/system/system.module';
+
 /**
  * Root application module.
  *
@@ -157,6 +163,12 @@ import { StorageModule } from './shared/storage/storage.module';
 
     // Platform Foundation (Phase 12A)
     StorageModule,
+
+    // Infrastructure, Reliability & Production Readiness (Phase 12C)
+    RedisModule,
+    QueuesModule.forRootAsync(),
+    EventsModule,
+    SystemModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],

@@ -1,0 +1,170 @@
+Phase 12C — Infrastructure, Reliability & Production Readiness
+
+The backend core is now stable. Before any frontend work begins, execute Phase 12C completely.
+
+Goals:
+Transform Siraja from a working backend into a production-grade platform capable of serving hundreds of thousands of users efficiently.
+
+Requirements:
+
+1. Redis Layer
+Implement Redis as a shared infrastructure service.
+
+Use Redis for:
+- Distributed rate limiting
+- AI response caching
+- Session caching
+- Tenant caching
+- User profile caching
+- Weakness heatmap caching
+- Quran search caching
+
+Requirements:
+- Cache invalidation strategy
+- Configurable TTLs
+- Cache metrics
+- Graceful fallback when Redis is unavailable
+
+2. BullMQ Queue Infrastructure
+
+Create queues:
+
+- ai-queue
+- email-queue
+- notification-queue
+- report-queue
+- future-audio-queue
+
+Requirements:
+
+- Retries
+- Exponential backoff
+- Dead letter queue
+- Job monitoring
+- Queue statistics
+- Queue health checks
+
+All AI calls, email sending and heavy computations must become asynchronous.
+
+3. Event Driven Architecture
+
+Create domain events:
+
+- UserRegisteredEvent
+- StudentCreatedEvent
+- MemorizationRecordedEvent
+- ReviewRecordedEvent
+- MistakeRecordedEvent
+- AttendanceMarkedEvent
+- NotificationCreatedEvent
+
+Requirements:
+
+- Events must trigger queues
+- Loose coupling
+- No synchronous heavy work inside controllers
+
+4. Email Completion
+
+Complete email workflows:
+
+- Welcome email
+- Email verification
+- Password reset
+- Notification emails
+- System alerts
+
+Requirements:
+
+- Arabic-first templates
+- Tenant branding support
+- Logo support
+- Responsive email design
+
+5. Storage Infrastructure
+
+Complete production storage layer.
+
+Support:
+
+- AWS S3
+- Cloudflare R2
+- MinIO
+
+Requirements:
+
+- Presigned uploads
+- Presigned downloads
+- Logo uploads
+- Future audio uploads
+- Future certificate storage
+
+6. System Health & Monitoring
+
+Create:
+
+GET /api/v1/system/health/detailed
+
+Must report:
+
+- MongoDB health
+- Redis health
+- Queue health
+- Storage health
+- Email health
+- AI health
+- Uptime
+- Memory usage
+- CPU usage
+
+7. Performance Optimization
+
+Implement:
+
+- Compression middleware
+- ETag support
+- HTTP keep-alive optimization
+- Query optimization review
+- Index verification
+- Response caching
+
+Performance targets:
+
+- Average API response <150ms
+- Dashboard endpoints <500ms
+- Production ready for 100k+ users
+
+8. Testing
+
+Add:
+
+- Redis tests
+- Queue tests
+- Event tests
+- Health endpoint tests
+- Storage tests
+
+Requirements:
+
+- 100% TypeScript clean
+- All tests passing
+
+Deliverables:
+
+1. Architecture document:
+docs/architecture/phase-12c-infrastructure.md
+
+2. Audit report:
+docs/audits/phase-12c-audit.md
+
+3. Migration guide:
+docs/migrations/phase-12c-migration.md
+
+4. Completion report with:
+- Files created
+- Files modified
+- Tests added
+- Performance impact
+- Remaining risks
+
+Do not stop until Phase 12C is fully implemented, tested, audited, documented, and verified running.
