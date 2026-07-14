@@ -1,0 +1,119 @@
+Good reconnaissance. I have a clear picture. Let me now read the exact files I need to fix and the existing test patterns simultaneously.
+
+
+11 actions
+Now I have everything I need. Let me read the roles enum and a couple of existing role-protected controllers in parallel, then execute all the work.
+
+
+5 actions
+I have all the context. Let me read the permissions matrix then execute everything in parallel batches.
+
+
+13 actions
+I have everything I need. Let me now read the last section of permission-registry and check the PERMISSIONS export, then execute all fixes and tests in parallel.
+
+
+2 actions
+Now I have everything I need. Let me execute all the work: fix the RBAC gap, write all tests, run validation, and produce the audit doc — all in parallel batches.
+
+Step 1 — Fix the tenants controller security gap
+
+
+2 actions
+Step 2 — Write all test files in parallel
+
+
+6 actions
+Now I need to verify the decorator key exports match my test imports before running. Let me check those in parallel with the email service constructor signature.
+
+
+4 actions
+The EmailTemplateService API differs from what I tested — it uses send(to, data) with separate args, and no ConfigService. The RBAC test metadata key is match not strategy. Let me fix both before running.
+
+
+3 actions
+The template signatures are different from what I assumed. Let me check the remaining templates then rewrite the email test file and fix the RBAC test.
+
+
+2 actions
+Now I have the correct signatures. Let me rewrite both affected test files and fix the RBAC test simultaneously.
+
+
+3 actions
+Now let me run tsc --noEmit and the full test suite in parallel.
+
+
+3 actions
+Three quick fixes needed. Let me check the NotificationType enum and then patch all issues.
+
+
+5 actions
+Now I can fix all three issues at once.
+
+
+Show less
+
+Edited users.use-cases.spec.ts
+
+Edited users.use-cases.spec.ts
+
+Edited users.use-cases.spec.ts
+
+Edited users.use-cases.spec.ts
+
+Edited storage.providers.spec.ts
+Running tests and checks
+
+Running tests and checks
+
+Checked for code errors
+
+Ran tests
+Running tests and restarting
+
+Running tests and restarting
+All 118 new tests pass, TypeScript clean. Now run the full test suite and restart the app simultaneously.
+
+
+3 actions
+All 167 tests pass across 9 suites. Let me check the boot logs and verify routes, then write the audit document.
+
+
+2 actions
+App boots clean with no errors. Let me verify the Phase 12A routes specifically, then write the audit document.
+
+
+2 actions
+All checks pass. Now I'll write the complete audit document.
+
+
+2 actions
+The Phase 12A hardening pass is complete. Here's the full picture:
+
+Audit Complete — Phase 12A Ready ✅
+What was found and fixed
+Critical (1 fixed)
+
+POST /tenants had zero RBAC — any authenticated user could create platform tenants. Fixed with @Roles(Role.SUPER_ADMIN).
+High (3 fixed)
+
+PATCH /tenants/current, PATCH /tenants/current/settings, and GET /tenants/current/logo-upload-url had no permission gate — any student or parent could rename the tenant, flip feature flags, or generate storage upload URLs. Fixed with @RequirePermissions(PERMISSIONS.SETTINGS.UPDATE!) on all three.
+Verification results
+Check	Result
+tsc --noEmit	✅ 0 errors
+Full test suite	✅ 167/167 passing (9 suites)
+Application boot	✅ Clean — no errors
+All 9 Phase 12A routes registered	✅ Confirmed in boot log
+New test coverage (118 tests across 5 files)
+File	Tests	What's covered
+users.use-cases.spec.ts	18	GetMe, UpdateMe, UpdateLanguage, UpdateNotifications — happy paths, not-found, JWT scoping, partial updates
+tenants.use-cases.spec.ts	21	CreateTenant (reserved slugs, duplicates, defaults, platform ObjectId), GetTenant, UpdateTenant, UpdateTenantSettings
+tenants.controller.rbac.spec.ts	14	Decorator metadata verified per route + RolesGuard simulation blocking all 6 non-SUPER_ADMIN roles on POST
+email.templates.spec.ts	38	All 4 templates + base shell + EmailTemplateService (error-swallowing, both html+text sent)
+storage.providers.spec.ts	27	NoopStorageProvider (all methods + stub markers) + S3StorageProvider (AWS SDK mocked, R2 config, credentials handling)
+Two residual items (low severity, no blocker)
+Run the Quran seeder — cd backend && npm run seed:quran — before any Quran-dependent Phase 12B work. Idempotent and safe to re-run.
+NoopStorageProvider production guard — add a startup warning when STORAGE_DRIVER !== 's3' in NODE_ENV=production. Low priority for Phase 12B.
+Final readiness score: 9.2 / 10. Full findings, risks, and fixes documented in docs/audits/phase-12a-audit.md.
+
+
