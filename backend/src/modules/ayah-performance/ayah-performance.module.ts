@@ -10,6 +10,9 @@ import { AyahPerformanceController } from './infrastructure/controllers/ayah-per
 import { StudentsModule } from '@modules/students/students.module';
 import { SheikhsModule } from '@modules/sheikhs/sheikhs.module';
 import { ParentsModule } from '@modules/parents/parents.module';
+import { WeaknessHeatmapService } from './application/services/weakness-heatmap.service';
+import { GetWeaknessSummaryUseCase } from './application/use-cases/get-weakness-summary.use-case';
+import { GetOverdueRevisionsUseCase } from './application/use-cases/get-overdue-revisions.use-case';
 
 /**
  * Ayah Performance Module — Phase 9 (Smart Mushaf Engine).
@@ -33,7 +36,11 @@ import { ParentsModule } from '@modules/parents/parents.module';
     GetAyahPerformanceUseCase,
     ListAyahPerformanceUseCase,
     UpdateAyahPerformanceUseCase,
+    // Phase 12B: Learning Intelligence
+    WeaknessHeatmapService,
+    GetWeaknessSummaryUseCase,
+    GetOverdueRevisionsUseCase,
   ],
-  exports: [AYAH_PERFORMANCE_REPOSITORY],
+  exports: [AYAH_PERFORMANCE_REPOSITORY, WeaknessHeatmapService, GetWeaknessSummaryUseCase, GetOverdueRevisionsUseCase],
 })
 export class AyahPerformanceModule {}

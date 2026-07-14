@@ -4,6 +4,8 @@ import { Model, Types } from 'mongoose';
 import { AyahPerformance, AyahPerformanceDocument } from '@database/mongoose/schemas';
 import { AyahPerformanceStatus, HeatmapLevel } from '@shared/enums/smart-mushaf.enum';
 import { EvaluationGrade } from '@shared/enums/memorization.enum';
+import { MasteryScoreEngine } from '@shared/learning/mastery-score.engine';
+import { Sm2Engine, Sm2State } from '@shared/learning/sm2.engine';
 import {
   AyahPerformanceFilter,
   AyahPerformanceRecord,
@@ -13,44 +15,35 @@ import {
 } from '../../domain/repositories/ayah-performance.repository.interface';
 
 /**
- * Derives the display-ready heatmap bucket from the resulting
- * confidence score. `NOT_STARTED` ayahs have no heatmap level (there is
- * nothing to color on the Mushaf yet). Thresholds are a Phase 9 product
- * decision with no prior precedent in the codebase: >=85 Excellent,
- * >=65 Good, >=40 Needs Review, else Weak.
+ * Derives the display-ready heatmap bucket from the mastery score and status.
+ * `NOT_STARTED` ayahs have no heatmap level (nothing to color yet).
+ * Thresholds mirror Phase 9 decisions but are now driven by masteryScore.
  */
-function computeHeatmapLevel(status: AyahPerformanceStatus, confidenceScore: number): HeatmapLevel | null {
+function computeHeatmapLevel(status: AyahPerformanceStatus, masteryScore: number): HeatmapLevel | null {
   if (status === AyahPerformanceStatus.NOT_STARTED) return null;
-  if (confidenceScore >= 85) return HeatmapLevel.EXCELLENT;
-  if (confidenceScore >= 65) return HeatmapLevel.GOOD;
-  if (confidenceScore >= 40) return HeatmapLevel.NEEDS_REVIEW;
+  if (masteryScore >= 85) return HeatmapLevel.EXCELLENT;
+  if (masteryScore >= 65) return HeatmapLevel.GOOD;
+  if (masteryScore >= 40) return HeatmapLevel.NEEDS_REVIEW;
   return HeatmapLevel.WEAK;
 }
 
-/** Maps an evaluation/retention grade to a starting confidence score. No precedent elsewhere — Phase 9 decision. */
-function confidenceForGrade(grade: EvaluationGrade | undefined, fallback: number): number {
-  switch (grade) {
-    case EvaluationGrade.EXCELLENT:
-      return 95;
-    case EvaluationGrade.VERY_GOOD:
-      return 85;
-    case EvaluationGrade.GOOD:
-      return 70;
-    case EvaluationGrade.ACCEPTABLE:
-      return 55;
-    case EvaluationGrade.WEAK:
-      return 35;
-    default:
-      return fallback;
-  }
+/**
+ * Derives AyahPerformanceStatus from masteryScore after a successful memorization/revision.
+ */
+function statusFromScore(masteryScore: number): AyahPerformanceStatus {
+  if (masteryScore >= 40) return AyahPerformanceStatus.MEMORIZED;
+  return AyahPerformanceStatus.WEAK;
 }
 
-function clampScore(score: number): number {
-  return Math.max(0, Math.min(100, Math.round(score)));
+function clamp(v: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, Math.round(v)));
 }
 
 @Injectable()
 export class AyahPerformanceRepository implements IAyahPerformanceRepository {
+  private readonly masteryEngine = new MasteryScoreEngine();
+  private readonly sm2Engine = new Sm2Engine();
+
   constructor(
     @InjectModel(AyahPerformance.name)
     private readonly model: Model<AyahPerformanceDocument>,
@@ -108,21 +101,36 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
       tenantId: new Types.ObjectId(tenantId),
       student: new Types.ObjectId(studentId),
       isDeleted: false,
-      status: { $ne: AyahPerformanceStatus.NOT_STARTED },
     };
     if (surahNumber) match.surahNumber = surahNumber;
 
-    const docs = await this.model.find(match).select('heatmapLevel confidenceScore').lean();
-    let totalConfidence = 0;
-    for (const doc of docs) {
-      if (doc.heatmapLevel) counts[doc.heatmapLevel as HeatmapLevel] += 1;
-      totalConfidence += doc.confidenceScore ?? 0;
+    const results = await this.model
+      .aggregate([
+        { $match: match },
+        {
+          $group: {
+            _id: '$heatmapLevel',
+            count: { $sum: 1 },
+            avgScore: { $avg: '$masteryScore' },
+          },
+        },
+      ])
+      .exec();
+
+    let total = 0;
+    let weightedSum = 0;
+    for (const r of results) {
+      if (r._id && r._id in counts) {
+        counts[r._id as HeatmapLevel] = r.count;
+      }
+      total += r.count;
+      weightedSum += (r.avgScore ?? 0) * r.count;
     }
 
     return {
-      totalTracked: docs.length,
+      totalTracked: total,
       counts,
-      averageConfidenceScore: docs.length > 0 ? Math.round(totalConfidence / docs.length) : 0,
+      averageConfidenceScore: total > 0 ? Math.round(weightedSum / total) : 0,
     };
   }
 
@@ -133,6 +141,8 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
     ayahNumber: number,
     input: ManualAyahPerformanceUpdate,
   ): Promise<AyahPerformanceRecord> {
+    if (!Types.ObjectId.isValid(studentId)) throw new Error('Invalid studentId');
+
     const existing = await this.model
       .findOne({
         tenantId: new Types.ObjectId(tenantId),
@@ -142,14 +152,15 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
       })
       .lean();
 
-    const status = input.status ?? existing?.status ?? AyahPerformanceStatus.IN_PROGRESS;
-    const confidenceScore = clampScore(input.confidenceScore ?? existing?.confidenceScore ?? 0);
-    const heatmapLevel = computeHeatmapLevel(status, confidenceScore);
+    const status = input.status ?? existing?.status ?? AyahPerformanceStatus.NOT_STARTED;
+    const rawScore = input.confidenceScore ?? existing?.masteryScore ?? 0;
+    const masteryScore = clamp(rawScore, 0, 100);
+    const heatmapLevel = computeHeatmapLevel(status, masteryScore);
 
     const doc = await this.model
       .findOneAndUpdate(
         { tenantId: new Types.ObjectId(tenantId), student: new Types.ObjectId(studentId), surahNumber, ayahNumber },
-        { $set: { status, confidenceScore, heatmapLevel } },
+        { $set: { status, confidenceScore: masteryScore, masteryScore, heatmapLevel } },
         { new: true, upsert: true, setDefaultsOnInsert: true },
       )
       .lean();
@@ -163,15 +174,37 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
     ayahNumber: number,
     grade?: EvaluationGrade,
   ): Promise<AyahPerformanceRecord> {
-    const confidenceScore = confidenceForGrade(grade, 75);
-    const status = AyahPerformanceStatus.MEMORIZED;
-    const heatmapLevel = computeHeatmapLevel(status, confidenceScore);
+    if (!Types.ObjectId.isValid(studentId)) throw new Error('Invalid studentId');
+
+    const existing = await this.model
+      .findOne({ tenantId: new Types.ObjectId(tenantId), student: new Types.ObjectId(studentId), surahNumber, ayahNumber })
+      .lean();
+
+    const currentSm2: Sm2State = extractSm2(existing);
+    const newSm2 = this.sm2Engine.onSuccess(currentSm2, grade);
+
+    const lastActivityAt = new Date();
+    const masteryScore = this.masteryEngine.compute({
+      grade,
+      lastActivityAt,
+      mistakeCount: existing?.mistakeCount ?? 0,
+      revisionCount: existing?.revisionCount ?? 0,
+    });
+    const status = statusFromScore(masteryScore);
+    const heatmapLevel = computeHeatmapLevel(status, masteryScore);
 
     const doc = await this.model
       .findOneAndUpdate(
         { tenantId: new Types.ObjectId(tenantId), student: new Types.ObjectId(studentId), surahNumber, ayahNumber },
         {
-          $set: { status, confidenceScore, heatmapLevel, lastMemorizedAt: new Date() },
+          $set: {
+            status,
+            confidenceScore: masteryScore,
+            masteryScore,
+            heatmapLevel,
+            lastMemorizedAt: lastActivityAt,
+            ...newSm2,
+          },
         },
         { new: true, upsert: true, setDefaultsOnInsert: true },
       )
@@ -186,31 +219,45 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
     ayahNumber: number,
     retentionGrade?: EvaluationGrade,
   ): Promise<AyahPerformanceRecord> {
+    if (!Types.ObjectId.isValid(studentId)) throw new Error('Invalid studentId');
+
     const existing = await this.model
-      .findOne({
-        tenantId: new Types.ObjectId(tenantId),
-        student: new Types.ObjectId(studentId),
-        surahNumber,
-        ayahNumber,
-      })
+      .findOne({ tenantId: new Types.ObjectId(tenantId), student: new Types.ObjectId(studentId), surahNumber, ayahNumber })
       .lean();
 
-    const baseline = existing?.confidenceScore ?? 60;
-    const target = confidenceForGrade(retentionGrade, baseline);
-    // Revisions nudge confidence toward the grade-implied target rather than
-    // snapping to it outright — retains memory of prior performance.
-    const confidenceScore = clampScore((baseline + target) / 2);
+    const currentSm2: Sm2State = extractSm2(existing);
+    const newSm2 = this.sm2Engine.onSuccess(currentSm2, retentionGrade);
+
+    const lastActivityAt = new Date();
+    const newRevisionCount = (existing?.revisionCount ?? 0) + 1;
+
+    const masteryScore = this.masteryEngine.compute({
+      grade: retentionGrade,
+      lastActivityAt,
+      mistakeCount: existing?.mistakeCount ?? 0,
+      revisionCount: newRevisionCount,
+    });
+    const priorStatus = existing?.status ?? AyahPerformanceStatus.NOT_STARTED;
     const status =
-      existing && existing.status !== AyahPerformanceStatus.NOT_STARTED
-        ? existing.status
-        : AyahPerformanceStatus.IN_PROGRESS;
-    const heatmapLevel = computeHeatmapLevel(status, confidenceScore);
+      priorStatus === AyahPerformanceStatus.NOT_STARTED
+        ? AyahPerformanceStatus.NOT_STARTED
+        : masteryScore >= 40
+          ? AyahPerformanceStatus.MEMORIZED
+          : AyahPerformanceStatus.WEAK;
+    const heatmapLevel = computeHeatmapLevel(status, masteryScore);
 
     const doc = await this.model
       .findOneAndUpdate(
         { tenantId: new Types.ObjectId(tenantId), student: new Types.ObjectId(studentId), surahNumber, ayahNumber },
         {
-          $set: { status, confidenceScore, heatmapLevel, lastRevisedAt: new Date() },
+          $set: {
+            status,
+            confidenceScore: masteryScore,
+            masteryScore,
+            heatmapLevel,
+            lastRevisedAt: lastActivityAt,
+            ...newSm2,
+          },
           $inc: { revisionCount: 1 },
         },
         { new: true, upsert: true, setDefaultsOnInsert: true },
@@ -225,35 +272,42 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
     surahNumber: number,
     ayahNumber: number,
   ): Promise<AyahPerformanceRecord> {
+    if (!Types.ObjectId.isValid(studentId)) throw new Error('Invalid studentId');
+
     const existing = await this.model
-      .findOne({
-        tenantId: new Types.ObjectId(tenantId),
-        student: new Types.ObjectId(studentId),
-        surahNumber,
-        ayahNumber,
-      })
+      .findOne({ tenantId: new Types.ObjectId(tenantId), student: new Types.ObjectId(studentId), surahNumber, ayahNumber })
       .lean();
 
-    const baseline = existing?.confidenceScore ?? 60;
-    const confidenceScore = clampScore(baseline - 10);
+    const currentSm2: Sm2State = extractSm2(existing);
+    const newSm2 = this.sm2Engine.onMistake(currentSm2);
+
+    const newMistakeCount = (existing?.mistakeCount ?? 0) + 1;
+    const currentMastery = existing?.masteryScore ?? 60;
+    const masteryScore = this.masteryEngine.applyMistakePenalty(currentMastery, newMistakeCount);
+
     const priorStatus = existing?.status ?? AyahPerformanceStatus.NOT_STARTED;
-    // A mistake never regresses an untouched ayah to "weak" on its own —
-    // it only downgrades ayahs the student has already engaged with.
     const status =
       priorStatus === AyahPerformanceStatus.NOT_STARTED
         ? AyahPerformanceStatus.NOT_STARTED
-        : confidenceScore < 40
+        : masteryScore < 40
           ? AyahPerformanceStatus.WEAK
           : priorStatus === AyahPerformanceStatus.MEMORIZED
             ? AyahPerformanceStatus.NEEDS_REVIEW
             : priorStatus;
-    const heatmapLevel = computeHeatmapLevel(status, confidenceScore);
+    const heatmapLevel = computeHeatmapLevel(status, masteryScore);
 
     const doc = await this.model
       .findOneAndUpdate(
         { tenantId: new Types.ObjectId(tenantId), student: new Types.ObjectId(studentId), surahNumber, ayahNumber },
         {
-          $set: { status, confidenceScore, heatmapLevel, lastMistakeAt: new Date() },
+          $set: {
+            status,
+            confidenceScore: masteryScore,
+            masteryScore,
+            heatmapLevel,
+            lastMistakeAt: new Date(),
+            ...newSm2,
+          },
           $inc: { mistakeCount: 1 },
         },
         { new: true, upsert: true, setDefaultsOnInsert: true },
@@ -261,6 +315,48 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
       .lean();
     return toRecord(doc!);
   }
+
+  async findOverdueRevisions(tenantId: string, studentId: string): Promise<AyahPerformanceRecord[]> {
+    if (!Types.ObjectId.isValid(studentId)) return [];
+    const now = new Date();
+    const docs = await this.model
+      .find({
+        tenantId: new Types.ObjectId(tenantId),
+        student: new Types.ObjectId(studentId),
+        smNextReviewDue: { $lte: now, $ne: null },
+        isDeleted: false,
+      })
+      .sort({ smNextReviewDue: 1 }) // oldest overdue first
+      .lean();
+    return docs.map(toRecord);
+  }
+
+  async findWeakest(tenantId: string, studentId: string, limit = 20): Promise<AyahPerformanceRecord[]> {
+    if (!Types.ObjectId.isValid(studentId)) return [];
+    const docs = await this.model
+      .find({
+        tenantId: new Types.ObjectId(tenantId),
+        student: new Types.ObjectId(studentId),
+        status: { $ne: AyahPerformanceStatus.NOT_STARTED },
+        isDeleted: false,
+      })
+      .sort({ masteryScore: 1 }) // lowest mastery first
+      .limit(limit)
+      .lean();
+    return docs.map(toRecord);
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+
+/** Extract SM-2 state from a DB document (or return defaults if missing). */
+function extractSm2(doc: any): Sm2State {
+  return {
+    smEasinessFactor: doc?.smEasinessFactor ?? 2.5,
+    smInterval: doc?.smInterval ?? 0,
+    smRepetitions: doc?.smRepetitions ?? 0,
+    smNextReviewDue: doc?.smNextReviewDue ?? null,
+  };
 }
 
 function toRecord(doc: any): AyahPerformanceRecord {
@@ -270,13 +366,18 @@ function toRecord(doc: any): AyahPerformanceRecord {
     surahNumber: doc.surahNumber,
     ayahNumber: doc.ayahNumber,
     status: doc.status,
-    confidenceScore: doc.confidenceScore,
+    confidenceScore: doc.confidenceScore ?? 0,
+    masteryScore: doc.masteryScore ?? 0,
     heatmapLevel: doc.heatmapLevel ?? null,
     mistakeCount: doc.mistakeCount ?? 0,
     revisionCount: doc.revisionCount ?? 0,
     lastMemorizedAt: doc.lastMemorizedAt ?? null,
     lastRevisedAt: doc.lastRevisedAt ?? null,
     lastMistakeAt: doc.lastMistakeAt ?? null,
+    smEasinessFactor: doc.smEasinessFactor ?? 2.5,
+    smInterval: doc.smInterval ?? 0,
+    smRepetitions: doc.smRepetitions ?? 0,
+    smNextReviewDue: doc.smNextReviewDue ?? null,
     updatedAt: doc.updatedAt,
   };
 }

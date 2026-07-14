@@ -7,6 +7,7 @@ import { StudentsModule } from '@modules/students/students.module';
 import { SheikhsModule } from '@modules/sheikhs/sheikhs.module';
 import { ParentsModule } from '@modules/parents/parents.module';
 import { ProgressModule } from '@modules/progress/progress.module';
+import { AyahPerformanceModule } from '@modules/ayah-performance/ayah-performance.module';
 
 /**
  * Forecast Module — Phase 7.
@@ -26,6 +27,7 @@ import { ProgressModule } from '@modules/progress/progress.module';
     SheikhsModule,
     ParentsModule,
     ProgressModule,
+    AyahPerformanceModule, // Phase 12B: SM-2 + mastery signals for forecast upgrade
   ],
   controllers: [ForecastController],
   providers: [GetCompletionForecastUseCase],

@@ -9,8 +9,13 @@ import {
 import { IStudentRepository, STUDENT_REPOSITORY } from '@modules/students/domain/repositories/student.repository.interface';
 import { ISheikhRepository, SHEIKH_REPOSITORY } from '@modules/sheikhs/domain/repositories/sheikh.repository.interface';
 import { IParentRepository, PARENT_REPOSITORY } from '@modules/parents/domain/repositories/parent.repository.interface';
+import {
+  AYAH_PERFORMANCE_REPOSITORY,
+  IAyahPerformanceRepository,
+} from '@modules/ayah-performance/domain/repositories/ayah-performance.repository.interface';
 import { MemorizationRecord, MemorizationRecordDocument } from '@database/mongoose/schemas';
 import { MemorizationStatus } from '@shared/enums/memorization.enum';
+import { HeatmapLevel } from '@shared/enums/smart-mushaf.enum';
 import { Role } from '@shared/enums/roles.enum';
 
 const TOTAL_QURAN_AYAHS = 6236;
@@ -34,10 +39,34 @@ export interface CompletionForecast {
   consistencyScore: number;
   /** Number of active memorization days in the last 30 days. */
   activeDaysLast30: number;
+
+  // ── Phase 12B: SM-2 & mastery-aware fields ────────────────────────────
+
+  /** Number of ayahs where smNextReviewDue <= today. */
+  overdueRevisionCount: number;
+  /**
+   * 0–100 revision burden score.
+   * 0 = no backlog; 100 = backlog equals 50%+ of memorized material.
+   * Heavy burden reduces the adjusted completion estimate.
+   */
+  revisionBurdenScore: number;
+  /** Completion date accounting for revision overhead — null if pace is 0. */
+  adjustedCompletionDate: string | null;
+  /** Days remaining with revision overhead included — null if pace is 0. */
+  adjustedDaysRemaining: number | null;
+  /** Ayahs with masteryScore >= 85 (strongly retained). */
+  stronglyMemorizedCount: number;
+  /** Ayahs with masteryScore < 55 but status = MEMORIZED (at risk). */
+  weaklyMemorizedCount: number;
+  /** Overall retention risk assessment. */
+  retentionRisk: 'low' | 'medium' | 'high';
 }
 
 /**
- * GetCompletionForecastUseCase
+ * GetCompletionForecastUseCase — Phase 7 + Phase 12B upgrade.
+ *
+ * Phase 12B additions: SM-2 overdue count, revision burden score,
+ * adjusted completion estimate, mastery-aware retention risk.
  *
  * `studentId` is a Student profile ID (_id) for /forecast/students/:id,
  * OR user.sub (userId) when called from /forecast/me for STUDENT role.
@@ -54,6 +83,8 @@ export class GetCompletionForecastUseCase {
     private readonly sheikhRepo: ISheikhRepository,
     @Inject(PARENT_REPOSITORY)
     private readonly parentRepo: IParentRepository,
+    @Inject(AYAH_PERFORMANCE_REPOSITORY)
+    private readonly ayahPerformanceRepo: IAyahPerformanceRepository,
     @InjectModel(MemorizationRecord.name)
     private readonly memModel: Model<MemorizationRecordDocument>,
   ) {}
@@ -95,14 +126,20 @@ export class GetCompletionForecastUseCase {
   }
 
   private async computeForecast(tenantId: string, studentId: string): Promise<CompletionForecast> {
-    const progress = await this.progressRepo.findByStudent(tenantId, studentId);
+    const now = new Date();
+
+    // Fetch base progress + SM-2 data in parallel
+    const [progress, ayahPerformanceRecords] = await Promise.all([
+      this.progressRepo.findByStudent(tenantId, studentId),
+      this.ayahPerformanceRepo.findByStudent(tenantId, studentId),
+    ]);
+
     const totalAyahsMemorized = progress?.totalAyahsMemorized ?? 0;
     const remainingAyahs = Math.max(0, TOTAL_QURAN_AYAHS - totalAyahsMemorized);
 
+    // ── Pace calculation (Phase 7 logic, unchanged) ──────────────────────
     const tenantOid = new Types.ObjectId(tenantId);
     const studentOid = new Types.ObjectId(studentId);
-    const now = new Date();
-
     const thirtyDaysAgo = new Date(now);
     thirtyDaysAgo.setDate(now.getDate() - 30);
 
@@ -117,7 +154,6 @@ export class GetCompletionForecastUseCase {
       .select('range evaluatedAt')
       .lean();
 
-    // Group by calendar day.
     const dayMap = new Map<string, number>();
     for (const doc of recentDocs) {
       const range = doc.range as any;
@@ -129,7 +165,6 @@ export class GetCompletionForecastUseCase {
 
     const activeDaysLast30 = dayMap.size;
     const totalAyahsLast30 = [...dayMap.values()].reduce((a, b) => a + b, 0);
-
     const dailyPaceAyahs = activeDaysLast30 > 0 ? totalAyahsLast30 / activeDaysLast30 : 0;
     const weeklyProjectionAyahs = parseFloat((dailyPaceAyahs * 7).toFixed(1));
     const monthlyProjectionAyahs = parseFloat((dailyPaceAyahs * 30).toFixed(1));
@@ -148,6 +183,51 @@ export class GetCompletionForecastUseCase {
       estimatedCompletionDate = now.toISOString().split('T')[0];
     }
 
+    // ── Phase 12B: SM-2 & mastery signals ───────────────────────────────
+    const nowMs = now.getTime();
+
+    let overdueRevisionCount = 0;
+    let stronglyMemorizedCount = 0;
+    let weaklyMemorizedCount = 0;
+
+    for (const r of ayahPerformanceRecords) {
+      if (r.smNextReviewDue && r.smNextReviewDue.getTime() <= nowMs) {
+        overdueRevisionCount++;
+      }
+      if (r.masteryScore >= 85) {
+        stronglyMemorizedCount++;
+      } else if (r.masteryScore < 55 && r.heatmapLevel !== null &&
+                 r.heatmapLevel !== HeatmapLevel.WEAK) {
+        weaklyMemorizedCount++;
+      }
+    }
+
+    // Revision burden: proportion of memorized material that is overdue, scaled 0–100
+    const burdenScore =
+      totalAyahsMemorized > 0
+        ? Math.min(100, Math.round((overdueRevisionCount / totalAyahsMemorized) * 200))
+        : 0;
+
+    // Adjusted capacity: heavy backlog reduces effective new-memorization rate
+    let adjustedDaysRemaining: number | null = null;
+    let adjustedCompletionDate: string | null = null;
+
+    if (dailyPaceAyahs > 0 && remainingAyahs > 0) {
+      const adjustedCapacity = dailyPaceAyahs * Math.max(0.3, 1 - burdenScore / 200);
+      adjustedDaysRemaining = Math.ceil(remainingAyahs / adjustedCapacity);
+      const adjDate = new Date(now);
+      adjDate.setDate(now.getDate() + adjustedDaysRemaining);
+      adjustedCompletionDate = adjDate.toISOString().split('T')[0];
+    } else if (remainingAyahs === 0) {
+      adjustedDaysRemaining = 0;
+      adjustedCompletionDate = now.toISOString().split('T')[0];
+    }
+
+    // Retention risk
+    const overdueRatio = totalAyahsMemorized > 0 ? overdueRevisionCount / totalAyahsMemorized : 0;
+    const retentionRisk: 'low' | 'medium' | 'high' =
+      overdueRatio < 0.05 ? 'low' : overdueRatio < 0.20 ? 'medium' : 'high';
+
     return {
       studentId,
       totalAyahsMemorized,
@@ -160,6 +240,14 @@ export class GetCompletionForecastUseCase {
       estimatedDaysRemaining,
       consistencyScore,
       activeDaysLast30,
+      // Phase 12B
+      overdueRevisionCount,
+      revisionBurdenScore: burdenScore,
+      adjustedCompletionDate,
+      adjustedDaysRemaining,
+      stronglyMemorizedCount,
+      weaklyMemorizedCount,
+      retentionRisk,
     };
   }
 }

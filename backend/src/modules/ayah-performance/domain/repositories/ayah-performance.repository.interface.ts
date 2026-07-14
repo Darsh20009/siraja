@@ -8,12 +8,18 @@ export interface AyahPerformanceRecord {
   ayahNumber: number;
   status: AyahPerformanceStatus;
   confidenceScore: number;
+  masteryScore: number;
   heatmapLevel: HeatmapLevel | null;
   mistakeCount: number;
   revisionCount: number;
   lastMemorizedAt: Date | null;
   lastRevisedAt: Date | null;
   lastMistakeAt: Date | null;
+  // SM-2 fields
+  smEasinessFactor: number;
+  smInterval: number;
+  smRepetitions: number;
+  smNextReviewDue: Date | null;
   updatedAt: Date;
 }
 
@@ -84,6 +90,19 @@ export interface IAyahPerformanceRepository {
     surahNumber: number,
     ayahNumber: number,
   ): Promise<AyahPerformanceRecord>;
+
+  /** Phase 12B: all ayahs where smNextReviewDue <= now, ordered by overdue duration desc. */
+  findOverdueRevisions(
+    tenantId: string,
+    studentId: string,
+  ): Promise<AyahPerformanceRecord[]>;
+
+  /** Phase 12B: ayahs with lowest masteryScore for a student, ordered asc. */
+  findWeakest(
+    tenantId: string,
+    studentId: string,
+    limit?: number,
+  ): Promise<AyahPerformanceRecord[]>;
 }
 
 export const AYAH_PERFORMANCE_REPOSITORY = Symbol('AYAH_PERFORMANCE_REPOSITORY');
