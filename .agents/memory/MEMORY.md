@@ -10,3 +10,4 @@
 - [Siraja compound sparse index gotcha](siraja-index-sparse-compound-gotcha.md) — sparse:true on compound unique indexes only skips docs missing ALL fields; use partialFilterExpression instead.
 - [Siraja AccessTokenPayload field name](siraja-authz-guard-user-id-bug.md) — JWT user id claim is `sub`, not `id`; guards/resolvers must read request.user.sub.
 - [Siraja Phase 12A Platform Foundation](siraja-phase12a-architecture.md) — Users module, Tenant management, Email templates, Storage layer (S3/R2), Quran seeder; read before touching those areas.
+- [Siraja Phase 12B Learning Intelligence](siraja-phase12b-learning-intelligence.md) — MasteryScoreEngine, Sm2Engine, WeaknessHeatmapService, QuranMatcherService, MistakeDetectorService, Forecast upgrade; read before touching any learning-intelligence code.

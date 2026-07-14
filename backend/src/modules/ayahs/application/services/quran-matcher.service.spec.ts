@@ -33,9 +33,9 @@ function buildRepo(ayahs: AyahRecord[]) {
   return {
     findBySurah: jest.fn(async (s: number) => bysurah.get(s) ?? []),
     findOne: jest.fn(async () => null),
-    findByPage: jest.fn(async () => []),
-    findByJuz: jest.fn(async () => []),
-    searchByText: jest.fn(async () => []),
+    findByPage: jest.fn(async (): Promise<AyahRecord[]> => []),
+    findByJuz: jest.fn(async (): Promise<AyahRecord[]> => []),
+    searchByText: jest.fn(async (): Promise<AyahRecord[]> => []),
     upsert: jest.fn(async (i: any) => ({ ...i, id: 'x' })),
   };
 }

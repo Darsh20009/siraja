@@ -110,11 +110,14 @@ export class MistakeDetectorService {
       if (closestRefIdx === -1) continue;
       const refWord = refWords[closestRefIdx];
 
-      // REPEATED_WORD: same word appears earlier in the recited stream and matches ref
-      const seenEarlier = recWords
-        .slice(0, recIdx)
-        .some((w) => w === recWord);
-      if (seenEarlier && recWord === refWord) {
+      // REPEATED_WORD: same word appears elsewhere in the recited stream (before or
+      // after this position) and that other occurrence IS matched to reference.
+      // Handles both "X X Y" (first X unmatched) and "X Y X" (second X unmatched).
+      const seenEarlier = recWords.slice(0, recIdx).some((w) => w === recWord);
+      const seenLaterMatched = recWords.some(
+        (w, i) => i > recIdx && w === recWord && recMatched.has(i),
+      );
+      if ((seenEarlier || seenLaterMatched) && recWord === refWord) {
         mistakes.push({
           type: MistakeType.REPEATED_WORD,
           severity: MistakeSeverity.MINOR,
