@@ -36,4 +36,11 @@ export enum PermissionCategory {
   USER_PREFERENCES = 'user_preferences',
   // Phase 12D — Gamification, Rewards & Engagement
   GAMIFICATION = 'gamification',
+  // Phase 12E — Administration, Operations & Growth
+  ADMIN = 'admin',
+  DONATIONS = 'donations',
+  FEEDBACK = 'feedback',
+  FEATURE_VOTING = 'feature_voting',
+  SUPPORT_ADMIN = 'support_admin',
+  AUDIT = 'audit',
 }

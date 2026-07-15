@@ -116,3 +116,14 @@ export * from './badge-definition.schema';
 export * from './student-badge.schema';
 export * from './leaderboard-entry.schema';
 export * from './reward-rule.schema';
+
+// Administration, Operations & Growth (Phase 12E)
+export * from './donation-campaign.schema';
+export * from './donation.schema';
+export * from './feedback.schema';
+export * from './feature-request.schema';
+export * from './feature-vote.schema';
+export * from './ticket-message.schema';
+export * from './system-alert.schema';
+export * from './tenant-branding.schema';
+export * from './operational-snapshot.schema';

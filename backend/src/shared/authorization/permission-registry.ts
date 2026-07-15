@@ -181,15 +181,61 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.UPDATE,
   ],
   // Phase 12D — Gamification, Rewards & Engagement.
-  // READ: any authenticated role (student, sheikh, parent) sees their data.
-  // UPDATE: admin can update config and reward rules.
-  // AWARD: sheikh/admin can manually award badges and achievements.
   [PermissionCategory.GAMIFICATION]: [
     PermissionAction.READ,
     PermissionAction.CREATE,
     PermissionAction.UPDATE,
     PermissionAction.DELETE,
     PermissionAction.AWARD,
+  ],
+  // Phase 12E — Administration, Operations & Growth.
+  // ADMIN: super-admin platform overview, snapshots, health.
+  [PermissionCategory.ADMIN]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+    PermissionAction.UPDATE,
+    PermissionAction.RESOLVE,
+  ],
+  // DONATIONS: campaign and donor management.
+  [PermissionCategory.DONATIONS]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+    PermissionAction.APPROVE,
+    PermissionAction.EXPORT,
+  ],
+  // FEEDBACK: public submissions + admin review.
+  [PermissionCategory.FEEDBACK]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+  ],
+  // FEATURE_VOTING: community-driven roadmap.
+  // VOTE is intentionally NOT listed here — any authenticated user can vote
+  // without an explicit permission check (enforced in the use-case).
+  [PermissionCategory.FEATURE_VOTING]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+    PermissionAction.APPROVE,
+  ],
+  // SUPPORT_ADMIN: staff-facing ticket management.
+  // Distinct from the existing SUPPORT category (user-facing ticket creation).
+  [PermissionCategory.SUPPORT_ADMIN]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+    PermissionAction.ASSIGN,
+    PermissionAction.RESOLVE,
+  ],
+  // AUDIT: read-only access to the audit trail.
+  [PermissionCategory.AUDIT]: [
+    PermissionAction.READ,
+    PermissionAction.EXPORT,
   ],
 };
 

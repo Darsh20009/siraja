@@ -1,42 +1,60 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
+import { TicketStatus, TicketPriority, TicketCategory } from '@shared/enums/support.enum';
 import { BaseSchema } from './base.schema';
-import { TicketCategory, TicketPriority, TicketStatus } from '@shared/enums/support.enum';
+
+export type SupportTicketDocument = HydratedDocument<SupportTicket>;
 
 /**
  * Collection: support_tickets
  *
- * A support case opened by a tenant user. Messages are stored separately
- * in `support_messages` (one-to-many, unbounded thread) rather than
- * embedded, since a ticket's conversation can grow indefinitely.
+ * A support ticket submitted by a user (tenant member or anonymous).
+ * Phase 12E: extended with assignment, resolution workflow, and the
+ * new TicketCategory values (account, content, feature_request, other).
  */
-@Schema({ timestamps: true, collection: 'support_tickets' })
+@Schema({ collection: 'support_tickets', timestamps: true })
 export class SupportTicket extends BaseSchema {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  openedBy: Types.ObjectId;
+  submittedBy: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'User', required: false, default: null })
-  assignedTo?: Types.ObjectId | null; // support agent (platform-level)
-
-  @Prop({ type: String, required: true, trim: true })
+  @Prop({ required: true })
   subject: string;
 
-  @Prop({ type: String, enum: TicketCategory, required: true, default: TicketCategory.GENERAL })
+  @Prop({ required: true })
+  body: string;
+
+  @Prop({ type: String, enum: TicketCategory, default: TicketCategory.GENERAL })
   category: TicketCategory;
 
-  @Prop({ type: String, enum: TicketPriority, required: true, default: TicketPriority.MEDIUM })
+  @Prop({ type: String, enum: TicketPriority, default: TicketPriority.MEDIUM })
   priority: TicketPriority;
 
-  @Prop({ type: String, enum: TicketStatus, required: true, default: TicketStatus.OPEN })
+  @Prop({ type: String, enum: TicketStatus, default: TicketStatus.OPEN })
   status: TicketStatus;
 
-  @Prop({ type: Date, required: false, default: null })
-  resolvedAt?: Date | null;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  assignedTo?: Types.ObjectId;
+
+  @Prop({ type: Date })
+  assignedAt?: Date;
+
+  @Prop()
+  resolutionNote?: string;
+
+  @Prop({ type: Date })
+  resolvedAt?: Date;
+
+  @Prop({ type: Types.ObjectId })
+  resolvedBy?: Types.ObjectId;
+
+  @Prop({ type: Date })
+  closedAt?: Date;
+
+  @Prop({ type: [String], default: [] })
+  attachmentUrls: string[];
 }
 
-export type SupportTicketDocument = HydratedDocument<SupportTicket>;
 export const SupportTicketSchema = SchemaFactory.createForClass(SupportTicket);
-
-SupportTicketSchema.index({ tenantId: 1, status: 1, createdAt: -1 });
-SupportTicketSchema.index({ tenantId: 1, openedBy: 1 });
-SupportTicketSchema.index({ tenantId: 1, assignedTo: 1, status: 1 });
+SupportTicketSchema.index({ status: 1, priority: -1, createdAt: -1 });
+SupportTicketSchema.index({ assignedTo: 1, status: 1 });
+SupportTicketSchema.index({ submittedBy: 1 });

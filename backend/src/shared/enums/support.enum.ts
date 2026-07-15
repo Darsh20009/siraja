@@ -17,6 +17,20 @@ export enum TicketCategory {
   BILLING = 'billing',
   ACADEMIC = 'academic',
   GENERAL = 'general',
+  // Phase 12E additions
+  ACCOUNT = 'account',
+  CONTENT = 'content',
+  FEATURE_REQUEST = 'feature_request',
+  OTHER = 'other',
+}
+
+/** Phase 12E — waiting for customer response between OPEN and RESOLVED. */
+export enum TicketStatusExtended {
+  OPEN = 'open',
+  IN_PROGRESS = 'in_progress',
+  WAITING_CUSTOMER = 'waiting_customer',
+  RESOLVED = 'resolved',
+  CLOSED = 'closed',
 }
 
 export enum SenderType {

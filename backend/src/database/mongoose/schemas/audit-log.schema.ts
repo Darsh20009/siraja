@@ -1,49 +1,71 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Document, HydratedDocument, Types } from 'mongoose';
+import { AuditAction, ActorType, AuditEntityType } from '@shared/enums/audit.enum';
 import { BaseGlobalSchema } from './base-global.schema';
-import { ActorType, AuditAction } from '@shared/enums/audit.enum';
+
+export type AuditLogDocument = HydratedDocument<AuditLog>;
 
 /**
  * Collection: audit_logs
  *
- * Security/compliance trail of sensitive actions (permission changes,
- * deletions, logins). `tenantId` is optional (sparse) rather than
- * required: a `SUPER_ADMIN` action such as suspending a tenant or editing
- * `system_settings` is platform-level and has no owning tenant, so this
- * collection extends the global base rather than the tenant base.
- * Append-only by convention — never updated or deleted, only inserted.
+ * Shared, append-only security + admin action trail.
+ * Used by:
+ *  - AuthAuditService  (Phase 4) — login, password, device events
+ *  - AdminAuditService (Phase 12E) — admin CRUD, tenant/permission changes
+ *
+ * Both services write to the same collection, distinguished by `action`.
  */
-@Schema({ timestamps: true, collection: 'audit_logs' })
+@Schema({ timestamps: { createdAt: true, updatedAt: false }, collection: 'audit_logs' })
 export class AuditLog extends BaseGlobalSchema {
-  @Prop({ type: Types.ObjectId, ref: 'Tenant', required: false, index: true })
-  tenantId?: Types.ObjectId;
-
+  /** The user (or system) that performed the action. */
   @Prop({ type: Types.ObjectId, ref: 'User', required: false })
   actor?: Types.ObjectId;
 
-  @Prop({ type: String, enum: ActorType, required: true, default: ActorType.USER })
+  @Prop({ type: String, enum: ActorType, default: ActorType.USER })
   actorType: ActorType;
+
+  @Prop()
+  actorName?: string;
+
+  @Prop({ required: false })
+  tenantId?: string;
 
   @Prop({ type: String, enum: AuditAction, required: true })
   action: AuditAction;
 
-  @Prop({ type: String, required: true, trim: true })
-  entityType: string; // e.g. "Student", "Role"
+  /** e.g. 'User', 'Tenant', 'Role', 'Donation' */
+  @Prop({ required: true })
+  entityType: string;
 
-  @Prop({ type: Types.ObjectId, required: false })
-  entityId?: Types.ObjectId;
+  @Prop({ required: true })
+  entityId: string;
 
-  @Prop({ type: Object, required: false, default: {} })
-  changes?: Record<string, unknown>; // before/after diff
+  @Prop()
+  entityName?: string;
 
-  @Prop({ type: String, required: false })
+  /** JSON diff — only the fields that changed { field: { from, to } } */
+  @Prop({ type: Object })
+  changes?: Record<string, unknown>;
+
+  /** Extended diff for Phase 12E admin events */
+  @Prop({ type: Object })
+  diff?: Record<string, { from: unknown; to: unknown }>;
+
+  @Prop()
   ipAddress?: string;
+
+  @Prop()
+  userAgent?: string;
+
+  @Prop()
+  endpoint?: string;
+
+  @Prop()
+  notes?: string;
 }
 
-export type AuditLogDocument = HydratedDocument<AuditLog>;
 export const AuditLogSchema = SchemaFactory.createForClass(AuditLog);
-
-AuditLogSchema.index({ tenantId: 1, createdAt: -1 });
 AuditLogSchema.index({ actor: 1, createdAt: -1 });
-AuditLogSchema.index({ entityType: 1, entityId: 1 });
+AuditLogSchema.index({ tenantId: 1, createdAt: -1 });
+AuditLogSchema.index({ entityType: 1, entityId: 1, createdAt: -1 });
 AuditLogSchema.index({ action: 1, createdAt: -1 });
