@@ -3,7 +3,7 @@
  * Run: npm run seed:quran
  */
 
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import { seedQuranFoundation } from './quran-foundation.seeder';
 
 async function main() {

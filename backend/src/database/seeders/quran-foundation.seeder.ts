@@ -185,7 +185,14 @@ export async function seedQuranFoundation(conn: Connection): Promise<void> {
     );
     if (quranRes.code !== 200) throw new Error(`AlQuran API error: ${quranRes.status}`);
 
-    const allAyahs: AlQuranAyah[] = quranRes.data.surahs.flatMap((s) => s.ayahs);
+    // Inject surah reference onto each ayah (API returns ayahs nested under surah,
+    // but each ayah object does not carry a back-reference to its parent surah).
+    const allAyahs: AlQuranAyah[] = quranRes.data.surahs.flatMap((s) =>
+      s.ayahs.map((a) => ({
+        ...a,
+        surah: { number: (s as any).number, name: (s as any).name, englishName: (s as any).englishName },
+      })),
+    );
     log(`Fetched ${allAyahs.length} ayahs. Building documents...`);
 
     const ayahDocs = allAyahs.map((a) => ({

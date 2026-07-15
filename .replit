@@ -18,6 +18,12 @@ LOG_LEVEL = "debug"
 MONGODB_DB_NAME = "siraja"
 THROTTLE_LIMIT = "100"
 THROTTLE_TTL = "60"
+EMAIL_FROM = "noreply@siraja.app"
+EMAIL_FROM_NAME = "Siraja"
+EMAIL_HOST = "smtp.resend.com"
+EMAIL_PORT = "465"
+EMAIL_SECURE = "true"
+EMAIL_USER = "resend"
 
 [[ports]]
 localPort = 5000
