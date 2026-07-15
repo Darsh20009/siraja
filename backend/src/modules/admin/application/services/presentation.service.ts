@@ -65,7 +65,7 @@ export class PresentationService {
       fundraising: {
         ...fundraising,
         activeCampaign: primaryCampaign
-          ? { id: primaryCampaign._id?.toString(), name: primaryCampaign.name, targetAmount: primaryCampaign.targetAmount }
+          ? { id: (primaryCampaign as any)._id?.toString(), name: primaryCampaign.name, targetAmount: primaryCampaign.targetAmount }
           : null,
       },
     };

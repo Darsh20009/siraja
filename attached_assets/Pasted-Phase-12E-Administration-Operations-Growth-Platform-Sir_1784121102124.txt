@@ -1,0 +1,170 @@
+Phase 12E — Administration, Operations & Growth Platform
+
+Siraja must become fully self-manageable without requiring developers.
+
+Build the complete operational platform.
+
+Objectives:
+
+1. Super Admin Dashboard
+
+Create system-wide administration APIs.
+
+Support:
+
+- Platform overview
+- Total users
+- Active users
+- Tenants
+- Students
+- Parents
+- Sheikhs
+- Supervisors
+- Storage usage
+- Queue metrics
+- AI usage metrics
+- Email metrics
+
+2. Tenant Administration
+
+Complete tenant administration.
+
+Support:
+
+- Branding
+- Logo
+- Colors
+- Languages
+- Features
+- Limits
+- Statistics
+
+3. Donations System
+
+Siraja is non-profit.
+
+Build:
+
+- Donation inquiries
+- Donation requests
+- Donor management
+- Donation history
+- Campaign tracking
+- Fundraising progress
+
+Current fundraising targets:
+
+Stage 1: 5,000 SAR (completed)
+Stage 2: 15,000 SAR
+Stage 3: 30,000 SAR
+Stage 4: 50,000 SAR
+Stage 5: 100,000 SAR
+Stage 6: 150,000 SAR
+
+4. Feedback System
+
+Create:
+
+- Feedback submissions
+- Ratings
+- Bug reports
+- Improvement suggestions
+
+Allow:
+
+- Anonymous
+- Named
+
+5. Feature Voting Platform
+
+Users can:
+
+- Suggest features
+- Vote on features
+- Track status
+
+Statuses:
+
+- Proposed
+- Accepted
+- In Progress
+- Completed
+- Rejected
+
+Admin must provide rejection reasons.
+
+6. Support Center
+
+Create:
+
+- Support tickets
+- Ticket messages
+- Categories
+- Priorities
+- Assignment
+- Resolution workflow
+
+7. Operational Analytics
+
+Track:
+
+- User growth
+- Retention
+- Engagement
+- Activity trends
+- Platform usage
+
+8. System Alerts
+
+Automatic alerts for:
+
+- Queue failures
+- Redis failures
+- Storage failures
+- Email failures
+- AI failures
+
+Send alerts through existing email infrastructure.
+
+9. Presentation Platform
+
+Create backend support for:
+
+/presentation
+
+Must expose:
+
+- Platform features
+- Roadmap
+- Mission
+- Vision
+- Statistics
+- Fundraising status
+- Success metrics
+
+10. Audit System
+
+Track:
+
+- Admin actions
+- Tenant changes
+- Permission changes
+- System changes
+
+Requirements:
+
+- RBAC protected
+- Multi-tenant safe
+- Fully documented
+- Event-driven
+- Queue ready
+- TypeScript clean
+- Full tests
+
+Deliverables:
+
+docs/architecture/phase-12e-admin-operations.md
+
+docs/audits/phase-12e-audit.md
+
+Final completion report

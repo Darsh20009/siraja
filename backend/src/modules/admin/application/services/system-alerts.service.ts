@@ -39,7 +39,7 @@ export class SystemAlertsService {
     });
 
     this.emitter.emit(EVENTS.SYSTEM_ALERT_FIRED, {
-      alertId: alert._id?.toString(),
+      alertId: (alert as any)._id?.toString(),
       type,
       severity,
       message,

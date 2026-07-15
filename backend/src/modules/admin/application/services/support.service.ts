@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENTS } from '@shared/events/events.constants';
 import { SUPPORT_TICKET_REPOSITORY, ISupportTicketRepository } from '../../domain/repositories/support-ticket.repository.interface';
 import { TICKET_MESSAGE_REPOSITORY, ITicketMessageRepository } from '../../domain/repositories/ticket-message.repository.interface';
-import { TicketStatus, TicketPriority, TicketCategory } from '@shared/enums/support.enum';
+import { TicketStatus, TicketStatusExtended, TicketPriority, TicketCategory } from '@shared/enums/support.enum';
 
 @Injectable()
 export class SupportService {
@@ -41,7 +41,7 @@ export class SupportService {
   }) {
     const ticket = await this.ticketRepo.create({
       submittedBy: data.submittedBy as never,
-      tenantId: data.tenantId,
+      tenantId: data.tenantId as never,
       subject: data.subject,
       body: data.body,
       category: data.category ?? TicketCategory.GENERAL,
@@ -49,7 +49,7 @@ export class SupportService {
       status: TicketStatus.OPEN,
       attachmentUrls: data.attachmentUrls ?? [],
     });
-    this.emitter.emit(EVENTS.TICKET_CREATED, { ticketId: ticket._id?.toString(), submittedBy: data.submittedBy });
+    this.emitter.emit(EVENTS.TICKET_CREATED, { ticketId: (ticket as any)._id?.toString(), submittedBy: data.submittedBy });
     return ticket;
   }
 
@@ -76,11 +76,11 @@ export class SupportService {
     });
 
     // If customer replies, move back to IN_PROGRESS
-    if (!isStaffReply && ticket.status === TicketStatus.WAITING_CUSTOMER) {
+    if (!isStaffReply && (ticket.status as string) === TicketStatusExtended.WAITING_CUSTOMER) {
       await this.ticketRepo.update(ticketId, { status: TicketStatus.IN_PROGRESS });
     }
     if (isStaffReply && !isInternal) {
-      await this.ticketRepo.update(ticketId, { status: TicketStatus.WAITING_CUSTOMER });
+      await this.ticketRepo.update(ticketId, { status: TicketStatusExtended.WAITING_CUSTOMER as never });
     }
 
     return message;

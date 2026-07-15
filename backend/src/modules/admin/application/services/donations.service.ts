@@ -4,9 +4,10 @@ import { EVENTS } from '@shared/events/events.constants';
 import { DONATION_CAMPAIGN_REPOSITORY, IDonationCampaignRepository } from '../../domain/repositories/donation-campaign.repository.interface';
 import { DONATION_REPOSITORY, IDonationRepository } from '../../domain/repositories/donation.repository.interface';
 import { DonationStatus, CampaignStatus } from '@shared/enums/admin-operations.enum';
+import { FundraisingStage } from '@database/mongoose/schemas/donation-campaign.schema';
 
 /** Fundraising stages hardcoded per requirements — overridden by campaign stages if set. */
-export const DEFAULT_STAGES = [
+export const DEFAULT_STAGES: FundraisingStage[] = [
   { stageNumber: 1, label: 'المرحلة الأولى',  targetAmount: 5000  },
   { stageNumber: 2, label: 'المرحلة الثانية', targetAmount: 15000 },
   { stageNumber: 3, label: 'المرحلة الثالثة', targetAmount: 30000 },
@@ -45,7 +46,7 @@ export class DonationsService {
       completed: raisedAmount >= stage.targetAmount,
       completedAt: stage.completedAt,
     }));
-    return { ...campaign.toObject?.() ?? campaign, donorCount, raisedAmount, stages };
+    return { ...(campaign as any).toObject?.() ?? campaign, donorCount, raisedAmount, stages };
   }
 
   async createCampaign(data: Record<string, unknown>, createdBy: string) {
@@ -102,7 +103,7 @@ export class DonationsService {
       note: data.note,
     });
 
-    this.emitter.emit(EVENTS.DONATION_CREATED, { donationId: donation._id?.toString(), campaignId: data.campaignId, amount: data.amount });
+    this.emitter.emit(EVENTS.DONATION_CREATED, { donationId: (donation as any)._id?.toString(), campaignId: data.campaignId, amount: data.amount });
     return donation;
   }
 

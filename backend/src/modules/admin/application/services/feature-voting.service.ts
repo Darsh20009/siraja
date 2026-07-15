@@ -43,7 +43,7 @@ export class FeatureVotingService {
       status: FeatureRequestStatus.PROPOSED,
       voteCount: 0,
     });
-    this.emitter.emit(EVENTS.FEATURE_REQUEST_CREATED, { featureRequestId: request._id?.toString() });
+    this.emitter.emit(EVENTS.FEATURE_REQUEST_CREATED, { featureRequestId: (request as any)._id?.toString() });
     return request;
   }
 

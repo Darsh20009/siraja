@@ -47,7 +47,7 @@ export class FeedbackService {
       status: FeedbackStatus.OPEN,
     });
 
-    this.emitter.emit(EVENTS.FEEDBACK_SUBMITTED, { feedbackId: feedback._id?.toString(), type: feedback.type });
+    this.emitter.emit(EVENTS.FEEDBACK_SUBMITTED, { feedbackId: (feedback as any)._id?.toString(), type: feedback.type });
     return feedback;
   }
 
