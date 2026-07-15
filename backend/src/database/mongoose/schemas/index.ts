@@ -103,3 +103,16 @@ export * from './message-thread.schema';
 export * from './message.schema';
 export * from './announcement.schema';
 export * from './user-preferences.schema';
+
+
+// Gamification, Rewards & Engagement (Phase 12D)
+export * from './gamification-config.schema';
+export * from './point-transaction.schema';
+export * from './student-points.schema';
+export * from './streak.schema';
+export * from './achievement-definition.schema';
+export * from './student-achievement.schema';
+export * from './badge-definition.schema';
+export * from './student-badge.schema';
+export * from './leaderboard-entry.schema';
+export * from './reward-rule.schema';

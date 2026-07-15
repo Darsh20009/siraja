@@ -9,6 +9,10 @@ import {
   MistakeRecordedEvent,
   AttendanceMarkedEvent,
   NotificationCreatedEvent,
+  ExamCompletedEvent,
+  PointsAwardedEvent,
+  AchievementUnlockedEvent,
+  BadgeAwardedEvent,
 } from './domain.events';
 
 /**
@@ -55,6 +59,22 @@ export class EventDispatcherService {
 
   notificationCreated(event: NotificationCreatedEvent): void {
     this.dispatch(EVENTS.NOTIFICATION_CREATED, event);
+  }
+
+  examCompleted(event: ExamCompletedEvent): void {
+    this.dispatch(EVENTS.EXAM_COMPLETED, event);
+  }
+
+  pointsAwarded(event: PointsAwardedEvent): void {
+    this.dispatch(EVENTS.POINTS_AWARDED, event);
+  }
+
+  achievementUnlocked(event: AchievementUnlockedEvent): void {
+    this.dispatch(EVENTS.ACHIEVEMENT_UNLOCKED, event);
+  }
+
+  badgeAwarded(event: BadgeAwardedEvent): void {
+    this.dispatch(EVENTS.BADGE_AWARDED, event);
   }
 
   private dispatch(eventName: string, payload: object): void {

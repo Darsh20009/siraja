@@ -34,4 +34,6 @@ export enum PermissionCategory {
   MESSAGING = 'messaging',
   ANNOUNCEMENTS = 'announcements',
   USER_PREFERENCES = 'user_preferences',
+  // Phase 12D — Gamification, Rewards & Engagement
+  GAMIFICATION = 'gamification',
 }

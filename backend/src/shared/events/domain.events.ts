@@ -65,6 +65,47 @@ export class AttendanceMarkedEvent {
   ) {}
 }
 
+// ── Phase 12D — Gamification ──────────────────────────────────────────────────
+
+export class ExamCompletedEvent {
+  constructor(
+    public readonly examId: string,
+    public readonly studentId: string,
+    public readonly tenantId: string,
+    public readonly grade: string,
+    public readonly score: number,
+    public readonly passed: boolean,
+  ) {}
+}
+
+export class PointsAwardedEvent {
+  constructor(
+    public readonly studentId: string,
+    public readonly tenantId: string,
+    public readonly activityType: string,
+    public readonly points: number,
+    public readonly totalPoints: number,
+  ) {}
+}
+
+export class AchievementUnlockedEvent {
+  constructor(
+    public readonly studentId: string,
+    public readonly tenantId: string,
+    public readonly achievementType: string,
+    public readonly achievementName: string,
+  ) {}
+}
+
+export class BadgeAwardedEvent {
+  constructor(
+    public readonly studentId: string,
+    public readonly tenantId: string,
+    public readonly badgeName: string,
+    public readonly badgeTier: string,
+  ) {}
+}
+
 export class NotificationCreatedEvent {
   constructor(
     public readonly notificationId: string,

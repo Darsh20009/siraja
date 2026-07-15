@@ -66,6 +66,7 @@ import { RedisModule } from './shared/redis/redis.module';
 import { QueuesModule } from './shared/queues/queues.module';
 import { EventsModule } from './shared/events/events.module';
 import { SystemModule } from './modules/system/system.module';
+import { GamificationModule } from './modules/gamification/gamification.module';
 
 /**
  * Root application module.
@@ -169,6 +170,9 @@ import { SystemModule } from './modules/system/system.module';
     QueuesModule.forRootAsync(),
     EventsModule,
     SystemModule,
+
+    // Gamification, Rewards & Engagement (Phase 12D)
+    GamificationModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],

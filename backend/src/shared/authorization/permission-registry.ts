@@ -180,6 +180,17 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.READ,
     PermissionAction.UPDATE,
   ],
+  // Phase 12D — Gamification, Rewards & Engagement.
+  // READ: any authenticated role (student, sheikh, parent) sees their data.
+  // UPDATE: admin can update config and reward rules.
+  // AWARD: sheikh/admin can manually award badges and achievements.
+  [PermissionCategory.GAMIFICATION]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+    PermissionAction.UPDATE,
+    PermissionAction.DELETE,
+    PermissionAction.AWARD,
+  ],
 };
 
 export interface PermissionDefinition {

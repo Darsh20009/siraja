@@ -1,0 +1,152 @@
+Phase 12D — Gamification, Rewards & Engagement System
+
+Siraja is a non-profit platform, but engagement and motivation are critical.
+
+Build a complete gamification and rewards engine.
+
+Requirements:
+
+1. Points Engine
+
+Students earn points for:
+
+- Memorization completion
+- Revision completion
+- Attendance
+- Exam success
+- Daily streaks
+- Weekly streaks
+- Monthly streaks
+- AI Sheikh sessions
+- Community participation
+
+All point values must be configurable per tenant.
+
+2. Achievement System
+
+Create achievements:
+
+- First Memorization
+- First Khatmah
+- 7 Day Streak
+- 30 Day Streak
+- 100 Day Streak
+- Perfect Attendance
+- Revision Champion
+- Memorization Champion
+- Teacher Choice Award
+
+Support:
+- Automatic achievement awarding
+- Manual awarding by Sheikh/Admin
+
+3. Badge System
+
+Badge categories:
+
+- Bronze
+- Silver
+- Gold
+- Platinum
+- Diamond
+
+Badges can be:
+
+- Automatic
+- Manual
+- Seasonal
+- Event-based
+
+4. Leaderboards
+
+Create:
+
+- Student leaderboard
+- Circle leaderboard
+- Sheikh leaderboard
+- Tenant leaderboard
+
+Support:
+
+- Daily
+- Weekly
+- Monthly
+- Yearly
+- All-time
+
+5. Age Adaptive Experience
+
+Create age groups:
+
+- Child
+- Teen
+- Adult
+- Senior
+
+System must expose profile metadata allowing frontend to adapt experience.
+
+6. Reward Rules Engine
+
+Configurable rules:
+
+Examples:
+
+IF:
+- Attendance > 30 days
+THEN:
+- Award badge
+
+IF:
+- Memorization points > 1000
+THEN:
+- Award achievement
+
+Rules must be tenant configurable.
+
+7. Statistics Engine
+
+Track:
+
+- Streaks
+- Points earned
+- Badges earned
+- Achievements earned
+- Ranking history
+
+8. Event Integration
+
+Integrate with:
+
+- MemorizationRecordedEvent
+- ReviewRecordedEvent
+- AttendanceMarkedEvent
+- ExamCompletedEvent
+
+Everything should be automatic.
+
+9. APIs
+
+Create complete APIs for:
+
+- Points
+- Achievements
+- Badges
+- Rankings
+- Statistics
+
+10. Deliverables
+
+Architecture document:
+docs/architecture/phase-12d-gamification.md
+
+Audit report:
+docs/audits/phase-12d-audit.md
+
+Requirements:
+
+- TypeScript clean
+- Full tests
+- RBAC protected
+- Multi-tenant safe
+- Event-driven
+- Queue ready

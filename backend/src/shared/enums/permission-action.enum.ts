@@ -12,4 +12,5 @@ export enum PermissionAction {
   EXPORT = 'export',
   APPROVE = 'approve',
   ASSIGN = 'assign',
+  AWARD = 'award', // Phase 12D — manually award badges/achievements
 }

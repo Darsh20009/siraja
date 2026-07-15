@@ -12,3 +12,4 @@
 - [Siraja Phase 12A Platform Foundation](siraja-phase12a-architecture.md) — Users module, Tenant management, Email templates, Storage layer (S3/R2), Quran seeder; read before touching those areas.
 - [Siraja Phase 12B Learning Intelligence](siraja-phase12b-learning-intelligence.md) — MasteryScoreEngine, Sm2Engine, WeaknessHeatmapService, QuranMatcherService, MistakeDetectorService, Forecast upgrade; read before touching any learning-intelligence code.
 - [Siraja Phase 12C Infrastructure](siraja-phase12c-infrastructure.md) — Redis/CacheService graceful fallback, QueuesModule conditional registration, EventsModule wiring, health endpoint, compression; read before touching infra/cache/queue/event code.
+- [Siraja Phase 12D Gamification Engine](siraja-phase12d-gamification.md) — circular-dep avoidance pattern, typed EventDispatcher methods, snapshot leaderboard, Phase 13 gaps; read before touching GamificationModule.

@@ -118,6 +118,23 @@ export default () => ({
     },
   },
 
+  // Phase 12D — Gamification, Rewards & Engagement
+  // Default point values per activity — can be overridden per tenant via GamificationConfig.
+  gamification: {
+    defaultPoints: {
+      memorizationCompletion: parseInt(process.env.GAMIFICATION_POINTS_MEMORIZATION || '100', 10),
+      revisionCompletion: parseInt(process.env.GAMIFICATION_POINTS_REVISION || '50', 10),
+      attendance: parseInt(process.env.GAMIFICATION_POINTS_ATTENDANCE || '20', 10),
+      examSuccess: parseInt(process.env.GAMIFICATION_POINTS_EXAM || '150', 10),
+      dailyStreak: parseInt(process.env.GAMIFICATION_POINTS_DAILY_STREAK || '10', 10),
+      weeklyStreak: parseInt(process.env.GAMIFICATION_POINTS_WEEKLY_STREAK || '50', 10),
+      monthlyStreak: parseInt(process.env.GAMIFICATION_POINTS_MONTHLY_STREAK || '200', 10),
+      aiSession: parseInt(process.env.GAMIFICATION_POINTS_AI_SESSION || '30', 10),
+      communityParticipation: parseInt(process.env.GAMIFICATION_POINTS_COMMUNITY || '15', 10),
+    },
+    leaderboardRefreshIntervalMs: parseInt(process.env.GAMIFICATION_LEADERBOARD_REFRESH_MS || '3600000', 10), // 1 h
+  },
+
   // Phase 12A — File Storage Layer
   // Works with AWS S3, Cloudflare R2, Backblaze B2, MinIO.
   // STORAGE_DRIVER=s3 enables S3StorageProvider; anything else → NoopStorageProvider (dev-safe).
