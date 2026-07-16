@@ -33,18 +33,45 @@ const logger = new Logger('RedisModule');
           return null;
         }
 
-        const client = new Redis(url, {
-          lazyConnect: true,
-          enableReadyCheck: true,
-          maxRetriesPerRequest: 3,
-          retryStrategy: (times) => {
-            if (times > 5) {
-              logger.error('Redis: too many reconnect attempts — giving up.');
-              return null; // stop retrying
-            }
-            return Math.min(times * 200, 2000);
-          },
-        });
+        // Validate that the URL is a recognisable Redis URL before passing it
+        // to ioredis. If the value is anything other than a redis:// or
+        // rediss:// URL (e.g. an accidental text value stored in the secret),
+        // log a warning and fall back to in-process cache exactly as if the
+        // variable were unset.
+        const trimmed = url.trim();
+        if (!/^rediss?:\/\//i.test(trimmed)) {
+          logger.warn(
+            'REDIS_URL does not look like a valid Redis URL ' +
+            '(expected rediss://… or redis://…). ' +
+            'Falling back to in-process cache.',
+          );
+          return null;
+        }
+        const normalizedUrl = trimmed;
+
+        let client: Redis;
+        try {
+          client = new Redis(normalizedUrl, {
+            lazyConnect: true,
+            enableReadyCheck: true,
+            maxRetriesPerRequest: 3,
+            retryStrategy: (times) => {
+              if (times > 5) {
+                logger.error('Redis: too many reconnect attempts — giving up.');
+                return null;
+              }
+              return Math.min(times * 200, 2000);
+            },
+          });
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : String(err);
+          logger.error(
+            `Redis URL could not be parsed ("${msg}"). ` +
+            `Expected format: rediss://default:<password>@<host>:<port>  ` +
+            `Falling back to in-process cache.`,
+          );
+          return null;
+        }
 
         try {
           await client.connect();
