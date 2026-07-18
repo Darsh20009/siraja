@@ -24,6 +24,8 @@ EMAIL_HOST = "smtp.resend.com"
 EMAIL_PORT = "465"
 EMAIL_SECURE = "true"
 EMAIL_USER = "resend"
+STORAGE_DRIVER = "s3"
+STORAGE_REGION = "auto"
 
 [[ports]]
 localPort = 5000
