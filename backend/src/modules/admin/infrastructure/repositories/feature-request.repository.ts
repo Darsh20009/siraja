@@ -35,6 +35,18 @@ export class FeatureRequestRepository implements IFeatureRequestRepository {
     await this.model.findByIdAndUpdate(new Types.ObjectId(id), { $inc: { voteCount: delta } }).exec();
   }
 
+  async mergeInto(sourceId: string, targetId: string) {
+    const source = await this.model.findById(new Types.ObjectId(sourceId)).exec();
+    if (!source) return;
+    // Transfer votes to target
+    await this.model.findByIdAndUpdate(
+      new Types.ObjectId(targetId),
+      { $inc: { voteCount: source.voteCount } },
+    ).exec();
+    // Delete the source (duplicate)
+    await this.model.findByIdAndDelete(new Types.ObjectId(sourceId)).exec();
+  }
+
   async delete(id: string) {
     await this.model.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }

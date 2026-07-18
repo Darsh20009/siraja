@@ -41,6 +41,14 @@ export class DonationRepository implements IDonationRepository {
     return result[0]?.total ?? 0;
   }
 
+  async sumConfirmedGlobal(): Promise<number> {
+    const result = await this.model.aggregate([
+      { $match: { status: DonationStatus.CONFIRMED } },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]);
+    return result[0]?.total ?? 0;
+  }
+
   countByCampaign(campaignId: string): Promise<number> {
     return this.model.countDocuments({ campaignId: new Types.ObjectId(campaignId) }).exec();
   }

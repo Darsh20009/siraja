@@ -36,8 +36,14 @@ export enum FeedbackType {
 }
 
 export enum FeedbackStatus {
-  OPEN = 'open',
+  PENDING = 'pending',
   UNDER_REVIEW = 'under_review',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  /** Legacy — kept for backward-compat with older documents */
+  OPEN = 'open',
   RESOLVED = 'resolved',
   CLOSED = 'closed',
 }

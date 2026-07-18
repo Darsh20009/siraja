@@ -13,6 +13,8 @@ export class DashboardController {
     private readonly alerts: SystemAlertsService,
   ) {}
 
+  // ── Overview ──────────────────────────────────────────────────────────────
+
   @Get('overview')
   @RequirePermissions(PERMISSIONS.ADMIN.READ!)
   getOverview() {
@@ -25,16 +27,43 @@ export class DashboardController {
     return this.dashboard.getGrowthMetrics(days ? parseInt(days, 10) : 30);
   }
 
+  /** Operational status: queues, AI, email, storage, tickets. */
+  @Get('operational')
+  @RequirePermissions(PERMISSIONS.ADMIN.READ!)
+  getOperationalSummary() {
+    return this.dashboard.getOperationalSummary();
+  }
+
   @Post('snapshot')
   @RequirePermissions(PERMISSIONS.ADMIN.CREATE!)
   captureSnapshot() {
     return this.dashboard.captureSnapshot();
   }
 
+  // ── Analytics ─────────────────────────────────────────────────────────────
+
   @Get('analytics/users')
   @RequirePermissions(PERMISSIONS.ADMIN.READ!)
   getUserGrowth(@Query('days') days?: string) {
     return this.analytics.getUserGrowth(days ? parseInt(days, 10) : 30);
+  }
+
+  @Get('analytics/dau')
+  @RequirePermissions(PERMISSIONS.ADMIN.READ!)
+  getDau(@Query('days') days?: string) {
+    return this.analytics.getDailyActiveUsers(days ? parseInt(days, 10) : 30);
+  }
+
+  @Get('analytics/wau')
+  @RequirePermissions(PERMISSIONS.ADMIN.READ!)
+  getWau(@Query('weeks') weeks?: string) {
+    return this.analytics.getWeeklyActiveUsers(weeks ? parseInt(weeks, 10) : 12);
+  }
+
+  @Get('analytics/mau')
+  @RequirePermissions(PERMISSIONS.ADMIN.READ!)
+  getMau(@Query('months') months?: string) {
+    return this.analytics.getMonthlyActiveUsers(months ? parseInt(months, 10) : 6);
   }
 
   @Get('analytics/engagement')
@@ -49,6 +78,12 @@ export class DashboardController {
     return this.analytics.getRetentionProxy(days ? parseInt(days, 10) : 30);
   }
 
+  @Get('analytics/growth')
+  @RequirePermissions(PERMISSIONS.ADMIN.READ!)
+  getPlatformGrowth(@Query('days') days?: string) {
+    return this.analytics.getPlatformGrowth(days ? parseInt(days, 10) : 30);
+  }
+
   @Get('analytics/platform-usage')
   @RequirePermissions(PERMISSIONS.ADMIN.READ!)
   getPlatformUsage(@Query('days') days?: string) {
@@ -60,6 +95,8 @@ export class DashboardController {
   getDonationTrend(@Query('days') days?: string) {
     return this.analytics.getDonationTrend(days ? parseInt(days, 10) : 30);
   }
+
+  // ── Alerts & health ───────────────────────────────────────────────────────
 
   @Get('alerts')
   @RequirePermissions(PERMISSIONS.ADMIN.READ!)

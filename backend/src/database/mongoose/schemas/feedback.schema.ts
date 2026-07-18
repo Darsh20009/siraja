@@ -46,6 +46,10 @@ export class Feedback {
   @Prop({ type: Date })
   resolvedAt?: Date;
 
+  /** When true, the feedback is visible on the public community wall. */
+  @Prop({ default: false })
+  isPublic: boolean;
+
   /** Tags for categorisation */
   @Prop({ type: [String], default: [] })
   tags: string[];

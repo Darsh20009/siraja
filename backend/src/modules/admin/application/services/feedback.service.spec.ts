@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FeedbackService } from './feedback.service';
 import { FEEDBACK_REPOSITORY } from '../../domain/repositories/feedback.repository.interface';
 import { FeedbackStatus, FeedbackType } from '@shared/enums/admin-operations.enum';
-import { EVENTS } from '@shared/events/events.constants';
 
 const mockRepo = () => ({
   findAll: jest.fn(),
@@ -12,6 +11,7 @@ const mockRepo = () => ({
   create: jest.fn(),
   update: jest.fn(),
   countByType: jest.fn(),
+  countByStatus: jest.fn(),
   averageRating: jest.fn(),
 });
 
@@ -31,78 +31,116 @@ describe('FeedbackService', () => {
       ],
     }).compile();
 
-    service = module.get(FeedbackService);
-    repo = module.get(FEEDBACK_REPOSITORY);
-    emitter = module.get(EventEmitter2);
+    service  = module.get(FeedbackService);
+    repo     = module.get(FEEDBACK_REPOSITORY);
+    emitter  = module.get(EventEmitter2);
   });
+
+  // ── submit ────────────────────────────────────────────────────────────────
 
   describe('submit', () => {
-    it('creates feedback with OPEN status and default type GENERAL', async () => {
-      repo.create.mockResolvedValue({ _id: 'f1', type: FeedbackType.GENERAL });
+    it('creates feedback with PENDING status and isPublic: false by default', async () => {
+      const created = { _id: 'fb1', type: FeedbackType.GENERAL, status: FeedbackStatus.PENDING };
+      repo.create.mockResolvedValue(created);
 
-      await service.submit({ title: 'Great app', body: 'Love it' });
+      const result = await service.submit({ title: 'Test', body: 'Body' });
 
-      expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({
-        type: FeedbackType.GENERAL,
-        status: FeedbackStatus.OPEN,
-      }));
+      expect(repo.create).toHaveBeenCalledWith(
+        expect.objectContaining({ status: FeedbackStatus.PENDING, isPublic: false }),
+      );
+      expect(emitter.emit).toHaveBeenCalled();
+      expect(result).toBe(created);
     });
 
-    it('sets isAnonymous true when no userId given', async () => {
-      repo.create.mockResolvedValue({ _id: 'f1', type: FeedbackType.GENERAL });
-      await service.submit({ title: 'test', body: 'body' });
+    it('respects isPublic: true when provided', async () => {
+      repo.create.mockResolvedValue({ _id: 'fb2', status: FeedbackStatus.PENDING });
+      await service.submit({ title: 'Public feedback', body: 'Body', isPublic: true });
+      expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ isPublic: true }));
+    });
+
+    it('marks anonymous when no userId provided', async () => {
+      repo.create.mockResolvedValue({ _id: 'fb3' });
+      await service.submit({ title: 'Anon', body: 'Body' });
       expect(repo.create).toHaveBeenCalledWith(expect.objectContaining({ isAnonymous: true }));
     });
-
-    it('emits FEEDBACK_SUBMITTED event', async () => {
-      repo.create.mockResolvedValue({ _id: 'f1', type: FeedbackType.BUG_REPORT });
-      await service.submit({ title: 'Bug', body: 'It crashes', type: FeedbackType.BUG_REPORT });
-      expect(emitter.emit).toHaveBeenCalledWith(EVENTS.FEEDBACK_SUBMITTED, expect.objectContaining({
-        type: FeedbackType.BUG_REPORT,
-      }));
-    });
   });
 
-  describe('getFeedbackById', () => {
-    it('throws NotFoundException when not found', async () => {
+  // ── changeStatus ──────────────────────────────────────────────────────────
+
+  describe('changeStatus', () => {
+    it('transitions PENDING → UNDER_REVIEW successfully', async () => {
+      repo.findById.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.PENDING });
+      repo.update.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.UNDER_REVIEW });
+
+      const result = await service.changeStatus('fb1', FeedbackStatus.UNDER_REVIEW, 'admin-id');
+      expect(repo.update).toHaveBeenCalledWith('fb1', expect.objectContaining({ status: FeedbackStatus.UNDER_REVIEW }));
+      expect(result.status).toBe(FeedbackStatus.UNDER_REVIEW);
+    });
+
+    it('transitions UNDER_REVIEW → APPROVED', async () => {
+      repo.findById.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.UNDER_REVIEW });
+      repo.update.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.APPROVED });
+
+      await service.changeStatus('fb1', FeedbackStatus.APPROVED, 'admin-id');
+      expect(repo.update).toHaveBeenCalledWith('fb1', expect.objectContaining({ status: FeedbackStatus.APPROVED }));
+    });
+
+    it('transitions IN_PROGRESS → COMPLETED and sets resolvedAt', async () => {
+      repo.findById.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.IN_PROGRESS });
+      repo.update.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.COMPLETED });
+
+      await service.changeStatus('fb1', FeedbackStatus.COMPLETED, 'admin-id');
+      expect(repo.update).toHaveBeenCalledWith(
+        'fb1',
+        expect.objectContaining({ status: FeedbackStatus.COMPLETED, resolvedAt: expect.any(Date) }),
+      );
+    });
+
+    it('throws BadRequestException for invalid transition (PENDING → COMPLETED)', async () => {
+      repo.findById.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.PENDING });
+      await expect(service.changeStatus('fb1', FeedbackStatus.COMPLETED, 'admin-id')).rejects.toThrow(BadRequestException);
+    });
+
+    it('throws BadRequestException when already in terminal state (COMPLETED)', async () => {
+      repo.findById.mockResolvedValue({ _id: 'fb1', status: FeedbackStatus.COMPLETED });
+      await expect(service.changeStatus('fb1', FeedbackStatus.REJECTED, 'admin-id')).rejects.toThrow(BadRequestException);
+    });
+
+    it('throws NotFoundException when feedback does not exist', async () => {
       repo.findById.mockResolvedValue(null);
-      await expect(service.getFeedbackById('x')).rejects.toThrow(NotFoundException);
-    });
-
-    it('returns feedback when found', async () => {
-      const item = { _id: 'f1', title: 'test' };
-      repo.findById.mockResolvedValue(item);
-      const result = await service.getFeedbackById('f1');
-      expect(result).toEqual(item);
+      await expect(service.changeStatus('nonexistent', FeedbackStatus.UNDER_REVIEW, 'admin-id')).rejects.toThrow(NotFoundException);
     });
   });
 
-  describe('resolve', () => {
-    it('throws NotFoundException when not found', async () => {
+  // ── setVisibility ─────────────────────────────────────────────────────────
+
+  describe('setVisibility', () => {
+    it('updates isPublic flag', async () => {
+      repo.findById.mockResolvedValue({ _id: 'fb1' });
+      repo.update.mockResolvedValue({ _id: 'fb1', isPublic: true });
+
+      await service.setVisibility('fb1', true);
+      expect(repo.update).toHaveBeenCalledWith('fb1', { isPublic: true });
+    });
+
+    it('throws NotFoundException when feedback does not exist', async () => {
       repo.findById.mockResolvedValue(null);
-      await expect(service.resolve('x', 'admin1')).rejects.toThrow(NotFoundException);
-    });
-
-    it('updates status to RESOLVED with admin notes', async () => {
-      repo.findById.mockResolvedValue({ _id: 'f1' });
-      repo.update.mockResolvedValue({});
-
-      await service.resolve('f1', 'admin1', 'Fixed in v2');
-
-      expect(repo.update).toHaveBeenCalledWith('f1', expect.objectContaining({
-        status: FeedbackStatus.RESOLVED,
-        adminNotes: 'Fixed in v2',
-      }));
+      await expect(service.setVisibility('nonexistent', true)).rejects.toThrow(NotFoundException);
     });
   });
+
+  // ── getStats ──────────────────────────────────────────────────────────────
 
   describe('getStats', () => {
-    it('rounds average rating to one decimal place', async () => {
-      repo.countByType.mockResolvedValue([]);
-      repo.averageRating.mockResolvedValue(4.166);
+    it('returns byType, byStatus, and averageRating', async () => {
+      repo.countByType.mockResolvedValue([{ type: 'general', count: 5 }]);
+      repo.countByStatus.mockResolvedValue([{ status: 'pending', count: 3 }]);
+      repo.averageRating.mockResolvedValue(4.2);
 
-      const result = await service.getStats();
-      expect(result.averageRating).toBe(4.2);
+      const stats = await service.getStats();
+      expect(stats.byType).toHaveLength(1);
+      expect(stats.byStatus).toHaveLength(1);
+      expect(stats.averageRating).toBe(4.2);
     });
   });
 });

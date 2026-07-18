@@ -10,5 +10,7 @@ export interface IDonationRepository {
   create(data: Partial<Donation>): Promise<Donation>;
   update(id: string, data: Partial<Donation>): Promise<Donation | null>;
   sumConfirmedByCampaign(campaignId: string): Promise<number>;
+  /** Platform-wide sum of all confirmed donations (across all campaigns). */
+  sumConfirmedGlobal(): Promise<number>;
   countByCampaign(campaignId: string): Promise<number>;
 }

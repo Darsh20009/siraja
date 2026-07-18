@@ -9,11 +9,12 @@ import { FeedbackStatus, FeedbackType } from '@shared/enums/admin-operations.enu
 export class FeedbackRepository implements IFeedbackRepository {
   constructor(@InjectModel(Feedback.name) private readonly model: Model<FeedbackDocument>) {}
 
-  findAll(filter?: { type?: FeedbackType; status?: FeedbackStatus; tenantId?: string }) {
+  findAll(filter?: { type?: FeedbackType; status?: FeedbackStatus; tenantId?: string; isPublic?: boolean }) {
     const q: Record<string, unknown> = {};
-    if (filter?.type) q.type = filter.type;
-    if (filter?.status) q.status = filter.status;
+    if (filter?.type)     q.type     = filter.type;
+    if (filter?.status)   q.status   = filter.status;
     if (filter?.tenantId) q.tenantId = filter.tenantId;
+    if (filter?.isPublic !== undefined) q.isPublic = filter.isPublic;
     return this.model.find(q).sort({ createdAt: -1 }).exec();
   }
 
@@ -30,7 +31,17 @@ export class FeedbackRepository implements IFeedbackRepository {
   }
 
   async countByType(): Promise<Array<{ type: string; count: number }>> {
-    return this.model.aggregate([{ $group: { _id: '$type', count: { $sum: 1 } } }, { $project: { type: '$_id', count: 1, _id: 0 } }]);
+    return this.model.aggregate([
+      { $group: { _id: '$type', count: { $sum: 1 } } },
+      { $project: { type: '$_id', count: 1, _id: 0 } },
+    ]);
+  }
+
+  async countByStatus(): Promise<Array<{ status: string; count: number }>> {
+    return this.model.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+      { $project: { status: '$_id', count: 1, _id: 0 } },
+    ]);
   }
 
   async averageRating(): Promise<number> {

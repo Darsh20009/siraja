@@ -123,6 +123,7 @@ export * from './donation.schema';
 export * from './feedback.schema';
 export * from './feature-request.schema';
 export * from './feature-vote.schema';
+export * from './feature-follow.schema';
 export * from './ticket-message.schema';
 export * from './system-alert.schema';
 export * from './tenant-branding.schema';

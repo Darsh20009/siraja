@@ -10,5 +10,7 @@ export interface IFeatureRequestRepository {
   create(data: Partial<FeatureRequest>): Promise<FeatureRequest>;
   update(id: string, data: Partial<FeatureRequest>): Promise<FeatureRequest | null>;
   incrementVotes(id: string, delta: 1 | -1): Promise<void>;
+  /** Transfer all votes from sourceId into targetId, then delete source. */
+  mergeInto(sourceId: string, targetId: string): Promise<void>;
   delete(id: string): Promise<void>;
 }

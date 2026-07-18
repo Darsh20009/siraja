@@ -11,7 +11,11 @@ const mockSnapshotRepo = () => ({
 const buildSnapshot = (date: string, overrides: Record<string, number> = {}) => ({
   date,
   totalUsers: 100,
+  totalStudents: 40,
+  totalTenants: 5,
   newUsersToday: 5,
+  newStudentsToday: 2,
+  newTenantsToday: 0,
   dailyActiveUsers: 40,
   dailyMemorizationRecords: 20,
   dailyReviewRecords: 15,
@@ -39,8 +43,10 @@ describe('AnalyticsService', () => {
     }).compile();
 
     service = module.get(AnalyticsService);
-    repo = module.get(OPERATIONAL_SNAPSHOT_REPOSITORY);
+    repo    = module.get(OPERATIONAL_SNAPSHOT_REPOSITORY);
   });
+
+  // ── getUserGrowth ─────────────────────────────────────────────────────────
 
   describe('getUserGrowth', () => {
     it('returns period metadata and daily data', async () => {
@@ -57,6 +63,43 @@ describe('AnalyticsService', () => {
     });
   });
 
+  // ── getWeeklyActiveUsers ──────────────────────────────────────────────────
+
+  describe('getWeeklyActiveUsers', () => {
+    it('buckets daily snapshots into weeks', async () => {
+      // 2026-07-13 is a Monday
+      repo.findRange.mockResolvedValue([
+        buildSnapshot('2026-07-13', { dailyActiveUsers: 30 }),
+        buildSnapshot('2026-07-14', { dailyActiveUsers: 50 }),
+        buildSnapshot('2026-07-15', { dailyActiveUsers: 40 }),
+      ]);
+
+      const result = await service.getWeeklyActiveUsers(4);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0].weekStart).toBe('2026-07-13');
+      expect(result.data[0].maxDau).toBe(50);
+    });
+  });
+
+  // ── getMonthlyActiveUsers ─────────────────────────────────────────────────
+
+  describe('getMonthlyActiveUsers', () => {
+    it('buckets daily snapshots into months', async () => {
+      repo.findRange.mockResolvedValue([
+        buildSnapshot('2026-06-28', { dailyActiveUsers: 40 }),
+        buildSnapshot('2026-06-29', { dailyActiveUsers: 60 }),
+        buildSnapshot('2026-07-01', { dailyActiveUsers: 50 }),
+      ]);
+
+      const result = await service.getMonthlyActiveUsers(2);
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].month).toBe('2026-06');
+      expect(result.data[0].peakDau).toBe(60);
+    });
+  });
+
+  // ── getEngagementTrend ────────────────────────────────────────────────────
+
   describe('getEngagementTrend', () => {
     it('includes memorizations, reviews, and AI requests per day', async () => {
       repo.findRange.mockResolvedValue([buildSnapshot('2026-07-01')]);
@@ -70,6 +113,8 @@ describe('AnalyticsService', () => {
       });
     });
   });
+
+  // ── getRetentionProxy ─────────────────────────────────────────────────────
 
   describe('getRetentionProxy', () => {
     it('returns null when fewer than 2 snapshots', async () => {
@@ -86,10 +131,24 @@ describe('AnalyticsService', () => {
       ]);
 
       const result = await service.getRetentionProxy(30);
-      // avg = (40+60)/2 = 50; rate = 50/100 = 50%
       expect(result.retentionRate).toBe(50);
     });
   });
+
+  // ── getPlatformGrowth ─────────────────────────────────────────────────────
+
+  describe('getPlatformGrowth', () => {
+    it('includes tenant growth fields', async () => {
+      repo.findRange.mockResolvedValue([
+        buildSnapshot('2026-07-01', { totalTenants: 5, newTenantsToday: 1 }),
+      ]);
+
+      const result = await service.getPlatformGrowth(7);
+      expect(result.data[0]).toMatchObject({ totalTenants: 5, newTenants: 1 });
+    });
+  });
+
+  // ── getDonationTrend ──────────────────────────────────────────────────────
 
   describe('getDonationTrend', () => {
     it('includes cumulative donation amounts', async () => {
@@ -98,6 +157,17 @@ describe('AnalyticsService', () => {
       const result = await service.getDonationTrend(30);
 
       expect(result.data[0].cumulative).toBe(12000);
+    });
+  });
+
+  // ── getPlatformUsageTrend ─────────────────────────────────────────────────
+
+  describe('getPlatformUsageTrend', () => {
+    it('includes ai requests in platform usage', async () => {
+      repo.findRange.mockResolvedValue([buildSnapshot('2026-07-01', { dailyAiRequests: 25 })]);
+
+      const result = await service.getPlatformUsageTrend(30);
+      expect(result.data[0].aiRequests).toBe(25);
     });
   });
 });
