@@ -34,7 +34,7 @@ export class GetMeUseCase {
 
     return {
       id: (user._id as Types.ObjectId).toHexString(),
-      tenantId: user.tenantId.toHexString(),
+      tenantId: String(user.tenantId),
       email: user.email,
       phone: user.phone,
       fullName: user.fullName,

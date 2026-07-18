@@ -1,10 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
+import { Public } from '@modules/auth/infrastructure/decorators/public.decorator';
 import { PresentationService } from '../../application/services/presentation.service';
 
 /**
  * Public presentation endpoints — no auth required.
  * Powers the /presentation landing page and any public-facing data widgets.
  */
+@Public()
 @Controller('presentation')
 export class PresentationController {
   constructor(private readonly service: PresentationService) {}

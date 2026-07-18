@@ -3,6 +3,7 @@ import { RequirePermissions } from '@common/decorators/require-permissions.decor
 import { PERMISSIONS } from '@shared/authorization/permission-registry';
 import { CurrentUser } from '@modules/auth/infrastructure/decorators/current-user.decorator';
 import { AccessTokenPayload } from '@modules/auth/domain/value-objects/jwt-payload';
+import { Public } from '@modules/auth/infrastructure/decorators/public.decorator';
 import { DonationsService } from '../../application/services/donations.service';
 import { CreateCampaignDto } from '../../application/dto/create-campaign.dto';
 import { SubmitDonationDto, RejectDonationDto } from '../../application/dto/submit-donation.dto';
@@ -14,16 +15,19 @@ export class DonationsController {
 
   // ── Public / presentation endpoints ──────────────────────────────────────
 
+  @Public()
   @Get('public')
   getPublicCampaigns() {
     return this.service.getPublicCampaigns();
   }
 
+  @Public()
   @Get('campaigns/:id/public')
   getPublicCampaign(@Param('id') id: string) {
     return this.service.getCampaignById(id);
   }
 
+  @Public()
   @Get('fundraising-progress')
   async getFundraisingProgress() {
     const campaigns = await this.service.getPublicCampaigns();
@@ -31,8 +35,9 @@ export class DonationsController {
     return this.service.getFundraisingProgress(primary?.raisedAmount ?? 0);
   }
 
-  // ── User-facing: submit a donation ────────────────────────────────────────
+  // ── User-facing: submit a donation (optional auth — donor ID captured if logged in) ──
 
+  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   submitDonation(@Body() dto: SubmitDonationDto, @CurrentUser() user?: AccessTokenPayload) {

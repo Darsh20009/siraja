@@ -3,6 +3,7 @@ import { RequirePermissions } from '@common/decorators/require-permissions.decor
 import { PERMISSIONS } from '@shared/authorization/permission-registry';
 import { CurrentUser } from '@modules/auth/infrastructure/decorators/current-user.decorator';
 import { AccessTokenPayload } from '@modules/auth/domain/value-objects/jwt-payload';
+import { Public } from '@modules/auth/infrastructure/decorators/public.decorator';
 import { FeedbackService } from '../../application/services/feedback.service';
 import { SubmitFeedbackDto, ResolveFeedbackDto, ChangeFeedbackStatusDto } from '../../application/dto/submit-feedback.dto';
 import { FeedbackStatus, FeedbackType } from '@shared/enums/admin-operations.enum';
@@ -12,6 +13,7 @@ export class FeedbackController {
   constructor(private readonly service: FeedbackService) {}
 
   /** Public — anonymous and authenticated submissions */
+  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   submit(@Body() dto: SubmitFeedbackDto, @CurrentUser() user?: AccessTokenPayload) {
@@ -23,6 +25,7 @@ export class FeedbackController {
   }
 
   /** Public — community wall (publicly-flagged feedback only) */
+  @Public()
   @Get('public')
   listPublic() {
     return this.service.listPublic();

@@ -16,3 +16,5 @@
 - [Siraja SMTP email non-fatal pattern](siraja-smtp-email-non-fatal.md) — all MailerService calls in auth use cases must be try/catch; SmtpEmailProvider no-ops when EMAIL_PASS absent; read before touching auth email flows.
 - [Siraja beta demo seeder](siraja-beta-demo-seeder.md) — bootstrap order, demo credentials, dbName gotcha (must pass { dbName } to mongoose.connect in standalone seeders).
 - [Siraja Phase 12E Platform Operations](siraja-phase12e-operations.md) — AdminModule hub for Donations/Feedback/FeatureVoting/Support/Dashboard/Presentation/Analytics/Audit; snapshot-driven analytics pattern; read before touching admin module.
+- [Siraja GetMe 500 bug](siraja-getme-500-tenantId-bug.md) — user.tenantId from repo is a string not ObjectId; use String() not .toHexString().
+- [Siraja @Public() decorator pattern](siraja-public-decorator-pattern.md) — JwtAuthGuard is global; @Public() must be explicit on every anonymous endpoint.

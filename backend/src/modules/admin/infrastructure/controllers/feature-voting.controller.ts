@@ -3,6 +3,7 @@ import { RequirePermissions } from '@common/decorators/require-permissions.decor
 import { PERMISSIONS } from '@shared/authorization/permission-registry';
 import { CurrentUser } from '@modules/auth/infrastructure/decorators/current-user.decorator';
 import { AccessTokenPayload } from '@modules/auth/domain/value-objects/jwt-payload';
+import { Public } from '@modules/auth/infrastructure/decorators/public.decorator';
 import { FeatureVotingService } from '../../application/services/feature-voting.service';
 import { SuggestFeatureDto, ReviewFeatureDto, SetFeaturePriorityDto } from '../../application/dto/feature-request.dto';
 import { FeatureRequestStatus } from '@shared/enums/admin-operations.enum';
@@ -11,21 +12,26 @@ import { FeatureRequestStatus } from '@shared/enums/admin-operations.enum';
 export class FeatureVotingController {
   constructor(private readonly service: FeatureVotingService) {}
 
+  @Public()
   @Get()
   list(@Query('status') status?: FeatureRequestStatus) {
     return this.service.listFeatureRequests(status);
   }
 
+  @Public()
   @Get('top')
   getTopVoted(@Query('limit') limit?: string) {
     return this.service.getTopVoted(limit ? parseInt(limit, 10) : 20);
   }
 
+  @Public()
   @Get(':id')
   getById(@Param('id') id: string) {
     return this.service.getById(id);
   }
 
+  /** Optional auth — submitter ID captured when logged in */
+  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   suggest(@Body() dto: SuggestFeatureDto, @CurrentUser() user?: AccessTokenPayload) {
