@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Types } from 'mongoose';
 import { UserStatus } from '@shared/enums/user-status.enum';
@@ -43,6 +43,8 @@ import { AuthResult } from '../dto/auth-result';
  */
 @Injectable()
 export class RegisterUseCase {
+  private readonly logger = new Logger(RegisterUseCase.name);
+
   constructor(
     @Inject(USER_AUTH_REPOSITORY) private readonly users: IUserAuthRepository,
     @Inject(VERIFICATION_TOKEN_REPOSITORY) private readonly verificationTokens: IVerificationTokenRepository,
@@ -92,7 +94,17 @@ export class RegisterUseCase {
     });
 
     if (dto.email) {
-      await this.sendVerificationEmail(tenantId, user._id as Types.ObjectId, dto.email, ctx.ipAddress);
+      // Email delivery is best-effort: the account is created and the session
+      // is issued regardless of SMTP availability. If delivery fails (SMTP not
+      // yet configured, transient relay error) we log a warning and continue —
+      // the user can request a resend later. The verification token is already
+      // persisted above so a successful resend will still work.
+      try {
+        await this.sendVerificationEmail(tenantId, user._id as Types.ObjectId, dto.email, ctx.ipAddress);
+      } catch (emailErr: unknown) {
+        const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
+        this.logger.warn(`Verification email could not be sent to ${dto.email}: ${msg}`);
+      }
     }
 
     return this.issueSession.issue(user, ctx);

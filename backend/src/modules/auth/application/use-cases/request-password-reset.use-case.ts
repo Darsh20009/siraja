@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Types } from 'mongoose';
 import { AuditAction } from '@shared/enums/audit.enum';
@@ -24,6 +24,8 @@ import { AuthAuditService } from '../../infrastructure/services/audit.service';
  */
 @Injectable()
 export class RequestPasswordResetUseCase {
+  private readonly logger = new Logger(RequestPasswordResetUseCase.name);
+
   constructor(
     @Inject(USER_AUTH_REPOSITORY) private readonly users: IUserAuthRepository,
     @Inject(VERIFICATION_TOKEN_REPOSITORY) private readonly verificationTokens: IVerificationTokenRepository,
@@ -49,7 +51,15 @@ export class RequestPasswordResetUseCase {
       requestIpAddress: ipAddress,
     });
 
-    await this.mailer.sendPasswordResetEmail(email, raw, this.configService.get<string>('appUrl') || '');
+    try {
+      await this.mailer.sendPasswordResetEmail(email, raw, this.configService.get<string>('appUrl') || '');
+    } catch (emailErr: unknown) {
+      // Non-fatal — the reset token is already persisted; the user can
+      // request another reset if email fails. Failure must not leak that
+      // the email address exists in the system.
+      const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
+      this.logger.warn(`Password-reset email failed for ${email}: ${msg}`);
+    }
     await this.audit.record({
       tenantId,
       actor: user._id as Types.ObjectId,

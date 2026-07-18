@@ -93,7 +93,8 @@ async function bootstrap() {
   // so the app's real database is whatever db the URI's own path resolves
   // to, NOT `configuration().database.dbName`'s fallback default. Passing
   // that fallback here would silently seed a different, invisible database.
-  await mongoose.connect(uri);
+  const dbName = process.env.MONGODB_DB_NAME || 'siraja';
+  await mongoose.connect(uri, { dbName });
 
   console.log(`Seeding tenant "${TENANT_SLUG}"...`);
   await upsertTenant();

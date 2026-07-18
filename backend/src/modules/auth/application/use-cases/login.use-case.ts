@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { AuditAction } from '@shared/enums/audit.enum';
 import { UserStatus } from '@shared/enums/user-status.enum';
@@ -30,6 +30,8 @@ const SUSPICIOUS_LOOKBACK_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
  */
 @Injectable()
 export class LoginUseCase {
+  private readonly logger = new Logger(LoginUseCase.name);
+
   constructor(
     @Inject(USER_AUTH_REPOSITORY) private readonly users: IUserAuthRepository,
     @Inject(LOGIN_ATTEMPT_REPOSITORY) private readonly loginAttempts: ILoginAttemptRepository,
@@ -109,7 +111,14 @@ export class LoginUseCase {
         ipAddress: ctx.ipAddress,
         changes: { userAgent: ctx.userAgent },
       });
-      await this.mailer.sendSuspiciousLoginAlert(user.email, ctx.ipAddress, ctx.userAgent);
+      try {
+        await this.mailer.sendSuspiciousLoginAlert(user.email, ctx.ipAddress, ctx.userAgent);
+      } catch (emailErr: unknown) {
+        // Non-fatal — suspicious login is already audit-logged above; email
+        // delivery failure must not block the login response.
+        const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
+        this.logger.warn(`Suspicious-login alert email failed for ${user.email}: ${msg}`);
+      }
     }
 
     return this.issueSession.issue(user, ctx);

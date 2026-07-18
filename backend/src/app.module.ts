@@ -68,6 +68,9 @@ import { EventsModule } from './shared/events/events.module';
 import { SystemModule } from './modules/system/system.module';
 import { GamificationModule } from './modules/gamification/gamification.module';
 
+// Admin Operations (Phase 12D/12E)
+import { AdminModule } from './modules/admin/admin.module';
+
 /**
  * Root application module.
  *
@@ -173,6 +176,10 @@ import { GamificationModule } from './modules/gamification/gamification.module';
 
     // Gamification, Rewards & Engagement (Phase 12D)
     GamificationModule,
+
+    // Admin Operations — Audit, Dashboard, Donations, Feedback, Support,
+    // System Alerts, Tenant Branding, Analytics, Feature Voting (Phase 12D/12E)
+    AdminModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],

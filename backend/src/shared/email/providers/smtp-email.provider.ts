@@ -41,11 +41,24 @@ export class SmtpEmailProvider implements IEmailProvider {
       return;
     }
 
+    // Require both user AND pass when the host is set — an incomplete
+    // credential pair will cause SMTP auth failures on every send (530).
+    // Treat partial credentials the same as "no host": log a warning
+    // and fall back to no-op rather than crashing every email call.
+    if (host && !(user && pass)) {
+      this.logger.warn(
+        'EMAIL_HOST is set but EMAIL_USER/EMAIL_PASS are missing — ' +
+          'email delivery is disabled. Configure all three to enable SMTP.',
+      );
+      this.transporter = null;
+      return;
+    }
+
     this.transporter = nodemailer.createTransport({
       host,
       port,
       secure,
-      auth: user && pass ? { user, pass } : undefined,
+      auth: { user, pass },
     });
   }
 
