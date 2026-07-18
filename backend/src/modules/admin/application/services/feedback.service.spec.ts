@@ -74,7 +74,7 @@ describe('FeedbackService', () => {
 
       const result = await service.changeStatus('fb1', FeedbackStatus.UNDER_REVIEW, 'admin-id');
       expect(repo.update).toHaveBeenCalledWith('fb1', expect.objectContaining({ status: FeedbackStatus.UNDER_REVIEW }));
-      expect(result.status).toBe(FeedbackStatus.UNDER_REVIEW);
+      expect(result!.status).toBe(FeedbackStatus.UNDER_REVIEW);
     });
 
     it('transitions UNDER_REVIEW → APPROVED', async () => {

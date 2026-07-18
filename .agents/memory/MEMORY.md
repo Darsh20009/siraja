@@ -15,3 +15,4 @@
 - [Siraja Phase 12D Gamification Engine](siraja-phase12d-gamification.md) — circular-dep avoidance pattern, typed EventDispatcher methods, snapshot leaderboard, Phase 13 gaps; read before touching GamificationModule.
 - [Siraja SMTP email non-fatal pattern](siraja-smtp-email-non-fatal.md) — all MailerService calls in auth use cases must be try/catch; SmtpEmailProvider no-ops when EMAIL_PASS absent; read before touching auth email flows.
 - [Siraja beta demo seeder](siraja-beta-demo-seeder.md) — bootstrap order, demo credentials, dbName gotcha (must pass { dbName } to mongoose.connect in standalone seeders).
+- [Siraja Phase 12E Platform Operations](siraja-phase12e-operations.md) — AdminModule hub for Donations/Feedback/FeatureVoting/Support/Dashboard/Presentation/Analytics/Audit; snapshot-driven analytics pattern; read before touching admin module.

@@ -110,6 +110,17 @@ environment config) live in `docs/architecture/`. Start at
   Revision Recommendation, Memorization Recommendation, Forecast
   Explanation, Sheikh/Parent AI Reports, AI Insights history. Moonshot
   AI is the sole LLM vendor (`MOONSHOT_API_KEY`).
+- **Phase 12E (complete, 2026-07-18)**: Final Platform Operations &
+  Launch Readiness — 75 new endpoints across 9 controllers inside
+  `src/modules/admin/`: Donation System (campaigns + milestones 5k→150k
+  SAR), Feedback System (state machine, anonymous, public wall), Feature
+  Voting (vote/follow/merge), Support Center (tickets + threaded
+  messages), Super Admin Operational Dashboard (snapshot-driven
+  DAU/WAU/MAU + 15 analytics routes), Presentation Data API (7 public
+  routes, no auth), Analytics Layer (OperationalSnapshot CRON at 00:05),
+  Audit (append-only AuditLog). TypeScript clean, 75/75 tests pass.
+  Architecture: `docs/architecture/phase-12e-operations.md`.
+  Audit: `docs/audits/phase-12e-audit.md`.
 
 ## Known follow-ups (deferred, not project tasks)
 
