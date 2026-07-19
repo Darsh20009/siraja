@@ -62,6 +62,7 @@ export default () => ({
     pass: process.env.EMAIL_PASS || '',
     from: process.env.EMAIL_FROM || 'noreply@siraja.com',
     fromName: process.env.EMAIL_FROM_NAME || 'Siraja',
+    supportEmail: process.env.SUPPORT_EMAIL || 'support@siraja.com',
   },
 
   throttle: {
