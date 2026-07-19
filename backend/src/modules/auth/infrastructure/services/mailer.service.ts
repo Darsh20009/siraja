@@ -1,18 +1,27 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { EMAIL_PROVIDER, IEmailProvider } from '@shared/email/email-provider.interface';
+import { verificationEmailTemplate } from '@shared/email/templates/verification.template';
+import { passwordResetEmailTemplate } from '@shared/email/templates/password-reset.template';
+import { notificationEmailTemplate } from '@shared/email/templates/notification.template';
+
+/** Shared brand data injected into every email */
+const BRAND = {
+  tenantName:   'سراج',
+  primaryColor: '#1A6B4A',
+  accentColor:  '#C9A84C',
+  supportEmail: 'support@siraja.website',
+  websiteUrl:   'https://siraja.website',
+};
 
 /**
  * Email delivery seam for auth flows (verification, password reset,
- * suspicious login) — every such flow is Email-only per Phase 4's "no SMS
- * OTP" instruction, so this service is on the critical path for both.
+ * suspicious login) — every email is rendered through the shared branded
+ * HTML template system (base.template.ts) so all outbound mail carries
+ * the Siraja identity consistently.
  *
- * Delegates to the shared `IEmailProvider` (SMTP via Nodemailer by
- * default, see `shared/email/`) so delivery actually happens once
- * `EMAIL_HOST`/`EMAIL_USER`/`EMAIL_PASS` are configured. If those env
- * vars are unset, `SmtpEmailProvider` itself no-ops with a warning log
- * (see `smtp-email.provider.ts`) rather than throwing — so the rest of
- * the auth flow (token generation, hashing, expiry, single-use
- * consumption) keeps working in dev/CI without a mail provider.
+ * Delegates to the shared IEmailProvider (SMTP via Nodemailer).
+ * If EMAIL_HOST is unset, SmtpEmailProvider no-ops with a WARN — the auth
+ * flow continues (token generation, hashing, expiry) without crashing.
  */
 @Injectable()
 export class MailerService {
@@ -23,68 +32,71 @@ export class MailerService {
     private readonly emailProvider: IEmailProvider,
   ) {}
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // Public methods
+  // ─────────────────────────────────────────────────────────────────────────
+
   async sendVerificationEmail(email: string, rawToken: string, appUrl: string): Promise<void> {
-    const link = `${appUrl}/auth/verify-email?token=${rawToken}`;
-    await this.emailProvider.send({
-      to: email,
-      subject: 'Verify your Siraja account',
-      text: `Welcome to Siraja!\n\nTo verify your account, open the link below:\n${link}\n\nIf you did not create this account, you can safely ignore this email.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
-          <h2>Welcome to Siraja!</h2>
-          <p>To verify your account, click the button below:</p>
-          <p style="margin: 24px 0;">
-            <a href="${link}" style="background:#0f766e;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">Verify account</a>
-          </p>
-          <p>Or copy and paste this link into your browser:</p>
-          <p style="word-break: break-all; color:#555;">${link}</p>
-          <p>If you did not create this account, you can safely ignore this email.</p>
-        </div>
-      `,
+    const verificationUrl = `${appUrl}/auth/verify-email?token=${rawToken}`;
+    const { subject, html, text } = verificationEmailTemplate({
+      ...BRAND,
+      fullName: email.split('@')[0],   // best-effort name until we pass it through
+      verificationUrl,
+      expiresInHours: 24,
     });
-    this.logger.log(`Verification email dispatched to ${email}`);
+
+    await this.deliver('verification', email, subject, html, text);
   }
 
   async sendPasswordResetEmail(email: string, rawToken: string, appUrl: string): Promise<void> {
-    const link = `${appUrl}/auth/reset-password?token=${rawToken}`;
-    await this.emailProvider.send({
-      to: email,
-      subject: 'Reset your Siraja password',
-      text: `We received a request to reset your Siraja account password.\n\nTo reset it, open the link below (valid for a limited time):\n${link}\n\nIf you did not request this, you can safely ignore this email — nothing will change.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
-          <h2>Reset your password</h2>
-          <p>We received a request to reset the password for your Siraja account.</p>
-          <p style="margin: 24px 0;">
-            <a href="${link}" style="background:#0f766e;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;">Reset password</a>
-          </p>
-          <p>This link is valid for a limited time only.</p>
-          <p>If you did not request this, you can safely ignore this email — nothing will change on your account.</p>
-        </div>
-      `,
+    const resetUrl = `${appUrl}/auth/reset-password?token=${rawToken}`;
+    const { subject, html, text } = passwordResetEmailTemplate({
+      ...BRAND,
+      fullName: email.split('@')[0],
+      resetUrl,
+      expiresInMinutes: 60,
     });
-    this.logger.log(`Password reset email dispatched to ${email}`);
+
+    await this.deliver('password-reset', email, subject, html, text);
   }
 
   async sendSuspiciousLoginAlert(email: string, ipAddress: string, userAgent?: string): Promise<void> {
-    const device = userAgent ?? 'an unknown device';
-    await this.emailProvider.send({
-      to: email,
-      subject: 'Unusual sign-in detected — Siraja',
-      text: `We noticed a sign-in to your account from an unusual location or device.\n\nIP address: ${ipAddress}\nDevice: ${device}\n\nIf this was you, you can ignore this email. If it wasn't, we recommend changing your password immediately and reviewing the devices linked to your account.`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto;">
-          <h2>Unusual sign-in detected</h2>
-          <p>We noticed a sign-in to your account from an unusual location or device:</p>
-          <ul>
-            <li><strong>IP address:</strong> ${ipAddress}</li>
-            <li><strong>Device:</strong> ${device}</li>
-          </ul>
-          <p>If this was you, you can ignore this email.</p>
-          <p>If it wasn't, we recommend changing your password immediately and reviewing the devices linked to your account.</p>
-        </div>
+    const device = userAgent ?? 'جهاز غير معروف';
+    const { subject, html, text } = notificationEmailTemplate({
+      ...BRAND,
+      recipientName: email.split('@')[0],
+      type: 'warning',
+      title: 'تسجيل دخول غير مألوف',
+      message: `
+        لاحظنا تسجيل دخول إلى حسابك من موقع أو جهاز غير مألوف:<br/><br/>
+        <strong>عنوان IP:</strong> ${ipAddress}<br/>
+        <strong>الجهاز:</strong> ${device}<br/><br/>
+        إذا كنت أنت، يمكنك تجاهل هذه الرسالة.
+        إذا لم تكن أنت، <strong>غيّر كلمة مرورك فوراً</strong> وراجع الأجهزة المرتبطة بحسابك.
       `,
     });
-    this.logger.warn(`Suspicious login alert dispatched to ${email} from ${ipAddress} (${device})`);
+
+    await this.deliver('suspicious-login', email, subject, html, text);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Private helpers
+  // ─────────────────────────────────────────────────────────────────────────
+
+  private async deliver(
+    type: string,
+    to: string,
+    subject: string,
+    html: string,
+    text: string,
+  ): Promise<void> {
+    try {
+      await this.emailProvider.send({ to, subject, html, text });
+      this.logger.log(`[${type}] dispatched → ${to}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.logger.error(`[${type}] failed → ${to}: ${msg}`);
+      // Non-fatal — auth flow continues even if email delivery fails.
+    }
   }
 }

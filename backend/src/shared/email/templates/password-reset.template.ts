@@ -12,34 +12,54 @@ export function passwordResetEmailTemplate(data: PasswordResetTemplateData): {
   html: string;
   text: string;
 } {
-  const { fullName, resetUrl, expiresInMinutes = 60, requestIp, tenantName = 'Siraja' } = data;
+  const { fullName, resetUrl, expiresInMinutes = 60, requestIp, tenantName = 'سراج' } = data;
 
-  const subject = `إعادة تعيين كلمة المرور — ${tenantName}`;
+  const subject = `🔐 إعادة تعيين كلمة المرور — ${tenantName}`;
 
   const ipNote = requestIp
-    ? `<p style="color: #888; font-size: 12px;">تم طلب إعادة التعيين من العنوان: ${requestIp}</p>`
+    ? `<div class="warn-card">⚠️ &nbsp;هذا الطلب صدر من العنوان: <strong>${requestIp}</strong><br/>إذا لم تكن أنت، غيّر كلمة مرورك فوراً.</div>`
     : '';
 
   const body = `
-    <h2>إعادة تعيين كلمة المرور</h2>
+    <h2>🔐 إعادة تعيين كلمة المرور</h2>
+
     <p>مرحباً <strong>${fullName}</strong>،</p>
+
     <p>
       تلقينا طلباً لإعادة تعيين كلمة مرور حسابك في <strong>${tenantName}</strong>.
       اضغط على الزر أدناه لإنشاء كلمة مرور جديدة:
     </p>
-    <p style="text-align: center; margin: 28px 0;">
-      <a href="${resetUrl}" class="btn">إعادة تعيين كلمة المرور</a>
+
+    <div class="btn-wrap">
+      <a href="${resetUrl}" class="btn">🔑 إعادة تعيين كلمة المرور</a>
+    </div>
+
+    <p class="link-fallback">
+      أو انسخ هذا الرابط في متصفحك:<br/>
+      <a href="${resetUrl}">${resetUrl}</a>
     </p>
-    <p style="color: #888; font-size: 13px;">
-      ⏱ هذا الرابط صالح لمدة ${expiresInMinutes} دقيقة.
-    </p>
+
+    <div class="info-card">
+      ⏱ &nbsp;هذا الرابط صالح لمدة <strong>${expiresInMinutes} دقيقة</strong> فقط.
+      لا تشاركه مع أحد.
+    </div>
+
     ${ipNote}
-    <p style="color: #888; font-size: 13px;">
-      إذا لم تطلب إعادة تعيين كلمة المرور، فتجاهل هذه الرسالة — حسابك بأمان.
+
+    <hr class="section-divider"/>
+
+    <p style="font-size:13px;color:#888;">
+      إذا لم تطلب إعادة تعيين كلمة المرور، يمكنك تجاهل هذه الرسالة بأمان —
+      لن يحدث أي تغيير في حسابك.
+    </p>
+
+    <p style="font-size:13px;color:#888;">
+      للمساعدة تواصل معنا على
+      <a href="mailto:support@siraja.website" style="color:#1A6B4A;">support@siraja.website</a>
     </p>
   `;
 
-  const text = `مرحباً ${fullName}،\n\nاضغط على الرابط لإعادة تعيين كلمة المرور:\n${resetUrl}\n\nصالح لمدة ${expiresInMinutes} دقيقة.\n\nفريق ${tenantName}`;
+  const text = `مرحباً ${fullName}،\n\nاضغط على الرابط لإعادة تعيين كلمة مرورك:\n${resetUrl}\n\nصالح لمدة ${expiresInMinutes} دقيقة.\n\nإذا لم تطلب ذلك، تجاهل هذه الرسالة.\n\nفريق ${tenantName}`;
 
   return { subject, html: baseEmailTemplate(body, data), text };
 }

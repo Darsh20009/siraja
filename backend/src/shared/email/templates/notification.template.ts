@@ -6,6 +6,7 @@ export interface NotificationTemplateData extends BaseTemplateData {
   message: string;
   actionUrl?: string;
   actionLabel?: string;
+  type?: 'info' | 'success' | 'warning';
 }
 
 export function notificationEmailTemplate(data: NotificationTemplateData): {
@@ -13,19 +14,44 @@ export function notificationEmailTemplate(data: NotificationTemplateData): {
   html: string;
   text: string;
 } {
-  const { recipientName, title, message, actionUrl, actionLabel = 'عرض التفاصيل', tenantName = 'Siraja' } = data;
+  const {
+    recipientName,
+    title,
+    message,
+    actionUrl,
+    actionLabel = 'عرض التفاصيل',
+    type = 'info',
+    tenantName = 'سراج',
+  } = data;
 
-  const subject = `${title} — ${tenantName}`;
+  const iconMap = { info: '📢', success: '✅', warning: '⚠️' };
+  const icon = iconMap[type] ?? '📢';
+
+  const subject = `${icon} ${title} — ${tenantName}`;
 
   const actionButton = actionUrl
-    ? `<p style="text-align: center; margin: 28px 0;"><a href="${actionUrl}" class="btn">${actionLabel}</a></p>`
+    ? `<div class="btn-wrap"><a href="${actionUrl}" class="btn">${actionLabel}</a></div>`
     : '';
 
+  const cardClass = type === 'warning' ? 'warn-card' : type === 'success' ? 'info-card' : 'info-card';
+
   const body = `
-    <h2>${title}</h2>
+    <h2>${icon} ${title}</h2>
+
     <p>مرحباً <strong>${recipientName}</strong>،</p>
-    <p>${message}</p>
+
+    <div class="${cardClass}">
+      ${message}
+    </div>
+
     ${actionButton}
+
+    <hr class="section-divider"/>
+
+    <p style="font-size:13px;color:#888;">
+      للمساعدة تواصل معنا على
+      <a href="mailto:support@siraja.website" style="color:#1A6B4A;">support@siraja.website</a>
+    </p>
   `;
 
   const text = `${title}\n\nمرحباً ${recipientName}،\n\n${message}${actionUrl ? `\n\n${actionUrl}` : ''}\n\nفريق ${tenantName}`;
