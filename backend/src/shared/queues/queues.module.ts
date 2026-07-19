@@ -28,13 +28,22 @@ const QUEUE_NAMES = [QUEUE_AI, QUEUE_EMAIL, QUEUE_NOTIFICATION, QUEUE_REPORT, QU
 @Module({})
 export class QueuesModule {
   static forRootAsync() {
-    const redisUrl = process.env.REDIS_URL;
+    const rawUrl = process.env.REDIS_URL;
+    const redisUrl = rawUrl && /^rediss?:\/\//i.test(rawUrl.trim()) ? rawUrl.trim() : null;
 
     if (!redisUrl) {
-      logger.warn(
-        'REDIS_URL not set — BullMQ queues disabled. ' +
-          'All queue operations will be no-ops until Redis is configured.',
-      );
+      if (rawUrl && !redisUrl) {
+        logger.warn(
+          'REDIS_URL is set but does not look like a valid Redis URL ' +
+            '(expected rediss://… or redis://…) — BullMQ queues disabled. ' +
+            'Update the secret to a plain rediss://user:pass@host:port URL.',
+        );
+      } else {
+        logger.warn(
+          'REDIS_URL not set — BullMQ queues disabled. ' +
+            'All queue operations will be no-ops until Redis is configured.',
+        );
+      }
 
       // Provide a no-op QueueService that satisfies DI without BullMQ
       return {
