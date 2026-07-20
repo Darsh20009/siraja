@@ -1,9 +1,12 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
+import { getButtonHtml, getCardHtml, getCodeBoxHtml, SIRAJA_BRAND_DEFAULTS } from '../brand/brand-config';
 
 export interface VerificationTemplateData extends BaseTemplateData {
   fullName: string;
   verificationUrl: string;
+  /** Optional OTP code displayed alongside the link */
   verificationCode?: string;
+  /** Link validity in hours (default: 24) */
   expiresInHours?: number;
 }
 
@@ -12,52 +15,79 @@ export function verificationEmailTemplate(data: VerificationTemplateData): {
   html: string;
   text: string;
 } {
-  const { fullName, verificationUrl, verificationCode, expiresInHours = 24, tenantName = 'سراج' } = data;
+  const {
+    fullName,
+    verificationUrl,
+    verificationCode,
+    expiresInHours = 24,
+    tenantName   = SIRAJA_BRAND_DEFAULTS.tenantName,
+    primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
+    accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
+    supportEmail = SIRAJA_BRAND_DEFAULTS.supportEmail,
+  } = data;
 
   const subject = `✉️ تأكيد بريدك الإلكتروني — ${tenantName}`;
 
   const codeSection = verificationCode
-    ? `<div class="code-box">${verificationCode}</div>
-       <p style="text-align:center;font-size:12px;color:#999;margin-top:-8px;">أدخل هذا الرمز في التطبيق</p>`
+    ? getCodeBoxHtml(verificationCode, primaryColor) +
+      `<p style="text-align:center;font-size:12.5px;color:#9CA3AF;margin:-8px 0 20px;
+                 font-family:'Cairo',Tahoma,Arial,sans-serif;">أدخل هذا الرمز في التطبيق</p>`
     : '';
 
-  const body = `
-    <h2>🌟 أهلاً وسهلاً، ${fullName}!</h2>
+  const ctaButton = getButtonHtml({
+    href:         verificationUrl,
+    label:        '✔ تأكيد البريد الإلكتروني',
+    primaryColor,
+    accentColor,
+    width:        260,
+  });
 
-    <p>
-      شكراً لانضمامك إلى <strong>${tenantName}</strong>، رفيقك في رحلة حفظ كتاب الله الكريم.
+  const expiryCard = getCardHtml(
+    `⏱&nbsp; هذا الرابط صالح لمدة <strong>${expiresInHours} ساعة</strong> من وقت إرساله.`,
+    'info',
+  );
+
+  const body = `
+    <h2 style="color:${primaryColor};font-size:21px;font-weight:700;margin:0 0 20px;
+               padding-bottom:10px;border-bottom:2px solid #EEF0EC;
+               font-family:'Cairo',Tahoma,Arial,sans-serif;">
+      🌟 أهلاً وسهلاً، ${fullName}!
+    </h2>
+
+    <p style="margin:0 0 16px;color:#4B5563;font-size:15px;line-height:1.9;
+              font-family:'Cairo',Tahoma,Arial,sans-serif;">
+      شكراً لانضمامك إلى <strong style="color:#1F2937;">${tenantName}</strong>، رفيقك في رحلة حفظ كتاب الله الكريم.
       خطوة واحدة تفصلك عن بدء رحلتك — قم بتأكيد بريدك الإلكتروني:
     </p>
 
     ${codeSection}
 
-    <div class="btn-wrap">
-      <a href="${verificationUrl}" class="btn">✔ تأكيد البريد الإلكتروني</a>
-    </div>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+      <tr><td align="center" style="padding:28px 0 0;">${ctaButton}</td></tr>
+    </table>
 
-    <p class="link-fallback">
-      أو انسخ هذا الرابط في متصفحك:<br/>
-      <a href="${verificationUrl}">${verificationUrl}</a>
+    <p style="text-align:center;font-size:12px;color:#9CA3AF;margin:8px 0 20px;
+              word-break:break-all;direction:ltr;font-family:Tahoma,Arial,sans-serif;">
+      <a href="${verificationUrl}" style="color:${primaryColor};">${verificationUrl}</a>
     </p>
 
-    <div class="info-card">
-      ⏱ &nbsp;هذا الرابط صالح لمدة <strong>${expiresInHours} ساعة</strong> من وقت إرساله.
-    </div>
+    ${expiryCard}
 
-    <hr class="section-divider"/>
+    <hr style="border:none;border-top:1px solid #EEF0EC;margin:24px 0;"/>
 
-    <p style="font-size:13px;color:#888;">
-      إذا لم تقم بإنشاء حساب في منصة سراج، يمكنك تجاهل هذه الرسالة بأمان —
-      لن يحدث أي تغيير في حسابك.
+    <p style="font-size:13px;color:#9CA3AF;margin:0 0 10px;
+              font-family:'Cairo',Tahoma,Arial,sans-serif;">
+      إذا لم تقم بإنشاء حساب في منصة ${tenantName}، يمكنك تجاهل هذه الرسالة بأمان.
     </p>
 
-    <p style="font-size:13px;color:#888;">
+    <p style="font-size:13px;color:#9CA3AF;margin:0;
+              font-family:'Cairo',Tahoma,Arial,sans-serif;">
       للمساعدة تواصل معنا على
-      <a href="mailto:support@siraja.website" style="color:#1A6B4A;">support@siraja.website</a>
+      <a href="mailto:${supportEmail}" style="color:${primaryColor};">${supportEmail}</a>
     </p>
   `;
 
-  const text = `أهلاً ${fullName}،\n\nشكراً لانضمامك إلى منصة سراج.\n\nيرجى تأكيد بريدك الإلكتروني عبر الرابط:\n${verificationUrl}\n\nصالح لمدة ${expiresInHours} ساعة.\n\nفريق ${tenantName}`;
+  const text = `أهلاً ${fullName}،\n\nشكراً لانضمامك إلى منصة ${tenantName}.\n\nيرجى تأكيد بريدك الإلكتروني عبر الرابط:\n${verificationUrl}\n\nصالح لمدة ${expiresInHours} ساعة.\n\nفريق ${tenantName}`;
 
   return { subject, html: baseEmailTemplate(body, data), text };
 }

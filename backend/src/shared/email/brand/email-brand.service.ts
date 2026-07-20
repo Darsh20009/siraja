@@ -1,19 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { BaseTemplateData } from '../templates/base.template';
-import { SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from './brand-config';
+import { SIRAJA_BRAND_DEFAULTS, isSafeLogoUrl } from './brand-config';
 
 /**
- * Minimal shape of TenantBranding data needed for email rendering.
+ * Minimal projection of TenantBranding data needed for email rendering.
  * Decoupled from the Mongoose document to avoid circular dependencies.
- * Callers (controllers, use-cases) fetch TenantBranding from their own
- * repositories and pass only this projection here.
+ *
+ * Callers fetch TenantBranding from TenantBrandingRepository and pass
+ * only this shape here. EmailModule stays MongoDB-free.
  */
 export interface TenantBrandingInput {
   /** Display name of the tenant (e.g. "دار الحفاظ") */
   name?: string;
-  /** Publicly-reachable logo image URL (Cloudflare R2, CDN …) */
+  /**
+   * Publicly-reachable HTTPS logo image URL (Cloudflare R2, CDN …).
+   * Use isSafeLogoUrl() to validate before passing. Absent → Siraja SVG.
+   */
   logoUrl?: string;
-  /** Optional tagline overriding the Siraja default */
+  /** Optional tagline replacing the Siraja default */
   tagline?: string;
   colors?: {
     primary?: string;
@@ -22,8 +26,8 @@ export interface TenantBrandingInput {
   /** Overrides the default support@siraja.website */
   supportEmail?: string;
   /**
-   * Custom domain (without protocol), e.g. "app.daralhuffaz.com".
-   * If present, websiteUrl is set to https://<customDomain>.
+   * Custom domain without protocol, e.g. "app.daralhuffaz.com".
+   * When present, websiteUrl becomes https://<customDomain>.
    */
   customDomain?: string;
 }
@@ -32,33 +36,37 @@ export interface TenantBrandingInput {
  * EmailBrandService
  * ─────────────────
  * Resolves the BaseTemplateData injected into every email template.
+ * Merges optional tenant overrides with Siraja platform defaults.
  *
  * Usage:
  *   const brand = emailBrandService.resolve(tenantBranding);
- *   const { html } = verificationEmailTemplate({ ...brand, verificationUrl, ... });
+ *   const { html } = verificationEmailTemplate({ ...brand, verificationUrl, fullName });
  *
- * When no tenant branding is available (platform-level emails, admin alerts),
- * call resolve() with no argument — you get the Siraja defaults.
+ * When no tenant branding is available (platform-level emails, admin alerts):
+ *   const brand = emailBrandService.resolve(null);
  */
 @Injectable()
 export class EmailBrandService {
   /**
    * Merge Siraja defaults with optional tenant overrides.
-   * Any falsy value from the tenant is skipped; the Siraja default is kept.
+   * Any falsy value from the tenant input falls back to the platform default.
    */
   resolve(tenantBranding?: TenantBrandingInput | null): BaseTemplateData {
-    if (!tenantBranding) {
-      return this.sirajaBrand();
-    }
+    if (!tenantBranding) return this.defaults();
 
     const websiteUrl = tenantBranding.customDomain
       ? `https://${tenantBranding.customDomain}`
       : SIRAJA_BRAND_DEFAULTS.websiteUrl;
 
+    // Only accept HTTPS tenant logos
+    const safeLogoUrl = isSafeLogoUrl(tenantBranding.logoUrl)
+      ? tenantBranding.logoUrl
+      : undefined;
+
     return {
       tenantName:    tenantBranding.name        || SIRAJA_BRAND_DEFAULTS.tenantName,
-      tenantTagline: tenantBranding.tagline      || undefined,     // fallback handled in template
-      logoUrl:       tenantBranding.logoUrl      || undefined,     // undefined → Siraja SVG
+      tenantTagline: tenantBranding.tagline      || undefined,   // falls back in template
+      logoUrl:       safeLogoUrl,                                // undefined → Siraja SVG
       primaryColor:  tenantBranding.colors?.primary || SIRAJA_BRAND_DEFAULTS.primaryColor,
       accentColor:   tenantBranding.colors?.accent  || SIRAJA_BRAND_DEFAULTS.accentColor,
       supportEmail:  tenantBranding.supportEmail || SIRAJA_BRAND_DEFAULTS.supportEmail,
@@ -68,7 +76,7 @@ export class EmailBrandService {
   }
 
   /** Pure Siraja platform brand — no tenant overrides */
-  private sirajaBrand(): BaseTemplateData {
+  private defaults(): BaseTemplateData {
     return {
       tenantName:   SIRAJA_BRAND_DEFAULTS.tenantName,
       primaryColor: SIRAJA_BRAND_DEFAULTS.primaryColor,
@@ -78,29 +86,7 @@ export class EmailBrandService {
       year: new Date().getFullYear(),
     };
   }
-
-  /**
-   * Validate that tenant logo URL is safe to render in email.
-   * Only HTTPS public URLs are allowed (data: URIs and http: rejected).
-   */
-  static isSafeLogoUrl(url: string | undefined): boolean {
-    if (!url) return false;
-    try {
-      const parsed = new URL(url);
-      return parsed.protocol === 'https:';
-    } catch {
-      return false;
-    }
-  }
-
-  /**
-   * Build an inline CSS string for custom primary/accent colors.
-   * Useful when you need a quick color override without a full brand object.
-   */
-  static colorVars(primary: string, accent: string): string {
-    return `--siraja-primary:${primary};--siraja-accent:${accent};`;
-  }
 }
 
-// Re-export SIRAJA_COLORS so callers can access the full palette from one import
-export { SIRAJA_COLORS };
+// Re-export isSafeLogoUrl so callers can validate without importing brand-config directly
+export { isSafeLogoUrl };

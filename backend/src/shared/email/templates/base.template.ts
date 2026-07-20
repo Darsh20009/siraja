@@ -2,8 +2,8 @@ import {
   SIRAJA_COLORS,
   EMAIL_FONT_STACK,
   GOOGLE_FONTS_LINK,
-  getLogoMarkup,
   SIRAJA_BRAND_DEFAULTS,
+  getLogoMarkup,
 } from '../brand/brand-config';
 
 // ─── Data contract ────────────────────────────────────────────────────────────
@@ -11,12 +11,11 @@ import {
 export interface BaseTemplateData {
   /** Tenant or platform name shown in the header */
   tenantName?: string;
-  /** Optional tagline below the tenant name. Siraja default used when absent. */
+  /** Optional tagline; Siraja default used when absent */
   tenantTagline?: string;
   /**
-   * Publicly-reachable logo image URL (Cloudflare R2 / CDN).
-   * When provided the tenant logo is rendered as an <img> tag.
-   * When absent the official Siraja inline SVG is used — zero external deps.
+   * Publicly accessible HTTPS logo URL (Cloudflare R2 / CDN).
+   * Absent → official Siraja inline SVG lantern (zero external deps).
    */
   logoUrl?: string;
   primaryColor?: string;
@@ -24,28 +23,32 @@ export interface BaseTemplateData {
   year?: number;
   supportEmail?: string;
   websiteUrl?: string;
+  /**
+   * Optional hidden preheader text — shown in inbox previews before the subject.
+   * Keep under 100 characters. Falls back to a zero-width filler when omitted.
+   */
+  preheader?: string;
 }
 
 // ─── Geometric ornament ───────────────────────────────────────────────────────
+// Unicode-based, renders in every email client.
+const GEO_ROW = '✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦';
 
-const GEO_STRIP = Array(22).fill('◆').join(' ');
-
-// ─── Template ─────────────────────────────────────────────────────────────────
+// ─── Main template ────────────────────────────────────────────────────────────
 
 /**
- * Siraja branded HTML email shell.
+ * Siraja branded HTML email shell — "ضوء السراج"
  *
- * Design concept: "ضوء السراج" — the warm glow of a lantern illuminating
- * the path of Quran memorisation. Deep emerald primary with gold accents.
+ * Uses TABLE-based layout for maximum cross-client compatibility:
+ *   - Outlook 2016-2021 (table cells + VML)
+ *   - Gmail (web + Android + iOS)
+ *   - Apple Mail (macOS + iOS)
+ *   - Outlook.com / Yahoo / Samsung Mail
  *
- * ┌─ Compatibility ─────────────────────────────────────────────────────────┐
- * │  Gmail (web + Android + iOS), Apple Mail, Outlook 2016-2021, Yahoo,     │
- * │  Samsung Mail, Outlook.com — tested with and without image blocking.    │
- * │  Dark-mode aware via @media + [data-ogsc] Gmail attribute selectors.    │
- * └─────────────────────────────────────────────────────────────────────────┘
+ * Dark-mode: @media (prefers-color-scheme: dark) + [data-ogsc] Gmail selectors.
  *
- * @param body      - Pre-rendered inner HTML (from individual templates)
- * @param data      - Brand overrides; resolved by EmailBrandService
+ * @param body  - Pre-rendered inner HTML from individual templates
+ * @param data  - Brand data (resolved via EmailBrandService or passed directly)
  */
 export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): string {
   const {
@@ -57,25 +60,34 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     year          = new Date().getFullYear(),
     supportEmail  = SIRAJA_BRAND_DEFAULTS.supportEmail,
     websiteUrl    = SIRAJA_BRAND_DEFAULTS.websiteUrl,
+    preheader,
   } = data;
 
-  const tagline  = tenantTagline ?? '✦ منصة حفظ القرآن الكريم الذكية ✦';
-  const logoHtml = getLogoMarkup({ logoUrl, tenantName, width: 58, height: 70 });
+  const tagline     = tenantTagline ?? SIRAJA_BRAND_DEFAULTS.tenantTagline;
+  const displayName = tenantName;
+  const logoHtml    = getLogoMarkup({ logoUrl, tenantName, width: 58, height: 70 });
+  const webDomain   = websiteUrl.replace(/^https?:\/\//, '');
 
-  // Derived shades for the header gradient
-  const primaryDeep  = primaryColor === SIRAJA_BRAND_DEFAULTS.primaryColor
-    ? SIRAJA_COLORS.primaryDeep  : primaryColor;
-  const primaryLight = primaryColor === SIRAJA_BRAND_DEFAULTS.primaryColor
-    ? SIRAJA_COLORS.primaryLight : primaryColor;
+  // Header gradient — use spec primary or derive shades from custom primary
+  const isSirajaBrand = primaryColor === SIRAJA_BRAND_DEFAULTS.primaryColor;
+  const hdrDeep  = isSirajaBrand ? SIRAJA_COLORS.primaryDeep  : primaryColor;
+  const hdrLight = isSirajaBrand ? SIRAJA_COLORS.primaryLight : primaryColor;
+
+  // Preheader: visible text or zero-width space filler (to prevent body leaking into preview)
+  const preheaderHtml = preheader
+    ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;color:${SIRAJA_COLORS.bgPage};line-height:1px;">${preheader}&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>`
+    : `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;">&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>`;
 
   return `<!DOCTYPE html>
-<html lang="ar" dir="rtl" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="ar" dir="rtl" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="x-apple-disable-message-reformatting" />
-  <meta name="format-detection" content="telephone=no,address=no,email=no,date=no" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="x-apple-disable-message-reformatting"/>
+  <meta name="format-detection" content="telephone=no,address=no,email=no,date=no"/>
   <title>${tenantName}</title>
   <!--[if mso]>
   <noscript><xml>
@@ -87,17 +99,17 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
   <![endif]-->
   ${GOOGLE_FONTS_LINK}
   <style type="text/css">
-    /* ═══ RESET ═══════════════════════════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; }
+    /* ═══ RESET ═══════════════════════════════════════════════════════════════ */
+    * { box-sizing: border-box; }
     body, table, td, p, a, li, blockquote {
       -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
     }
     table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
     img { -ms-interpolation-mode: bicubic; border: 0; outline: 0; text-decoration: none; }
-    a { text-decoration: none; }
+    a  { text-decoration: none; }
 
-    /* ═══ BASE ═════════════════════════════════════════════════════════════ */
+    /* ═══ BASE ═════════════════════════════════════════════════════════════════ */
     body {
       margin: 0;
       padding: 0;
@@ -106,78 +118,19 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       direction: rtl;
       -webkit-font-smoothing: antialiased;
     }
-
-    /* ═══ LAYOUT ════════════════════════════════════════════════════════════ */
-    .email-wrapper {
-      width: 100%;
+    .outer-wrapper {
       background-color: ${SIRAJA_COLORS.bgPage};
-      padding: 32px 0 48px;
-    }
-    .email-container {
-      max-width: 600px;
-      margin: 0 auto;
-      background: ${SIRAJA_COLORS.bgCard};
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 28px rgba(26, 107, 74, 0.11);
     }
 
-    /* ═══ HEADER ════════════════════════════════════════════════════════════ */
-    .email-header {
-      background: linear-gradient(160deg, ${primaryDeep} 0%, ${primaryColor} 55%, ${primaryLight} 100%);
-      text-align: center;
-    }
-    .geo-strip-top {
-      background-color: ${accentColor};
-      height: 5px;
-    }
-    .header-inner {
-      padding: 30px 24px 26px;
-    }
-    .geo-pattern {
-      color: rgba(201,168,76,0.38);
-      font-size: 9px;
-      letter-spacing: 4px;
-      margin: 0 0 20px;
-      overflow: hidden;
-      white-space: nowrap;
-      user-select: none;
-    }
-    .brand-name {
-      color: #ffffff;
-      font-size: 34px;
-      font-weight: 800;
-      margin: 10px 0 4px;
-      letter-spacing: 1px;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.28);
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
-    }
-    .brand-tagline {
-      color: ${accentColor};
-      font-size: 12.5px;
-      font-weight: 500;
-      margin: 0 0 16px;
-      letter-spacing: 0.5px;
-      opacity: 0.95;
-    }
-    .gold-divider {
-      width: 64px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, ${accentColor}, transparent);
-      margin: 0 auto;
-    }
-    .geo-strip-bottom {
-      background: linear-gradient(90deg, transparent, ${accentColor}55, transparent);
-      height: 1px;
-    }
-
-    /* ═══ BODY ══════════════════════════════════════════════════════════════ */
+    /* ═══ BODY CELL ════════════════════════════════════════════════════════════ */
     .email-body {
-      padding: 36px 40px 28px;
-      color: #2d2d2d;
+      padding: 38px 42px 30px !important;
+      color: ${SIRAJA_COLORS.textPrimary};
       font-size: 15px;
       line-height: 1.9;
       direction: rtl;
+      font-family: ${EMAIL_FONT_STACK};
+      background-color: ${SIRAJA_COLORS.bgCard};
     }
     .email-body h2 {
       color: ${primaryColor};
@@ -185,104 +138,42 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       font-weight: 700;
       margin: 0 0 20px;
       padding-bottom: 10px;
-      border-bottom: 2px solid #EFF5F1;
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
+      border-bottom: 2px solid ${SIRAJA_COLORS.borderLight};
+      font-family: ${EMAIL_FONT_STACK};
     }
-    .email-body p  { margin: 0 0 16px; color: #444444; }
-    .email-body strong { color: #1a1a1a; }
-    .email-body a  { color: ${primaryColor}; }
+    .email-body p  { margin: 0 0 16px; color: ${SIRAJA_COLORS.textSecondary}; }
+    .email-body strong { color: ${SIRAJA_COLORS.textPrimary}; font-weight: 700; }
+    .email-body a  { color: ${primaryColor}; text-decoration: none; }
+    .email-body a:hover { text-decoration: underline; }
 
-    /* CTA Button */
+    /* CTA button wrapper — hides the fallback <a> from MSO */
     .btn-wrap { text-align: center; margin: 28px 0; }
-    .btn {
-      display: inline-block;
-      background: linear-gradient(135deg, ${primaryDeep} 0%, ${primaryColor} 100%);
-      color: #ffffff !important;
-      text-decoration: none !important;
-      padding: 14px 38px;
-      border-radius: 50px;
-      font-size: 15.5px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      box-shadow: 0 4px 16px rgba(26,107,74,0.32);
-      border: 2px solid ${accentColor};
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
-      mso-padding-alt: 0;
-    }
-    <!--[if mso]>
-    .btn { padding: 14px 38px !important; }
-    <![endif]-->
 
-    /* OTP / Code box */
-    .code-box {
-      background: linear-gradient(135deg, #f0faf5, #e6f4ec);
-      border: 2px dashed ${primaryColor};
-      border-radius: 10px;
-      padding: 20px 32px;
-      text-align: center;
-      font-size: 34px;
-      letter-spacing: 10px;
-      font-weight: 800;
-      color: ${primaryColor};
-      margin: 24px 0;
-      direction: ltr;
-      font-family: 'Courier New', Courier, monospace;
-    }
-
-    /* Info / Warning / Danger cards */
-    .info-card {
-      background: ${SIRAJA_COLORS.bgInfoCard};
-      border-right: 4px solid ${primaryColor};
-      border-radius: 6px;
-      padding: 14px 18px;
-      margin: 20px 0;
-      font-size: 13.5px;
-      color: #555;
-    }
-    .warn-card {
-      background: ${SIRAJA_COLORS.bgWarnCard};
-      border-right: 4px solid ${accentColor};
-      border-radius: 6px;
-      padding: 14px 18px;
-      margin: 20px 0;
-      font-size: 13.5px;
-      color: #7a5a00;
-    }
-    .danger-card {
-      background: ${SIRAJA_COLORS.bgDangerCard};
-      border-right: 4px solid #e53e3e;
-      border-radius: 6px;
-      padding: 14px 18px;
-      margin: 20px 0;
-      font-size: 13.5px;
-      color: #742a2a;
-    }
-
-    /* Link fallback */
+    /* Link fallback below buttons */
     .link-fallback {
       text-align: center;
       font-size: 12px;
-      color: #999;
-      margin: -10px 0 20px;
+      color: ${SIRAJA_COLORS.textMuted};
+      margin: -12px 0 20px;
       word-break: break-all;
       direction: ltr;
     }
-    .link-fallback a { color: ${primaryColor}; }
+    .link-fallback a { color: ${primaryColor}; text-decoration: underline; }
 
-    /* Divider */
+    /* Section divider */
     .section-divider {
       border: none;
-      border-top: 1px solid #e8f0eb;
+      border-top: 1px solid ${SIRAJA_COLORS.borderLight};
       margin: 24px 0;
     }
 
     /* Feature list (welcome email) */
     .feature-list { list-style: none; padding: 0; margin: 16px 0; }
     .feature-list li {
-      padding: 9px 0;
-      border-bottom: 1px solid #f0f0f0;
+      padding: 9px 4px;
+      border-bottom: 1px solid ${SIRAJA_COLORS.borderLight};
       font-size: 14px;
-      color: #444;
+      color: ${SIRAJA_COLORS.textSecondary};
     }
     .feature-list li:last-child { border-bottom: none; }
     .feature-list li::before {
@@ -292,181 +183,246 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       font-size: 10px;
     }
 
-    /* ═══ FOOTER ════════════════════════════════════════════════════════════ */
+    /* ═══ FOOTER ═══════════════════════════════════════════════════════════════ */
     .email-footer {
-      background: ${SIRAJA_COLORS.bgFooter};
-      border-top: 1px solid #deeae2;
-      padding: 26px 32px 22px;
-      text-align: center;
+      background-color: ${SIRAJA_COLORS.bgFooter} !important;
+      border-top: 1px solid ${SIRAJA_COLORS.border};
     }
-    .quran-verse {
-      color: ${primaryColor};
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0 0 3px;
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
-    }
-    .quran-source {
-      color: ${accentColor};
-      font-size: 11px;
-      margin: 0 0 18px;
-    }
-    .footer-divider {
-      width: 44px;
-      height: 1px;
-      background: ${accentColor};
-      margin: 12px auto 18px;
-      opacity: 0.5;
-    }
+    .quran-verse  { color: ${primaryColor} !important; }
+    .quran-source { color: ${accentColor}  !important; }
 
-    /* Social / contact bar */
-    .social-bar {
-      margin: 0 0 14px;
-      padding: 12px 20px;
-      background: rgba(26,107,74,0.04);
-      border-radius: 30px;
-      display: inline-block;
-    }
-    .social-bar a {
-      color: ${primaryColor} !important;
-      font-size: 12.5px;
-      text-decoration: none;
-      margin: 0 10px;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    .social-bar a:hover { text-decoration: underline; }
-
-    .footer-links { margin: 0 0 10px; }
-    .footer-links a {
-      color: #888888;
-      font-size: 11.5px;
-      text-decoration: none;
-      margin: 0 6px;
-    }
-    .footer-copy {
-      color: #aaaaaa;
-      font-size: 11px;
-      margin: 0;
-      line-height: 1.9;
-    }
-    .footer-copy a { color: #bbbbbb; text-decoration: underline; }
-
-    /* ═══ MOBILE ════════════════════════════════════════════════════════════ */
+    /* ═══ MOBILE ════════════════════════════════════════════════════════════════ */
     @media only screen and (max-width: 620px) {
-      .email-wrapper { padding: 16px 0 32px !important; }
-      .email-container { border-radius: 0 !important; }
-      .email-body { padding: 28px 22px 20px !important; }
-      .brand-name { font-size: 26px !important; }
-      .btn { padding: 12px 28px !important; font-size: 14.5px !important; }
-      .code-box { font-size: 26px !important; letter-spacing: 6px !important; }
-      .email-footer { padding: 20px 16px !important; }
-      .social-bar a { margin: 0 6px !important; font-size: 12px !important; }
+      .email-outer-td { padding: 16px 8px 32px !important; }
+      .email-card     { border-radius: 0 !important; }
+      .email-body     { padding: 28px 22px 20px !important; }
+      .email-body h2  { font-size: 19px !important; }
+      .email-footer   { padding: 20px 16px !important; }
     }
 
-    /* ═══ DARK MODE — Apple Mail, iOS Mail, Samsung Mail, Outlook.com ═══════ */
+    /* ═══ DARK MODE — Apple Mail, iOS Mail, Samsung Mail, Outlook.com ══════════ */
     @media (prefers-color-scheme: dark) {
-      .email-wrapper  { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
-      .email-container{ background-color: ${SIRAJA_COLORS.darkBgCard}   !important; }
-      .email-body     { color: ${SIRAJA_COLORS.darkText}                 !important; }
+      body            { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
+      .outer-wrapper  { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
+      .email-body     { background-color: ${SIRAJA_COLORS.darkBgCard}   !important;
+                        color:            ${SIRAJA_COLORS.darkText}      !important; }
       .email-body p   { color: ${SIRAJA_COLORS.darkTextMuted}            !important; }
+      .email-body h2  { color: ${SIRAJA_COLORS.darkHeading}              !important;
+                        border-bottom-color: ${SIRAJA_COLORS.darkBorder} !important; }
+      .email-body a   { color: ${SIRAJA_COLORS.darkLink}                 !important; }
       .email-body strong { color: #ffffff                                !important; }
-      .email-body h2  { color: ${SIRAJA_COLORS.darkHeading}              !important; border-bottom-color: #2d4a38 !important; }
-      .email-body a   { color: #7ecba1                                   !important; }
-      .info-card      { background-color: ${SIRAJA_COLORS.darkBgInfoCard}!important; color: ${SIRAJA_COLORS.darkTextMuted} !important; border-right-color: #5aad82 !important; }
-      .warn-card      { background-color: ${SIRAJA_COLORS.darkBgWarnCard}!important; color: #d4b870 !important; }
-      .danger-card    { background-color: ${SIRAJA_COLORS.darkBgDanger}  !important; color: #d48080 !important; }
-      .code-box       { background: linear-gradient(135deg, #1a3226, #162b20) !important; color: #7ecba1 !important; border-color: #5aad82 !important; }
-      .section-divider{ border-top-color: ${SIRAJA_COLORS.darkBorder}    !important; }
-      .email-footer   { background-color: ${SIRAJA_COLORS.darkBgFooter}  !important; border-top-color: ${SIRAJA_COLORS.darkBorder} !important; }
-      .quran-verse    { color: #7ecba1                                    !important; }
-      .social-bar     { background: rgba(255,255,255,0.04)                !important; }
-      .social-bar a   { color: #7ecba1                                    !important; }
-      .footer-links a { color: #888888                                    !important; }
-      .feature-list li{ color: ${SIRAJA_COLORS.darkTextMuted}             !important; border-bottom-color: #2d4a38 !important; }
+      .section-divider{ border-top-color: ${SIRAJA_COLORS.darkBorder}   !important; }
+      .email-footer   { background-color: ${SIRAJA_COLORS.darkBgFooter} !important;
+                        border-top-color:  ${SIRAJA_COLORS.darkBorder}  !important; }
+      .quran-verse    { color: ${SIRAJA_COLORS.darkHeading}              !important; }
+      .feature-list li{ color: ${SIRAJA_COLORS.darkTextMuted}            !important;
+                        border-bottom-color: ${SIRAJA_COLORS.darkBorder} !important; }
     }
 
-    /* ═══ DARK MODE — Gmail web ([data-ogsc] attribute selector hack) ════════ */
-    [data-ogsc] .email-wrapper  { background-color: ${SIRAJA_COLORS.darkBgPage}    !important; }
-    [data-ogsc] .email-container{ background-color: ${SIRAJA_COLORS.darkBgCard}    !important; }
-    [data-ogsc] .email-body     { color: ${SIRAJA_COLORS.darkText}                  !important; }
-    [data-ogsc] .email-body p   { color: ${SIRAJA_COLORS.darkTextMuted}             !important; }
-    [data-ogsc] .email-body strong { color: #ffffff                                 !important; }
-    [data-ogsc] .email-body h2  { color: ${SIRAJA_COLORS.darkHeading}               !important; border-bottom-color: #2d4a38 !important; }
-    [data-ogsc] .info-card      { background-color: ${SIRAJA_COLORS.darkBgInfoCard} !important; color: ${SIRAJA_COLORS.darkTextMuted} !important; }
-    [data-ogsc] .warn-card      { background-color: ${SIRAJA_COLORS.darkBgWarnCard} !important; color: #d4b870 !important; }
-    [data-ogsc] .danger-card    { background-color: ${SIRAJA_COLORS.darkBgDanger}   !important; color: #d48080 !important; }
-    [data-ogsc] .code-box       { background-color: #1a3226                         !important; color: #7ecba1 !important; }
-    [data-ogsc] .section-divider{ border-top-color: ${SIRAJA_COLORS.darkBorder}     !important; }
-    [data-ogsc] .email-footer   { background-color: ${SIRAJA_COLORS.darkBgFooter}   !important; }
-    [data-ogsc] .quran-verse    { color: #7ecba1                                     !important; }
-    [data-ogsc] .social-bar a   { color: #7ecba1                                     !important; }
+    /* ═══ DARK MODE — Gmail web ([data-ogsc] attribute selector) ════════════════ */
+    [data-ogsc] body           { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
+    [data-ogsc] .outer-wrapper { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
+    [data-ogsc] .email-body    { background-color: ${SIRAJA_COLORS.darkBgCard}   !important;
+                                  color:            ${SIRAJA_COLORS.darkText}     !important; }
+    [data-ogsc] .email-body p  { color: ${SIRAJA_COLORS.darkTextMuted}            !important; }
+    [data-ogsc] .email-body h2 { color: ${SIRAJA_COLORS.darkHeading}              !important; }
+    [data-ogsc] .email-body a  { color: ${SIRAJA_COLORS.darkLink}                 !important; }
+    [data-ogsc] .email-footer  { background-color: ${SIRAJA_COLORS.darkBgFooter} !important; }
+    [data-ogsc] .quran-verse   { color: ${SIRAJA_COLORS.darkHeading}              !important; }
   </style>
 </head>
-<body>
-<div class="email-wrapper">
-  <div class="email-container">
+<body style="margin:0;padding:0;background-color:${SIRAJA_COLORS.bgPage};" bgcolor="${SIRAJA_COLORS.bgPage}">
 
-    <!-- ═══════════════════════  HEADER  ═══════════════════════ -->
-    <div class="email-header">
-      <div class="geo-strip-top"></div>
-      <div class="header-inner">
+${preheaderHtml}
 
-        <div class="geo-pattern">${GEO_STRIP}</div>
+<!-- ╔══════════════════════════════════════════════════════════╗
+     ║  OUTER WRAPPER TABLE                                     ║
+     ╚══════════════════════════════════════════════════════════╝ -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
+       class="outer-wrapper" bgcolor="${SIRAJA_COLORS.bgPage}"
+       style="background-color:${SIRAJA_COLORS.bgPage};">
+  <tr>
+    <td align="center" valign="top" class="email-outer-td"
+        style="padding:32px 16px 48px;">
 
-        <!-- Logo: tenant image OR official Siraja SVG -->
-        ${logoHtml}
+      <!--[if mso]><table align="center" border="0" cellspacing="0" cellpadding="0" width="600"><tr><td align="center" valign="top" width="600"><![endif]-->
 
-        <div class="brand-name">${tenantName === SIRAJA_BRAND_DEFAULTS.tenantName ? 'سِـراج' : tenantName}</div>
-        <div class="brand-tagline">${tagline}</div>
-        <div class="gold-divider"></div>
+      <!-- ╔══════════════════════════════════════════════════════╗
+           ║  EMAIL CARD                                          ║
+           ╚══════════════════════════════════════════════════════╝ -->
+      <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%"
+             class="email-card"
+             style="max-width:600px;background-color:${SIRAJA_COLORS.bgCard};border-radius:12px;
+                    overflow:hidden;box-shadow:0 4px 28px rgba(26,107,74,0.10);">
 
-      </div>
-      <div class="geo-strip-bottom"></div>
-    </div>
-    <!-- ═══════════════════════  END HEADER  ═══════════════════ -->
+        <!-- ── Gold accent top strip ─────────────────────────────── -->
+        <tr>
+          <td height="5" bgcolor="${accentColor}"
+              style="height:5px;line-height:5px;font-size:0;background-color:${accentColor};">&nbsp;</td>
+        </tr>
 
-    <!-- ═══════════════════════  BODY  ═════════════════════════ -->
-    <div class="email-body">
-      ${body}
-    </div>
-    <!-- ═══════════════════════  END BODY  ═════════════════════ -->
+        <!-- ── Header ───────────────────────────────────────────── -->
+        <tr>
+          <td align="center" valign="top" bgcolor="${hdrDeep}"
+              style="background-color:${hdrDeep};
+                     background:linear-gradient(160deg,${hdrDeep} 0%,${primaryColor} 55%,${hdrLight} 100%);
+                     padding:0;text-align:center;">
 
-    <!-- ═══════════════════════  FOOTER  ═══════════════════════ -->
-    <div class="email-footer">
+            <!-- Geometric ornament -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td align="center"
+                    style="padding:22px 20px 0;color:rgba(201,168,76,0.40);font-size:9px;
+                           letter-spacing:4px;font-family:Arial,sans-serif;
+                           overflow:hidden;white-space:nowrap;line-height:1.2;">
+                  ${GEO_ROW}
+                </td>
+              </tr>
+            </table>
 
-      <!-- Quranic verse -->
-      <p class="quran-verse">﴿ نُورٌ عَلَىٰ نُورٍ ﴾</p>
-      <p class="quran-source">سورة النور — آية ٣٥</p>
+            <!-- Logo -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td align="center" style="padding:16px 24px 4px;">
+                  ${logoHtml}
+                </td>
+              </tr>
+            </table>
 
-      <div class="footer-divider"></div>
+            <!-- Brand name -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td align="center" style="padding:2px 24px 4px;">
+                  <h1 style="margin:0;color:#ffffff;font-size:36px;font-weight:800;
+                             letter-spacing:1px;line-height:1.2;
+                             text-shadow:0 2px 10px rgba(0,0,0,0.28);
+                             font-family:'Cairo',Tahoma,Arial,sans-serif;">${displayName}</h1>
+                </td>
+              </tr>
+            </table>
 
-      <!-- Social / Contact bar -->
-      <div>
-        <span class="social-bar">
-          <a href="${websiteUrl}" title="الموقع الرسمي">🌐&nbsp; ${websiteUrl.replace('https://', '')}</a>
-          <a href="mailto:${supportEmail}" title="الدعم الفني">✉&nbsp; ${supportEmail}</a>
-        </span>
-      </div>
+            <!-- Tagline -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td align="center" style="padding:4px 24px 14px;">
+                  <p style="margin:0;color:${accentColor};font-size:12.5px;font-weight:500;
+                            font-family:'Cairo',Tahoma,Arial,sans-serif;opacity:0.95;">${tagline}</p>
+                </td>
+              </tr>
+            </table>
 
-      <!-- Secondary links -->
-      <div class="footer-links" style="margin-top:12px;">
-        <a href="${websiteUrl}/privacy">سياسة الخصوصية</a>
-        <span style="color:#cccccc;">·</span>
-        <a href="${websiteUrl}/terms">شروط الاستخدام</a>
-        <span style="color:#cccccc;">·</span>
-        <a href="${websiteUrl}/unsubscribe">إلغاء الاشتراك</a>
-      </div>
+            <!-- Gold divider (Outlook: solid gold cell; others: gradient) -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td align="center" style="padding:0 0 18px;">
+                  <!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="64"><tr><td height="2" bgcolor="${accentColor}" style="height:2px;line-height:2px;font-size:0;">&nbsp;</td></tr></table><![endif]-->
+                  <!--[if !mso]><!-->
+                  <div style="width:64px;height:2px;background:linear-gradient(90deg,transparent,${accentColor},transparent);margin:0 auto;mso-hide:all;"></div>
+                  <!--<![endif]-->
+                </td>
+              </tr>
+            </table>
 
-      <p class="footer-copy">
-        © ${year} منصة ${tenantName} · جميع الحقوق محفوظة
-      </p>
+            <!-- Bottom shimmer line (decorative) -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td height="1" bgcolor="${primaryColor}"
+                    style="height:1px;line-height:1px;font-size:0;
+                           background:linear-gradient(90deg,transparent,rgba(201,168,76,0.45),transparent);">&nbsp;</td>
+              </tr>
+            </table>
 
-    </div>
-    <!-- ═══════════════════════  END FOOTER  ════════════════════ -->
+          </td>
+        </tr>
+        <!-- ── /Header ─────────────────────────────────────────── -->
 
-  </div>
-</div>
+        <!-- ── Body ─────────────────────────────────────────────── -->
+        <tr>
+          <td class="email-body"
+              bgcolor="${SIRAJA_COLORS.bgCard}"
+              style="padding:38px 42px 30px;color:${SIRAJA_COLORS.textPrimary};font-size:15px;
+                     line-height:1.9;direction:rtl;font-family:${EMAIL_FONT_STACK};
+                     background-color:${SIRAJA_COLORS.bgCard};">
+            ${body}
+          </td>
+        </tr>
+        <!-- ── /Body ─────────────────────────────────────────────── -->
+
+        <!-- ── Footer ───────────────────────────────────────────── -->
+        <tr>
+          <td class="email-footer" bgcolor="${SIRAJA_COLORS.bgFooter}" align="center"
+              style="background-color:${SIRAJA_COLORS.bgFooter};border-top:1px solid ${SIRAJA_COLORS.border};
+                     padding:28px 32px 24px;text-align:center;direction:rtl;">
+
+            <!-- Quranic verse -->
+            <p class="quran-verse"
+               style="margin:0 0 3px;color:${primaryColor};font-size:16px;font-weight:700;
+                      font-family:'Cairo',Tahoma,Arial,sans-serif;">﴿ نُورٌ عَلَىٰ نُورٍ ﴾</p>
+            <p class="quran-source"
+               style="margin:0 0 18px;color:${accentColor};font-size:11px;
+                      font-family:'Cairo',Tahoma,Arial,sans-serif;">سورة النور — آية ٣٥</p>
+
+            <!-- Gold ornamental divider -->
+            <!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="44"><tr><td height="1" bgcolor="${accentColor}" style="height:1px;line-height:1px;font-size:0;opacity:0.5;">&nbsp;</td></tr></table><![endif]-->
+            <!--[if !mso]><!-->
+            <div style="width:44px;height:1px;background-color:${accentColor};opacity:0.5;margin:0 auto 18px;mso-hide:all;"></div>
+            <!--<![endif]-->
+
+            <!-- Social / contact bar -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td align="center" style="padding:0 0 14px;">
+                  <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer"
+                     style="color:${primaryColor};font-size:12.5px;font-weight:600;
+                            font-family:'Cairo',Tahoma,Arial,sans-serif;text-decoration:none;
+                            margin:0 10px;white-space:nowrap;">🌐&nbsp; ${webDomain}</a>
+                  <a href="mailto:${supportEmail}"
+                     style="color:${primaryColor};font-size:12.5px;font-weight:600;
+                            font-family:'Cairo',Tahoma,Arial,sans-serif;text-decoration:none;
+                            margin:0 10px;white-space:nowrap;">✉&nbsp; ${supportEmail}</a>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Secondary links -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td align="center" style="padding:0 0 10px;">
+                  <a href="${websiteUrl}/privacy"
+                     style="color:${SIRAJA_COLORS.textMuted};font-size:11px;
+                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 5px;">سياسة الخصوصية</a>
+                  <span style="color:${SIRAJA_COLORS.textMuted};font-size:11px;margin:0 2px;">·</span>
+                  <a href="${websiteUrl}/terms"
+                     style="color:${SIRAJA_COLORS.textMuted};font-size:11px;
+                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 5px;">شروط الاستخدام</a>
+                  <span style="color:${SIRAJA_COLORS.textMuted};font-size:11px;margin:0 2px;">·</span>
+                  <a href="${websiteUrl}/unsubscribe"
+                     style="color:${SIRAJA_COLORS.textMuted};font-size:11px;
+                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 5px;">إلغاء الاشتراك</a>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Copyright -->
+            <p style="margin:0;color:${SIRAJA_COLORS.textMuted};font-size:11px;
+                      font-family:Tahoma,Arial,sans-serif;line-height:1.8;">
+              © ${year} منصة ${tenantName} · جميع الحقوق محفوظة
+            </p>
+
+          </td>
+        </tr>
+        <!-- ── /Footer ─────────────────────────────────────────── -->
+
+      </table>
+      <!-- ╚══════════════════════════════════════════════════════╝ -->
+
+      <!--[if mso]></td></tr></table><![endif]-->
+
+    </td>
+  </tr>
+</table>
+<!-- ╚══════════════════════════════════════════════════════════╝ -->
+
 </body>
 </html>`;
 }

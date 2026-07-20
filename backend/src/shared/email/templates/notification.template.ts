@@ -1,4 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
+import { getButtonHtml, getCardHtml, SIRAJA_BRAND_DEFAULTS } from '../brand/brand-config';
 
 export interface NotificationTemplateData extends BaseTemplateData {
   recipientName: string;
@@ -19,38 +20,55 @@ export function notificationEmailTemplate(data: NotificationTemplateData): {
     title,
     message,
     actionUrl,
-    actionLabel = 'عرض التفاصيل',
-    type = 'info',
-    tenantName = 'سراج',
+    actionLabel  = 'عرض التفاصيل',
+    type         = 'info',
+    tenantName   = SIRAJA_BRAND_DEFAULTS.tenantName,
+    primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
+    accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
+    supportEmail = SIRAJA_BRAND_DEFAULTS.supportEmail,
   } = data;
 
-  const iconMap = { info: '📢', success: '✅', warning: '⚠️' };
+  const iconMap: Record<string, string> = { info: '📢', success: '✅', warning: '⚠️' };
   const icon = iconMap[type] ?? '📢';
 
   const subject = `${icon} ${title} — ${tenantName}`;
 
-  const actionButton = actionUrl
-    ? `<div class="btn-wrap"><a href="${actionUrl}" class="btn">${actionLabel}</a></div>`
+  // Map notification type to card type (success → success, warning → warning, info → info)
+  const cardType = type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+  const messageCard = getCardHtml(message, cardType);
+
+  const ctaButton = actionUrl
+    ? getButtonHtml({ href: actionUrl, label: actionLabel, primaryColor, accentColor, width: 220 })
     : '';
 
-  const cardClass = type === 'warning' ? 'warn-card' : type === 'success' ? 'info-card' : 'info-card';
+  const actionTable = actionUrl
+    ? `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+         <tr><td align="center" style="padding:24px 0 0;">${ctaButton}</td></tr>
+       </table>`
+    : '';
 
   const body = `
-    <h2>${icon} ${title}</h2>
+    <h2 style="color:${primaryColor};font-size:21px;font-weight:700;margin:0 0 20px;
+               padding-bottom:10px;border-bottom:2px solid #EEF0EC;
+               font-family:'Cairo',Tahoma,Arial,sans-serif;">
+      ${icon} ${title}
+    </h2>
 
-    <p>مرحباً <strong>${recipientName}</strong>،</p>
+    <p style="margin:0 0 16px;color:#4B5563;font-size:15px;line-height:1.9;
+              font-family:'Cairo',Tahoma,Arial,sans-serif;">
+      مرحباً <strong style="color:#1F2937;">${recipientName}</strong>،
+    </p>
 
-    <div class="${cardClass}">
-      ${message}
-    </div>
+    ${messageCard}
 
-    ${actionButton}
+    ${actionTable}
 
-    <hr class="section-divider"/>
+    <hr style="border:none;border-top:1px solid #EEF0EC;margin:24px 0;"/>
 
-    <p style="font-size:13px;color:#888;">
+    <p style="font-size:13px;color:#9CA3AF;margin:0;
+              font-family:'Cairo',Tahoma,Arial,sans-serif;">
       للمساعدة تواصل معنا على
-      <a href="mailto:support@siraja.website" style="color:#1A6B4A;">support@siraja.website</a>
+      <a href="mailto:${supportEmail}" style="color:${primaryColor};">${supportEmail}</a>
     </p>
   `;
 

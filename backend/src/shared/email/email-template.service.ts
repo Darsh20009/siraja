@@ -5,16 +5,19 @@ import { verificationEmailTemplate, VerificationTemplateData } from './templates
 import { passwordResetEmailTemplate, PasswordResetTemplateData } from './templates/password-reset.template';
 import { notificationEmailTemplate, NotificationTemplateData } from './templates/notification.template';
 import { systemAlertEmailTemplate, SystemAlertTemplateData } from './templates/system-alert.template';
+import { otpEmailTemplate, OtpTemplateData } from './templates/otp.template';
 
 /**
  * EmailTemplateService — high-level email sending with branded HTML templates.
  *
- * This service wraps the low-level IEmailProvider and adds:
- * - Template selection and rendering
- * - Consistent logging (recipient, template type, tenant)
- * - Plain-text fallback alongside HTML
+ * Wraps the low-level IEmailProvider and adds:
+ *   - Template selection and rendering (all 6 templates)
+ *   - Consistent logging (recipient, template type)
+ *   - Plain-text fallback alongside HTML
+ *   - Non-fatal error handling — email failures never crash the caller flow
  *
  * Callers inject this service; they never touch IEmailProvider or templates directly.
+ * Brand data (colors, logo URL, tenant name) comes from EmailBrandService.resolve().
  */
 @Injectable()
 export class EmailTemplateService {
@@ -30,6 +33,11 @@ export class EmailTemplateService {
   async sendVerification(to: string, data: VerificationTemplateData): Promise<void> {
     const { subject, html, text } = verificationEmailTemplate(data);
     await this.send('verification', to, subject, html, text);
+  }
+
+  async sendOtp(to: string, data: OtpTemplateData): Promise<void> {
+    const { subject, html, text } = otpEmailTemplate(data);
+    await this.send('otp', to, subject, html, text);
   }
 
   async sendPasswordReset(to: string, data: PasswordResetTemplateData): Promise<void> {
@@ -60,7 +68,7 @@ export class EmailTemplateService {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       this.logger.error(`[${templateType}] failed → ${to}: ${message}`);
-      // Do not rethrow — email failures are non-fatal; caller flow continues.
+      // Non-fatal — email failures never crash the caller flow.
     }
   }
 }
