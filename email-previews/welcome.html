@@ -1,74 +1,4 @@
-import {
-  SIRAJA_COLORS,
-  EMAIL_FONT_STACK,
-  GOOGLE_FONTS_LINK,
-  getLogoMarkup,
-  SIRAJA_BRAND_DEFAULTS,
-} from '../brand/brand-config';
-
-// ─── Data contract ────────────────────────────────────────────────────────────
-
-export interface BaseTemplateData {
-  /** Tenant or platform name shown in the header */
-  tenantName?: string;
-  /** Optional tagline below the tenant name. Siraja default used when absent. */
-  tenantTagline?: string;
-  /**
-   * Publicly-reachable logo image URL (Cloudflare R2 / CDN).
-   * When provided the tenant logo is rendered as an <img> tag.
-   * When absent the official Siraja inline SVG is used — zero external deps.
-   */
-  logoUrl?: string;
-  primaryColor?: string;
-  accentColor?: string;
-  year?: number;
-  supportEmail?: string;
-  websiteUrl?: string;
-}
-
-// ─── Geometric ornament ───────────────────────────────────────────────────────
-
-const GEO_STRIP = Array(22).fill('◆').join(' ');
-
-// ─── Template ─────────────────────────────────────────────────────────────────
-
-/**
- * Siraja branded HTML email shell.
- *
- * Design concept: "ضوء السراج" — the warm glow of a lantern illuminating
- * the path of Quran memorisation. Deep emerald primary with gold accents.
- *
- * ┌─ Compatibility ─────────────────────────────────────────────────────────┐
- * │  Gmail (web + Android + iOS), Apple Mail, Outlook 2016-2021, Yahoo,     │
- * │  Samsung Mail, Outlook.com — tested with and without image blocking.    │
- * │  Dark-mode aware via @media + [data-ogsc] Gmail attribute selectors.    │
- * └─────────────────────────────────────────────────────────────────────────┘
- *
- * @param body      - Pre-rendered inner HTML (from individual templates)
- * @param data      - Brand overrides; resolved by EmailBrandService
- */
-export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): string {
-  const {
-    tenantName    = SIRAJA_BRAND_DEFAULTS.tenantName,
-    tenantTagline,
-    logoUrl,
-    primaryColor  = SIRAJA_BRAND_DEFAULTS.primaryColor,
-    accentColor   = SIRAJA_BRAND_DEFAULTS.accentColor,
-    year          = new Date().getFullYear(),
-    supportEmail  = SIRAJA_BRAND_DEFAULTS.supportEmail,
-    websiteUrl    = SIRAJA_BRAND_DEFAULTS.websiteUrl,
-  } = data;
-
-  const tagline  = tenantTagline ?? '✦ منصة حفظ القرآن الكريم الذكية ✦';
-  const logoHtml = getLogoMarkup({ logoUrl, tenantName, width: 58, height: 70 });
-
-  // Derived shades for the header gradient
-  const primaryDeep  = primaryColor === SIRAJA_BRAND_DEFAULTS.primaryColor
-    ? SIRAJA_COLORS.primaryDeep  : primaryColor;
-  const primaryLight = primaryColor === SIRAJA_BRAND_DEFAULTS.primaryColor
-    ? SIRAJA_COLORS.primaryLight : primaryColor;
-
-  return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
   <meta charset="UTF-8" />
@@ -76,7 +6,7 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="x-apple-disable-message-reformatting" />
   <meta name="format-detection" content="telephone=no,address=no,email=no,date=no" />
-  <title>${tenantName}</title>
+  <title>سراج</title>
   <!--[if mso]>
   <noscript><xml>
     <o:OfficeDocumentSettings>
@@ -85,7 +15,10 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     </o:OfficeDocumentSettings>
   </xml></noscript>
   <![endif]-->
-  ${GOOGLE_FONTS_LINK}
+  
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style type="text/css">
     /* ═══ RESET ═══════════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; }
@@ -101,8 +34,8 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     body {
       margin: 0;
       padding: 0;
-      background-color: ${SIRAJA_COLORS.bgPage};
-      font-family: ${EMAIL_FONT_STACK};
+      background-color: #EFF5F1;
+      font-family: 'Cairo', 'Noto Sans Arabic', 'Segoe UI', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
       direction: rtl;
       -webkit-font-smoothing: antialiased;
     }
@@ -110,13 +43,13 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     /* ═══ LAYOUT ════════════════════════════════════════════════════════════ */
     .email-wrapper {
       width: 100%;
-      background-color: ${SIRAJA_COLORS.bgPage};
+      background-color: #EFF5F1;
       padding: 32px 0 48px;
     }
     .email-container {
       max-width: 600px;
       margin: 0 auto;
-      background: ${SIRAJA_COLORS.bgCard};
+      background: #ffffff;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 4px 28px rgba(26, 107, 74, 0.11);
@@ -124,11 +57,11 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
 
     /* ═══ HEADER ════════════════════════════════════════════════════════════ */
     .email-header {
-      background: linear-gradient(160deg, ${primaryDeep} 0%, ${primaryColor} 55%, ${primaryLight} 100%);
+      background: linear-gradient(160deg, #0d4a32 0%, #1A6B4A 55%, #22896a 100%);
       text-align: center;
     }
     .geo-strip-top {
-      background-color: ${accentColor};
+      background-color: #C9A84C;
       height: 5px;
     }
     .header-inner {
@@ -150,10 +83,10 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       margin: 10px 0 4px;
       letter-spacing: 1px;
       text-shadow: 0 2px 10px rgba(0,0,0,0.28);
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
+      font-family: 'Cairo', 'Cairo', 'Noto Sans Arabic', 'Segoe UI', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
     }
     .brand-tagline {
-      color: ${accentColor};
+      color: #C9A84C;
       font-size: 12.5px;
       font-weight: 500;
       margin: 0 0 16px;
@@ -163,11 +96,11 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     .gold-divider {
       width: 64px;
       height: 2px;
-      background: linear-gradient(90deg, transparent, ${accentColor}, transparent);
+      background: linear-gradient(90deg, transparent, #C9A84C, transparent);
       margin: 0 auto;
     }
     .geo-strip-bottom {
-      background: linear-gradient(90deg, transparent, ${accentColor}55, transparent);
+      background: linear-gradient(90deg, transparent, #C9A84C55, transparent);
       height: 1px;
     }
 
@@ -180,23 +113,23 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       direction: rtl;
     }
     .email-body h2 {
-      color: ${primaryColor};
+      color: #1A6B4A;
       font-size: 21px;
       font-weight: 700;
       margin: 0 0 20px;
       padding-bottom: 10px;
       border-bottom: 2px solid #EFF5F1;
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
+      font-family: 'Cairo', 'Cairo', 'Noto Sans Arabic', 'Segoe UI', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
     }
     .email-body p  { margin: 0 0 16px; color: #444444; }
     .email-body strong { color: #1a1a1a; }
-    .email-body a  { color: ${primaryColor}; }
+    .email-body a  { color: #1A6B4A; }
 
     /* CTA Button */
     .btn-wrap { text-align: center; margin: 28px 0; }
     .btn {
       display: inline-block;
-      background: linear-gradient(135deg, ${primaryDeep} 0%, ${primaryColor} 100%);
+      background: linear-gradient(135deg, #0d4a32 0%, #1A6B4A 100%);
       color: #ffffff !important;
       text-decoration: none !important;
       padding: 14px 38px;
@@ -205,8 +138,8 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       font-weight: 700;
       letter-spacing: 0.3px;
       box-shadow: 0 4px 16px rgba(26,107,74,0.32);
-      border: 2px solid ${accentColor};
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
+      border: 2px solid #C9A84C;
+      font-family: 'Cairo', 'Cairo', 'Noto Sans Arabic', 'Segoe UI', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
       mso-padding-alt: 0;
     }
     <!--[if mso]>
@@ -216,14 +149,14 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     /* OTP / Code box */
     .code-box {
       background: linear-gradient(135deg, #f0faf5, #e6f4ec);
-      border: 2px dashed ${primaryColor};
+      border: 2px dashed #1A6B4A;
       border-radius: 10px;
       padding: 20px 32px;
       text-align: center;
       font-size: 34px;
       letter-spacing: 10px;
       font-weight: 800;
-      color: ${primaryColor};
+      color: #1A6B4A;
       margin: 24px 0;
       direction: ltr;
       font-family: 'Courier New', Courier, monospace;
@@ -231,8 +164,8 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
 
     /* Info / Warning / Danger cards */
     .info-card {
-      background: ${SIRAJA_COLORS.bgInfoCard};
-      border-right: 4px solid ${primaryColor};
+      background: #f0faf5;
+      border-right: 4px solid #1A6B4A;
       border-radius: 6px;
       padding: 14px 18px;
       margin: 20px 0;
@@ -240,8 +173,8 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       color: #555;
     }
     .warn-card {
-      background: ${SIRAJA_COLORS.bgWarnCard};
-      border-right: 4px solid ${accentColor};
+      background: #fff8e6;
+      border-right: 4px solid #C9A84C;
       border-radius: 6px;
       padding: 14px 18px;
       margin: 20px 0;
@@ -249,7 +182,7 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       color: #7a5a00;
     }
     .danger-card {
-      background: ${SIRAJA_COLORS.bgDangerCard};
+      background: #fff0f0;
       border-right: 4px solid #e53e3e;
       border-radius: 6px;
       padding: 14px 18px;
@@ -267,7 +200,7 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       word-break: break-all;
       direction: ltr;
     }
-    .link-fallback a { color: ${primaryColor}; }
+    .link-fallback a { color: #1A6B4A; }
 
     /* Divider */
     .section-divider {
@@ -287,34 +220,34 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     .feature-list li:last-child { border-bottom: none; }
     .feature-list li::before {
       content: '✦';
-      color: ${accentColor};
+      color: #C9A84C;
       margin-left: 10px;
       font-size: 10px;
     }
 
     /* ═══ FOOTER ════════════════════════════════════════════════════════════ */
     .email-footer {
-      background: ${SIRAJA_COLORS.bgFooter};
+      background: #f7f9f8;
       border-top: 1px solid #deeae2;
       padding: 26px 32px 22px;
       text-align: center;
     }
     .quran-verse {
-      color: ${primaryColor};
+      color: #1A6B4A;
       font-size: 16px;
       font-weight: 700;
       margin: 0 0 3px;
-      font-family: 'Cairo', ${EMAIL_FONT_STACK};
+      font-family: 'Cairo', 'Cairo', 'Noto Sans Arabic', 'Segoe UI', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
     }
     .quran-source {
-      color: ${accentColor};
+      color: #C9A84C;
       font-size: 11px;
       margin: 0 0 18px;
     }
     .footer-divider {
       width: 44px;
       height: 1px;
-      background: ${accentColor};
+      background: #C9A84C;
       margin: 12px auto 18px;
       opacity: 0.5;
     }
@@ -328,7 +261,7 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       display: inline-block;
     }
     .social-bar a {
-      color: ${primaryColor} !important;
+      color: #1A6B4A !important;
       font-size: 12.5px;
       text-decoration: none;
       margin: 0 10px;
@@ -366,39 +299,39 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
 
     /* ═══ DARK MODE — Apple Mail, iOS Mail, Samsung Mail, Outlook.com ═══════ */
     @media (prefers-color-scheme: dark) {
-      .email-wrapper  { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
-      .email-container{ background-color: ${SIRAJA_COLORS.darkBgCard}   !important; }
-      .email-body     { color: ${SIRAJA_COLORS.darkText}                 !important; }
-      .email-body p   { color: ${SIRAJA_COLORS.darkTextMuted}            !important; }
+      .email-wrapper  { background-color: #0d1f15   !important; }
+      .email-container{ background-color: #122318   !important; }
+      .email-body     { color: #e0ebe3                 !important; }
+      .email-body p   { color: #a8c0b0            !important; }
       .email-body strong { color: #ffffff                                !important; }
-      .email-body h2  { color: ${SIRAJA_COLORS.darkHeading}              !important; border-bottom-color: #2d4a38 !important; }
+      .email-body h2  { color: #7ecba1              !important; border-bottom-color: #2d4a38 !important; }
       .email-body a   { color: #7ecba1                                   !important; }
-      .info-card      { background-color: ${SIRAJA_COLORS.darkBgInfoCard}!important; color: ${SIRAJA_COLORS.darkTextMuted} !important; border-right-color: #5aad82 !important; }
-      .warn-card      { background-color: ${SIRAJA_COLORS.darkBgWarnCard}!important; color: #d4b870 !important; }
-      .danger-card    { background-color: ${SIRAJA_COLORS.darkBgDanger}  !important; color: #d48080 !important; }
+      .info-card      { background-color: #1a3226!important; color: #a8c0b0 !important; border-right-color: #5aad82 !important; }
+      .warn-card      { background-color: #2a2010!important; color: #d4b870 !important; }
+      .danger-card    { background-color: #2a1010  !important; color: #d48080 !important; }
       .code-box       { background: linear-gradient(135deg, #1a3226, #162b20) !important; color: #7ecba1 !important; border-color: #5aad82 !important; }
-      .section-divider{ border-top-color: ${SIRAJA_COLORS.darkBorder}    !important; }
-      .email-footer   { background-color: ${SIRAJA_COLORS.darkBgFooter}  !important; border-top-color: ${SIRAJA_COLORS.darkBorder} !important; }
+      .section-divider{ border-top-color: #2d4a38    !important; }
+      .email-footer   { background-color: #0a1910  !important; border-top-color: #2d4a38 !important; }
       .quran-verse    { color: #7ecba1                                    !important; }
       .social-bar     { background: rgba(255,255,255,0.04)                !important; }
       .social-bar a   { color: #7ecba1                                    !important; }
       .footer-links a { color: #888888                                    !important; }
-      .feature-list li{ color: ${SIRAJA_COLORS.darkTextMuted}             !important; border-bottom-color: #2d4a38 !important; }
+      .feature-list li{ color: #a8c0b0             !important; border-bottom-color: #2d4a38 !important; }
     }
 
     /* ═══ DARK MODE — Gmail web ([data-ogsc] attribute selector hack) ════════ */
-    [data-ogsc] .email-wrapper  { background-color: ${SIRAJA_COLORS.darkBgPage}    !important; }
-    [data-ogsc] .email-container{ background-color: ${SIRAJA_COLORS.darkBgCard}    !important; }
-    [data-ogsc] .email-body     { color: ${SIRAJA_COLORS.darkText}                  !important; }
-    [data-ogsc] .email-body p   { color: ${SIRAJA_COLORS.darkTextMuted}             !important; }
+    [data-ogsc] .email-wrapper  { background-color: #0d1f15    !important; }
+    [data-ogsc] .email-container{ background-color: #122318    !important; }
+    [data-ogsc] .email-body     { color: #e0ebe3                  !important; }
+    [data-ogsc] .email-body p   { color: #a8c0b0             !important; }
     [data-ogsc] .email-body strong { color: #ffffff                                 !important; }
-    [data-ogsc] .email-body h2  { color: ${SIRAJA_COLORS.darkHeading}               !important; border-bottom-color: #2d4a38 !important; }
-    [data-ogsc] .info-card      { background-color: ${SIRAJA_COLORS.darkBgInfoCard} !important; color: ${SIRAJA_COLORS.darkTextMuted} !important; }
-    [data-ogsc] .warn-card      { background-color: ${SIRAJA_COLORS.darkBgWarnCard} !important; color: #d4b870 !important; }
-    [data-ogsc] .danger-card    { background-color: ${SIRAJA_COLORS.darkBgDanger}   !important; color: #d48080 !important; }
+    [data-ogsc] .email-body h2  { color: #7ecba1               !important; border-bottom-color: #2d4a38 !important; }
+    [data-ogsc] .info-card      { background-color: #1a3226 !important; color: #a8c0b0 !important; }
+    [data-ogsc] .warn-card      { background-color: #2a2010 !important; color: #d4b870 !important; }
+    [data-ogsc] .danger-card    { background-color: #2a1010   !important; color: #d48080 !important; }
     [data-ogsc] .code-box       { background-color: #1a3226                         !important; color: #7ecba1 !important; }
-    [data-ogsc] .section-divider{ border-top-color: ${SIRAJA_COLORS.darkBorder}     !important; }
-    [data-ogsc] .email-footer   { background-color: ${SIRAJA_COLORS.darkBgFooter}   !important; }
+    [data-ogsc] .section-divider{ border-top-color: #2d4a38     !important; }
+    [data-ogsc] .email-footer   { background-color: #0a1910   !important; }
     [data-ogsc] .quran-verse    { color: #7ecba1                                     !important; }
     [data-ogsc] .social-bar a   { color: #7ecba1                                     !important; }
   </style>
@@ -412,13 +345,36 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       <div class="geo-strip-top"></div>
       <div class="header-inner">
 
-        <div class="geo-pattern">${GEO_STRIP}</div>
+        <div class="geo-pattern">◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆ ◆</div>
 
         <!-- Logo: tenant image OR official Siraja SVG -->
-        ${logoHtml}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" width="52" height="62" role="img" aria-label="Siraja" style="display:block;margin:0 auto 6px;">
+  <circle cx="40" cy="7" r="5" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
+  <line x1="40" y1="12" x2="40" y2="19" stroke="#C9A84C" stroke-width="2" stroke-linecap="round"/>
+  <path d="M27 19 Q40 12.5 53 19 L51 28 L29 28 Z" fill="#C9A84C"/>
+  <rect x="29" y="27.5" width="22" height="4" rx="2" fill="#A87B28"/>
+  <path d="M33 31.5 L47 31.5 L53.5 43 L53.5 63 L47 74.5 L33 74.5 L26.5 63 L26.5 43 Z"
+        fill="rgba(201,168,76,0.07)" stroke="#C9A84C" stroke-width="2.2" stroke-linejoin="round"/>
+  <line x1="40"   y1="31.5" x2="40"   y2="74.5" stroke="#C9A84C" stroke-width="1"   opacity="0.30"/>
+  <line x1="26.5" y1="53"   x2="53.5" y2="53"   stroke="#C9A84C" stroke-width="1"   opacity="0.30"/>
+  <line x1="33"   y1="31.5" x2="26.5" y2="43"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
+  <line x1="47"   y1="31.5" x2="53.5" y2="43"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
+  <line x1="33"   y1="74.5" x2="26.5" y2="63"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
+  <line x1="47"   y1="74.5" x2="53.5" y2="63"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
+  <ellipse cx="40" cy="53" rx="13" ry="15" fill="#FCD34D" opacity="0.10"/>
+  <ellipse cx="40" cy="53" rx="7"  ry="9"  fill="#FCD34D" opacity="0.18"/>
+  <circle  cx="40" cy="53" r="3.5"          fill="#FCD34D" opacity="0.55"/>
+  <rect x="29" y="74.5" width="22" height="4" rx="2" fill="#A87B28"/>
+  <path d="M36 78.5 L44 78.5 L42 84 L40 87.5 L38 84 Z" fill="#C9A84C"/>
+  <circle cx="40" cy="91" r="3.5" fill="#C9A84C"/>
+  <circle cx="15.5" cy="53" r="4.5" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
+  <line   x1="20"   y1="53" x2="26.5" y2="53"   stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
+  <circle cx="64.5" cy="53" r="4.5" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
+  <line   x1="53.5" y1="53" x2="60"   y2="53"   stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
+</svg>
 
-        <div class="brand-name">${tenantName === SIRAJA_BRAND_DEFAULTS.tenantName ? 'سِـراج' : tenantName}</div>
-        <div class="brand-tagline">${tagline}</div>
+        <div class="brand-name">سِـراج</div>
+        <div class="brand-tagline">✦ منصة حفظ القرآن الكريم الذكية ✦</div>
         <div class="gold-divider"></div>
 
       </div>
@@ -428,7 +384,41 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
 
     <!-- ═══════════════════════  BODY  ═════════════════════════ -->
     <div class="email-body">
-      ${body}
+      
+    <h2>أهلاً وسهلاً، أحمد محمد! 🌙</h2>
+
+    <p>
+      يسعدنا انضمامك إلى <strong>سراج</strong> — منصتك الذكية لحفظ القرآن الكريم
+      وتتبع تقدمك مع شيخك وحلقتك.
+    </p>
+
+    <p>
+      حسابك جاهز الآن ويمكنك البدء فوراً:
+    </p>
+
+    <ul class="feature-list">
+      <li>📖 &nbsp;تتبع حفظك وتسميعك يومياً</li>
+      <li>🧑‍🏫 &nbsp;التواصل مع شيخك ومتابعة تقييماتك</li>
+      <li>📊 &nbsp;تحليل ذكي لأخطائك وتقدمك</li>
+      <li>🏆 &nbsp;مشاركة في لوحات الشرف</li>
+      <li>🤖 &nbsp;مساعد ذكاء اصطناعي لدعم رحلة الحفظ</li>
+    </ul>
+
+    <div class="btn-wrap">
+      <a href="https://siraja.website/auth/login" class="btn">🚀 ابدأ رحلتك مع القرآن</a>
+    </div>
+
+    <hr class="section-divider"/>
+
+    <p style="font-size:14px;color:#555;text-align:center;">
+      بارك الله فيك ووفقك لما يحبه ويرضاه 🤲
+    </p>
+
+    <p style="font-size:13px;color:#888;">
+      للمساعدة تواصل معنا على
+      <a href="mailto:support@siraja.website" style="color:#1A6B4A;">support@siraja.website</a>
+    </p>
+  
     </div>
     <!-- ═══════════════════════  END BODY  ═════════════════════ -->
 
@@ -444,22 +434,22 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       <!-- Social / Contact bar -->
       <div>
         <span class="social-bar">
-          <a href="${websiteUrl}" title="الموقع الرسمي">🌐&nbsp; ${websiteUrl.replace('https://', '')}</a>
-          <a href="mailto:${supportEmail}" title="الدعم الفني">✉&nbsp; ${supportEmail}</a>
+          <a href="https://siraja.website" title="الموقع الرسمي">🌐&nbsp; siraja.website</a>
+          <a href="mailto:support@siraja.website" title="الدعم الفني">✉&nbsp; support@siraja.website</a>
         </span>
       </div>
 
       <!-- Secondary links -->
       <div class="footer-links" style="margin-top:12px;">
-        <a href="${websiteUrl}/privacy">سياسة الخصوصية</a>
+        <a href="https://siraja.website/privacy">سياسة الخصوصية</a>
         <span style="color:#cccccc;">·</span>
-        <a href="${websiteUrl}/terms">شروط الاستخدام</a>
+        <a href="https://siraja.website/terms">شروط الاستخدام</a>
         <span style="color:#cccccc;">·</span>
-        <a href="${websiteUrl}/unsubscribe">إلغاء الاشتراك</a>
+        <a href="https://siraja.website/unsubscribe">إلغاء الاشتراك</a>
       </div>
 
       <p class="footer-copy">
-        © ${year} منصة ${tenantName} · جميع الحقوق محفوظة
+        © 2026 منصة سراج · جميع الحقوق محفوظة
       </p>
 
     </div>
@@ -468,5 +458,4 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
   </div>
 </div>
 </body>
-</html>`;
-}
+</html>

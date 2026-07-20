@@ -32,6 +32,10 @@ SUPPORT_EMAIL = "support@siraja.website"
 localPort = 5000
 externalPort = 80
 
+[[ports]]
+localPort = 8899
+externalPort = 3001
+
 [workflows]
 runButton = "Project"
 

@@ -18,3 +18,4 @@
 - [Siraja Phase 12E Platform Operations](siraja-phase12e-operations.md) — AdminModule hub for Donations/Feedback/FeatureVoting/Support/Dashboard/Presentation/Analytics/Audit; snapshot-driven analytics pattern; read before touching admin module.
 - [Siraja GetMe 500 bug](siraja-getme-500-tenantId-bug.md) — user.tenantId from repo is a string not ObjectId; use String() not .toHexString().
 - [Siraja @Public() decorator pattern](siraja-public-decorator-pattern.md) — JwtAuthGuard is global; @Public() must be explicit on every anonymous endpoint.
+- [Siraja Email Branding System](siraja-email-branding.md) — brand/, EmailBrandService, dark mode CSS, tenant logo override, Cairo font; read before touching any email template or base shell.
