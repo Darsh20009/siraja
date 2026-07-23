@@ -51,7 +51,7 @@ export class SessionManagementUseCase {
       deviceId: String(s.deviceId),
       ipAddress: s.ipAddress,
       platform: 'unknown',
-      createdAt: (s as any).createdAt,
+      createdAt: s.createdAt,
       expiresAt: s.expiresAt,
     }));
   }

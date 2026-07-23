@@ -1,17 +1,17 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EMAIL_PROVIDER, IEmailProvider } from '@shared/email/email-provider.interface';
 import { verificationEmailTemplate } from '@shared/email/templates/verification.template';
 import { passwordResetEmailTemplate } from '@shared/email/templates/password-reset.template';
 import { notificationEmailTemplate } from '@shared/email/templates/notification.template';
 
-/** Shared brand data injected into every email */
-const BRAND = {
-  tenantName:   'سراج',
-  primaryColor: '#1A6B4A',
-  accentColor:  '#C9A84C',
-  supportEmail: 'support@siraja.website',
-  websiteUrl:   'https://siraja.website',
-};
+interface BrandData {
+  tenantName: string;
+  primaryColor: string;
+  accentColor: string;
+  supportEmail: string;
+  websiteUrl: string;
+}
 
 /**
  * Email delivery seam for auth flows (verification, password reset,
@@ -30,6 +30,7 @@ export class MailerService {
   constructor(
     @Inject(EMAIL_PROVIDER)
     private readonly emailProvider: IEmailProvider,
+    private readonly config: ConfigService,
   ) {}
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -39,7 +40,7 @@ export class MailerService {
   async sendVerificationEmail(email: string, rawToken: string, appUrl: string): Promise<void> {
     const verificationUrl = `${appUrl}/auth/verify-email?token=${rawToken}`;
     const { subject, html, text } = verificationEmailTemplate({
-      ...BRAND,
+      ...this.getBrand(),
       fullName: email.split('@')[0],   // best-effort name until we pass it through
       verificationUrl,
       expiresInHours: 24,
@@ -51,7 +52,7 @@ export class MailerService {
   async sendPasswordResetEmail(email: string, rawToken: string, appUrl: string): Promise<void> {
     const resetUrl = `${appUrl}/auth/reset-password?token=${rawToken}`;
     const { subject, html, text } = passwordResetEmailTemplate({
-      ...BRAND,
+      ...this.getBrand(),
       fullName: email.split('@')[0],
       resetUrl,
       expiresInMinutes: 60,
@@ -63,7 +64,7 @@ export class MailerService {
   async sendSuspiciousLoginAlert(email: string, ipAddress: string, userAgent?: string): Promise<void> {
     const device = userAgent ?? 'جهاز غير معروف';
     const { subject, html, text } = notificationEmailTemplate({
-      ...BRAND,
+      ...this.getBrand(),
       recipientName: email.split('@')[0],
       type: 'warning',
       title: 'تسجيل دخول غير مألوف',
@@ -82,6 +83,17 @@ export class MailerService {
   // ─────────────────────────────────────────────────────────────────────────
   // Private helpers
   // ─────────────────────────────────────────────────────────────────────────
+
+  /** Reads brand values from config so they reflect env-var overrides. */
+  private getBrand(): BrandData {
+    return {
+      tenantName:   'سراج',
+      primaryColor: '#1A6B4A',
+      accentColor:  '#C9A84C',
+      supportEmail: this.config.get<string>('email.supportEmail', 'support@siraja.website'),
+      websiteUrl:   this.config.get<string>('appUrl', 'https://siraja.website'),
+    };
+  }
 
   private async deliver(
     type: string,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
 import { AuthProvider } from '@shared/enums/auth-provider.enum';
 import { VerifiedOAuthProfile } from '../../application/use-cases/oauth-login.use-case';
 
@@ -25,15 +25,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  validate(_accessToken: string, _refreshToken: string, profile: any, done: VerifyCallback): void {
+  validate(_accessToken: string, _refreshToken: string, profile: Profile, done: VerifyCallback): void {
     const email = profile.emails?.[0]?.value;
     const result: VerifiedOAuthProfile = {
       provider: AuthProvider.GOOGLE,
       providerUserId: profile.id,
       email,
       fullName: profile.displayName,
-      emailVerified: profile.emails?.[0]?.verified ?? true,
+      emailVerified: (profile.emails?.[0] as { value: string; verified?: boolean })?.verified ?? true,
     };
-    done(null, result as any);
+    done(null, result as Express.User);
   }
 }

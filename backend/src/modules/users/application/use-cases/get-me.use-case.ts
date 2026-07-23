@@ -48,8 +48,8 @@ export class GetMeUseCase {
       lastLoginAt: user.lastLoginAt ?? undefined,
       isMfaEnabled: user.isMfaEnabled,
       notificationPreferences,
-      createdAt: (user as any).createdAt,
-      updatedAt: (user as any).updatedAt,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 }

@@ -40,7 +40,7 @@ export class NotificationDeliveryService {
         await this.deliverEmail(notification);
         break;
       default:
-        this.logger.warn(`Unknown channel "${(notification as any).channel}" — skipping delivery.`);
+        this.logger.warn(`Unknown channel "${notification.channel as string}" — skipping delivery.`);
     }
   }
 

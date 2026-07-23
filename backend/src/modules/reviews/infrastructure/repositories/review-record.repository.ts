@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { ReviewRecord, ReviewRecordDocument } from '@database/mongoose/schemas';
+import { ReviewRecord, ReviewRecordDocument, QuranRange } from '@database/mongoose/schemas';
 import {
   CreateReviewRecordInput,
   IReviewRecordRepository,
@@ -103,7 +103,7 @@ export class ReviewRecordRepository implements IReviewRecordRepository {
     const gradeBreakdown: Record<string, number> = {};
 
     for (const doc of docs) {
-      const range = doc.range as any;
+      const range = doc.range as QuranRange;
       if (range) {
         totalAyahsRevised +=
           range.surahFrom === range.surahTo

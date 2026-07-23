@@ -1,4 +1,5 @@
 import { Injectable, Inject, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENTS } from '@shared/events/events.constants';
 import { SUPPORT_TICKET_REPOSITORY, ISupportTicketRepository } from '../../domain/repositories/support-ticket.repository.interface';
@@ -49,7 +50,7 @@ export class SupportService {
       status: TicketStatus.OPEN,
       attachmentUrls: data.attachmentUrls ?? [],
     });
-    this.emitter.emit(EVENTS.TICKET_CREATED, { ticketId: (ticket as any)._id?.toString(), submittedBy: data.submittedBy });
+    this.emitter.emit(EVENTS.TICKET_CREATED, { ticketId: String((ticket as unknown as { _id: Types.ObjectId })._id), submittedBy: data.submittedBy });
     return ticket;
   }
 

@@ -57,7 +57,7 @@ export class NotificationRepository implements INotificationRepository {
       })),
       { ordered: false },
     );
-    return docs.map((d) => toItem((d as any).toObject()));
+    return (docs as NotificationDocument[]).map((d) => toItem(d.toObject()));
   }
 
   async findById(tenantId: string, id: string): Promise<NotificationItem | null> {

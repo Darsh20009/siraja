@@ -180,7 +180,8 @@ export async function seedQuranFoundation(conn: Connection): Promise<void> {
     log(`Ayahs: already seeded (${ayahCount} docs) — skipping.`);
   } else {
     log('Fetching full Quran text (quran-uthmani) from alquran.cloud — this may take 30–60s...');
-    const quranRes = await fetchJson<AlQuranResponse<{ surahs: { ayahs: AlQuranAyah[] }[] }>>(
+    type AlQuranSurahWithAyahs = Pick<AlQuranSurah, 'number' | 'name' | 'englishName'> & { ayahs: AlQuranAyah[] };
+    const quranRes = await fetchJson<AlQuranResponse<{ surahs: AlQuranSurahWithAyahs[] }>>(
       'https://api.alquran.cloud/v1/quran/quran-uthmani',
     );
     if (quranRes.code !== 200) throw new Error(`AlQuran API error: ${quranRes.status}`);
@@ -190,7 +191,7 @@ export async function seedQuranFoundation(conn: Connection): Promise<void> {
     const allAyahs: AlQuranAyah[] = quranRes.data.surahs.flatMap((s) =>
       s.ayahs.map((a) => ({
         ...a,
-        surah: { number: (s as any).number, name: (s as any).name, englishName: (s as any).englishName },
+        surah: { number: s.number, name: s.name, englishName: s.englishName },
       })),
     );
     log(`Fetched ${allAyahs.length} ayahs. Building documents...`);

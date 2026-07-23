@@ -1,10 +1,11 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENTS } from '@shared/events/events.constants';
 import { DONATION_CAMPAIGN_REPOSITORY, IDonationCampaignRepository } from '../../domain/repositories/donation-campaign.repository.interface';
 import { DONATION_REPOSITORY, IDonationRepository } from '../../domain/repositories/donation.repository.interface';
 import { DonationStatus, CampaignStatus } from '@shared/enums/admin-operations.enum';
-import { FundraisingStage } from '@database/mongoose/schemas/donation-campaign.schema';
+import { DonationCampaignDocument, FundraisingStage } from '@database/mongoose/schemas/donation-campaign.schema';
 
 /** Fundraising stages hardcoded per requirements — overridden by campaign stages if set. */
 export const DEFAULT_STAGES: FundraisingStage[] = [
@@ -46,7 +47,9 @@ export class DonationsService {
       completed: raisedAmount >= stage.targetAmount,
       completedAt: stage.completedAt,
     }));
-    return { ...(campaign as any).toObject?.() ?? campaign, donorCount, raisedAmount, stages };
+    const campaignDoc = campaign as DonationCampaignDocument;
+    const campaignObj = typeof campaignDoc.toObject === 'function' ? campaignDoc.toObject() : campaign;
+    return { ...campaignObj, donorCount, raisedAmount, stages };
   }
 
   async createCampaign(data: Record<string, unknown>, createdBy: string) {
@@ -103,7 +106,7 @@ export class DonationsService {
       note: data.note,
     });
 
-    this.emitter.emit(EVENTS.DONATION_CREATED, { donationId: (donation as any)._id?.toString(), campaignId: data.campaignId, amount: data.amount });
+    this.emitter.emit(EVENTS.DONATION_CREATED, { donationId: String((donation as unknown as { _id: Types.ObjectId })._id), campaignId: data.campaignId, amount: data.amount });
     return donation;
   }
 

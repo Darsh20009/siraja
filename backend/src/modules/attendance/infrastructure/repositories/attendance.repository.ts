@@ -51,7 +51,7 @@ export class AttendanceRepository implements IAttendanceRepository {
       })),
       { ordered: false },
     );
-    return docs.map((d) => toItem((d as any).toObject()));
+    return (docs as AttendanceDocument[]).map((d) => toItem(d.toObject()));
   }
 
   async findById(tenantId: string, id: string): Promise<AttendanceItem | null> {

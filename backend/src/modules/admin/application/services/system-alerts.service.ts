@@ -1,4 +1,5 @@
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENTS } from '@shared/events/events.constants';
 import { SYSTEM_ALERT_REPOSITORY, ISystemAlertRepository } from '../../domain/repositories/system-alert.repository.interface';
@@ -39,7 +40,7 @@ export class SystemAlertsService {
     });
 
     this.emitter.emit(EVENTS.SYSTEM_ALERT_FIRED, {
-      alertId: (alert as any)._id?.toString(),
+      alertId: String((alert as unknown as { _id: Types.ObjectId })._id),
       type,
       severity,
       message,

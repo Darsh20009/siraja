@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { QuranRange } from '@database/mongoose/schemas';
 import {
   IStudentProgressRepository,
   STUDENT_PROGRESS_REPOSITORY,
@@ -66,7 +67,7 @@ export class UpdateStudentProgressUseCase {
     let lastMemorizationDate: Date | null = null;
 
     for (const doc of completedMem) {
-      const range = doc.range as any;
+      const range = doc.range as QuranRange;
       if (range) {
         totalAyahsMemorized += estimateAyahsInRange(range);
       }
@@ -88,7 +89,7 @@ export class UpdateStudentProgressUseCase {
     let lastRevisionDate: Date | null = null;
 
     for (const doc of revDocs) {
-      const range = doc.range as any;
+      const range = doc.range as QuranRange;
       if (range) {
         totalAyahsRevised += estimateAyahsInRange(range);
       }

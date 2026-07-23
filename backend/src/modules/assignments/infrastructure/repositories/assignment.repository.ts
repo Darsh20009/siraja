@@ -49,7 +49,7 @@ export class AssignmentRepository implements IAssignmentRepository {
         dueAt: input.dueAt,
       })),
     );
-    return docs.map((d) => toItem((d as any).toObject()));
+    return (docs as AssignmentDocument[]).map((d) => toItem(d.toObject()));
   }
 
   async findById(tenantId: string, id: string): Promise<AssignmentItem | null> {

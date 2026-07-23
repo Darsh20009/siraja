@@ -11,6 +11,7 @@ import { VerifyEmailDto } from '../../application/dto/verify-email.dto';
 import { RequestPasswordResetDto } from '../../application/dto/request-password-reset.dto';
 import { ResetPasswordDto } from '../../application/dto/reset-password.dto';
 import { OAuthTokenLoginDto } from '../../application/dto/oauth-login.dto';
+import { VerifiedOAuthProfile } from '../../application/use-cases/oauth-login.use-case';
 import { RegisterUseCase } from '../../application/use-cases/register.use-case';
 import { LoginUseCase } from '../../application/use-cases/login.use-case';
 import { RefreshTokenUseCase } from '../../application/use-cases/refresh-token.use-case';
@@ -136,7 +137,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const { ipAddress, userAgent } = extractRequestContext(req);
-    return this.oauthLoginUseCase.execute(extractTenantId(req), req.user as any, { ipAddress, userAgent });
+    return this.oauthLoginUseCase.execute(extractTenantId(req), req.user as unknown as VerifiedOAuthProfile, { ipAddress, userAgent });
   }
 
   @Public()

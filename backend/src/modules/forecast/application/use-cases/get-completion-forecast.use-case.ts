@@ -2,6 +2,7 @@ import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nest
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AccessTokenPayload } from '@modules/auth/domain/value-objects/jwt-payload';
+import { QuranRange } from '@database/mongoose/schemas';
 import {
   IStudentProgressRepository,
   STUDENT_PROGRESS_REPOSITORY,
@@ -156,7 +157,7 @@ export class GetCompletionForecastUseCase {
 
     const dayMap = new Map<string, number>();
     for (const doc of recentDocs) {
-      const range = doc.range as any;
+      const range = doc.range as QuranRange;
       if (!range) continue;
       const ayahs = estimateAyahsInRange(range);
       const dateKey = new Date(doc.evaluatedAt as Date).toISOString().split('T')[0];

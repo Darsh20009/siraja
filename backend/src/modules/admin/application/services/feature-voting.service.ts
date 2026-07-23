@@ -1,10 +1,12 @@
 import { Injectable, Inject, NotFoundException, ConflictException, BadRequestException, Logger } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENTS } from '@shared/events/events.constants';
 import { FEATURE_REQUEST_REPOSITORY, IFeatureRequestRepository } from '../../domain/repositories/feature-request.repository.interface';
 import { FEATURE_VOTE_REPOSITORY, IFeatureVoteRepository } from '../../domain/repositories/feature-vote.repository.interface';
 import { FEATURE_FOLLOW_REPOSITORY, IFeatureFollowRepository } from '../../domain/repositories/feature-follow.repository.interface';
 import { FeatureRequestStatus, FeatureRequestPriority } from '@shared/enums/admin-operations.enum';
+import { FeatureRequestDocument } from '@database/mongoose/schemas/feature-request.schema';
 
 @Injectable()
 export class FeatureVotingService {
@@ -32,7 +34,9 @@ export class FeatureVotingService {
       this.voteRepo.countByFeature(id),
       this.followRepo.countByFeature(id),
     ]);
-    return { ...(item as any).toObject?.() ?? item, voteCount, followerCount };
+    const itemDoc = item as FeatureRequestDocument;
+    const itemObj = typeof itemDoc.toObject === 'function' ? itemDoc.toObject() : item;
+    return { ...itemObj, voteCount, followerCount };
   }
 
   async suggest(data: {
@@ -51,7 +55,7 @@ export class FeatureVotingService {
       status: FeatureRequestStatus.PROPOSED,
       voteCount: 0,
     });
-    this.emitter.emit(EVENTS.FEATURE_REQUEST_CREATED, { featureRequestId: (request as any)._id?.toString() });
+    this.emitter.emit(EVENTS.FEATURE_REQUEST_CREATED, { featureRequestId: String((request as unknown as { _id: Types.ObjectId })._id) });
     return request;
   }
 

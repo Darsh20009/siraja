@@ -71,7 +71,7 @@ export class CreateTenantUseCase {
       type: tenant.type,
       status: tenant.status,
       trialEndsAt: tenant.trialEndsAt,
-      createdAt: (tenant as any).createdAt,
+      createdAt: tenant.createdAt,
     };
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { DONATION_REPOSITORY, IDonationRepository } from '../../domain/repositories/donation.repository.interface';
 import { DONATION_CAMPAIGN_REPOSITORY, IDonationCampaignRepository } from '../../domain/repositories/donation-campaign.repository.interface';
 import { OPERATIONAL_SNAPSHOT_REPOSITORY, IOperationalSnapshotRepository } from '../../domain/repositories/operational-snapshot.repository.interface';
@@ -115,7 +116,7 @@ export class PresentationService {
         })),
         activeCampaign: primaryCampaign
           ? {
-              id: (primaryCampaign as any)._id?.toString(),
+              id: String((primaryCampaign as unknown as { _id: Types.ObjectId })._id),
               name: primaryCampaign.name,
               targetAmount: primaryCampaign.targetAmount,
             }

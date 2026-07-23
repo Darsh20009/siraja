@@ -31,8 +31,8 @@ export class GetTenantUseCase {
       timezone: tenant.timezone,
       defaultLocale: tenant.defaultLocale,
       trialEndsAt: tenant.trialEndsAt,
-      createdAt: (tenant as any).createdAt,
-      updatedAt: (tenant as any).updatedAt,
+      createdAt: tenant.createdAt,
+      updatedAt: tenant.updatedAt,
       settings: settings
         ? {
             primaryLocale: settings.primaryLocale,

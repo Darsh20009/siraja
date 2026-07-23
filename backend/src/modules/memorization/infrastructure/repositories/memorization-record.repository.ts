@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { MemorizationRecord, MemorizationRecordDocument } from '@database/mongoose/schemas';
+import { MemorizationRecord, MemorizationRecordDocument, QuranRange } from '@database/mongoose/schemas';
 import {
   CreateMemorizationRecordInput,
   IMemorizationRecordRepository,
@@ -99,7 +99,7 @@ export class MemorizationRecordRepository implements IMemorizationRecordReposito
     for (const doc of docs) {
       if (doc.status === MemorizationStatus.COMPLETED) {
         completed++;
-        const range = doc.range as any;
+        const range = doc.range as QuranRange;
         if (range) {
           if (range.surahFrom === range.surahTo) {
             totalAyahsMemorized += Math.max(0, range.ayahTo - range.ayahFrom + 1);

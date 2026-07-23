@@ -1,4 +1,5 @@
 import { Injectable, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Types } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENTS } from '@shared/events/events.constants';
 import { FEEDBACK_REPOSITORY, IFeedbackRepository } from '../../domain/repositories/feedback.repository.interface';
@@ -66,7 +67,7 @@ export class FeedbackService {
       status: FeedbackStatus.PENDING,
     });
 
-    this.emitter.emit(EVENTS.FEEDBACK_SUBMITTED, { feedbackId: (feedback as any)._id?.toString(), type: feedback.type });
+    this.emitter.emit(EVENTS.FEEDBACK_SUBMITTED, { feedbackId: String((feedback as unknown as { _id: Types.ObjectId })._id), type: feedback.type });
     return feedback;
   }
 
