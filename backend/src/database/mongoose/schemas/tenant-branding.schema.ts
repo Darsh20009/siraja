@@ -72,4 +72,6 @@ export class TenantBranding {
 }
 
 export const TenantBrandingSchema = SchemaFactory.createForClass(TenantBranding);
-TenantBrandingSchema.index({ tenantId: 1 }, { unique: true });
+// Uniqueness (one branding document per tenant) is enforced at the application layer.
+// BaseSchema already declares index: true on tenantId; a duplicate standalone
+// { tenantId: 1 } index here would cause a Mongoose duplicate-index warning.

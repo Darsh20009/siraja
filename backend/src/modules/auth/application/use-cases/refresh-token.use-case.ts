@@ -78,7 +78,7 @@ export class RefreshTokenUseCase {
       userAgent,
     });
 
-    await this.refreshTokens.revokeById(existing._id as any, 'rotated', newToken._id as any);
+    await this.refreshTokens.revokeById(existing._id as Types.ObjectId, 'rotated', newToken._id as Types.ObjectId);
 
     await this.audit.record({
       tenantId: existing.tenantId,

@@ -83,9 +83,9 @@ export class ResetPasswordUseCase {
       passwordHash: newHash,
       failedLoginCount: 0,
       lockedUntil: null,
-    } as any);
+    });
 
-    await this.verificationTokens.consume(record._id as any);
+    await this.verificationTokens.consume(record._id as Types.ObjectId);
     await this.refreshTokens.revokeAllForUser(user._id as Types.ObjectId, 'password_changed');
 
     await this.audit.record({

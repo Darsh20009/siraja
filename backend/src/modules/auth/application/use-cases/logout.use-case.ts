@@ -21,7 +21,7 @@ export class LogoutUseCase {
     const tokenHash = this.tokenService.hashToken(rawRefreshToken);
     const existing = await this.refreshTokens.findActiveByHash(tokenHash);
     if (existing && !existing.revokedAt) {
-      await this.refreshTokens.revokeById(existing._id as any, 'logout');
+      await this.refreshTokens.revokeById(existing._id as Types.ObjectId, 'logout');
     }
     await this.audit.record({
       tenantId,

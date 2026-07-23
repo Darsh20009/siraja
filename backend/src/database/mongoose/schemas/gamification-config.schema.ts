@@ -47,4 +47,6 @@ export class GamificationConfig extends BaseSchema {
 export type GamificationConfigDocument = HydratedDocument<GamificationConfig>;
 export const GamificationConfigSchema = SchemaFactory.createForClass(GamificationConfig);
 
-GamificationConfigSchema.index({ tenantId: 1 }, { unique: true });
+// Uniqueness (one config per tenant) is enforced at the application layer.
+// BaseSchema already declares index: true on tenantId; a duplicate standalone
+// { tenantId: 1 } index here would cause a Mongoose duplicate-index warning.

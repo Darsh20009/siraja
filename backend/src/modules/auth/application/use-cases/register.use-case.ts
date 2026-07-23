@@ -83,7 +83,7 @@ export class RegisterUseCase {
       status: dto.email ? UserStatus.PENDING_VERIFICATION : UserStatus.ACTIVE,
       isEmailVerified: false,
       isPhoneVerified: false,
-    } as any);
+    });
 
     await this.audit.record({
       tenantId,

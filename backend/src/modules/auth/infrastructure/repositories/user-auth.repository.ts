@@ -33,11 +33,11 @@ export class UserAuthRepository implements IUserAuthRepository {
       .exec();
   }
 
-  create(data: Partial<UserDocument>) {
-    return this.userModel.create(data);
+  create(data: Partial<User>) {
+    return this.userModel.create(data as Parameters<typeof this.userModel.create>[0]);
   }
 
-  updateById(id: Types.ObjectId | string, update: Partial<UserDocument>) {
+  updateById(id: Types.ObjectId | string, update: Partial<User>) {
     return this.userModel.findByIdAndUpdate(id, update, { new: true }).exec();
   }
 }

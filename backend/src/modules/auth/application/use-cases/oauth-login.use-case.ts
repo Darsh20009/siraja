@@ -61,7 +61,7 @@ export class OAuthLoginUseCase {
             ...(existingByEmail.linkedProviders ?? []),
             { provider: profile.provider, providerUserId: profile.providerUserId, linkedAt: new Date() },
           ],
-        } as any);
+        });
         await this.audit.record({
           tenantId,
           actor: existingByEmail._id as Types.ObjectId,
@@ -86,7 +86,7 @@ export class OAuthLoginUseCase {
         isEmailVerified: true,
         isPhoneVerified: false,
         linkedProviders: [{ provider: profile.provider, providerUserId: profile.providerUserId, linkedAt: new Date() }],
-      } as any);
+      });
       await this.audit.record({
         tenantId,
         actor: user._id as Types.ObjectId,
@@ -100,7 +100,7 @@ export class OAuthLoginUseCase {
     await this.users.updateById(user._id as Types.ObjectId, {
       lastLoginAt: new Date(),
       lastLoginIp: ctx.ipAddress,
-    } as any);
+    });
 
     await this.audit.record({
       tenantId,

@@ -22,4 +22,11 @@ export class BaseSchema {
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;
+
+  /**
+   * TypeScript-only declarations — Mongoose manages these via `timestamps: true`.
+   * Declared here so subclasses don't need `(doc as any).createdAt`.
+   */
+  readonly createdAt: Date;
+  readonly updatedAt: Date;
 }

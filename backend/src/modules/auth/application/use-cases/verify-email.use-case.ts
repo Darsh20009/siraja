@@ -29,18 +29,18 @@ export class VerifyEmailUseCase {
       throw new BadRequestException('This verification link is invalid or has expired.');
     }
 
-    await this.verificationTokens.consume(record._id as any);
+    await this.verificationTokens.consume(record._id as Types.ObjectId);
     const user = await this.users.updateById(record.userId, {
       isEmailVerified: true,
       status: UserStatus.ACTIVE,
-    } as any);
+    });
 
     if (user) {
       await this.audit.record({
         tenantId: record.tenantId,
-        actor: user._id as any,
+        actor: user._id as Types.ObjectId,
         action: AuditAction.EMAIL_VERIFIED,
-        entityId: user._id as any,
+        entityId: user._id as Types.ObjectId,
         ipAddress,
       });
     }

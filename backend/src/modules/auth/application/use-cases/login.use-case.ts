@@ -92,7 +92,7 @@ export class LoginUseCase {
       lockedUntil: null,
       lastLoginAt: new Date(),
       lastLoginIp: ctx.ipAddress,
-    } as any);
+    });
 
     await this.audit.record({
       tenantId,
@@ -146,7 +146,7 @@ export class LoginUseCase {
         ipAddress: ctx.ipAddress,
       });
     }
-    await this.users.updateById(user._id, update as any);
+    await this.users.updateById(user._id, update);
   }
 
   private async recordFailure(
