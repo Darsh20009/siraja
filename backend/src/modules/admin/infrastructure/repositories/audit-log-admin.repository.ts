@@ -27,9 +27,10 @@ export class AuditLogAdminRepository implements IAuditLogAdminRepository {
     if (filter?.action) q.action = filter.action;
     if (filter?.entityType) q.entityType = filter.entityType;
     if (filter?.fromDate || filter?.toDate) {
-      q.createdAt = {};
-      if (filter.fromDate) q.createdAt.$gte = filter.fromDate;
-      if (filter.toDate) q.createdAt.$lte = filter.toDate;
+      const dateFilter: Record<string, Date> = {};
+      if (filter.fromDate) dateFilter.$gte = filter.fromDate;
+      if (filter.toDate) dateFilter.$lte = filter.toDate;
+      (q as Record<string, unknown>).createdAt = dateFilter;
     }
     return this.model.find(q).sort({ createdAt: -1 }).skip(skip).limit(limit).exec();
   }
