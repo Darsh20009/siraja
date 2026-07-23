@@ -27,6 +27,16 @@ EMAIL_USER = "noreply@siraja.website"
 STORAGE_DRIVER = "s3"
 STORAGE_REGION = "auto"
 SUPPORT_EMAIL = "support@siraja.website"
+STORAGE_SECRET_ACCESS_KEY = "dc"
+STORAGE_ENDPOINT = "ced"
+STORAGE_BUCKET = "wc"
+STORAGE_ACCESS_KEY_ID = "https://f68fbbbd24fd2b57df2f1a4f7e10d913.r2.cloudflarestorage.com"
+REDIS_URL = "rediss://default:gQAAAAAAAofnAAIgcDFiNDBmMDJlMTA5N2M0MWViOTNlODIzMTMxZGIyZmQxMQ@classic-llama-165863.upstash.io:6379"
+MOONSHOT_API_KEY = "sk-IKxbiZ9YXZFoFJ0eHSswqjx3Utz5QTwSWPrqXB4hJb8yKOh0"
+MONGODB_URI = "mongodb+srv://seraj:seraj123@seraj.wsvkbh2.mongodb.net/?appName=seraj"
+JWT_REFRESH_SECRET = "ctc7tctccccyffff7f7tf87f8f8f7"
+JWT_ACCESS_SECRET = "8gygtvttu8fvttyc7tc7tcct7c7c7ct"
+EMAIL_PASS = "ASDfgh@13579"
 
 [[ports]]
 localPort = 5000
