@@ -52,10 +52,10 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && PATH=\"/home/runner/workspace/node_modules/.bin:$PATH\" nest start"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && PATH=\"/home/runner/workspace/backend/node_modules/.bin:$PATH\" nest start"
+waitForPort = 5000
