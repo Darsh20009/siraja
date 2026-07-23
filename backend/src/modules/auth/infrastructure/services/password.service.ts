@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as argon2 from 'argon2';
+import { hash as argon2hash, verify as argon2verify, argon2id, HashOptions } from 'argon2';
 
 /**
  * Password hashing/verification — Argon2id, the OWASP-recommended
@@ -10,19 +10,19 @@ import * as argon2 from 'argon2';
  */
 @Injectable()
 export class PasswordService {
-  private readonly options: argon2.Options = {
-    type: argon2.argon2id,
+  private readonly options: HashOptions = {
+    type: argon2id,
     memoryCost: 19456, // ~19 MB, OWASP baseline
     timeCost: 2,
     parallelism: 1,
   };
 
   hash(plain: string): Promise<string> {
-    return argon2.hash(plain, this.options);
+    return argon2hash(plain, this.options);
   }
 
   verify(hash: string, plain: string): Promise<boolean> {
-    return argon2.verify(hash, plain).catch(() => false);
+    return argon2verify(hash, plain).catch(() => false);
   }
 
   /**
