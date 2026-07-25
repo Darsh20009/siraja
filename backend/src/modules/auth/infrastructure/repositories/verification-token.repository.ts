@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { VerificationToken, VerificationTokenDocument } from '@database/mongoose/schemas';
 import { TokenPurpose } from '@shared/enums/token-purpose.enum';
 import {
@@ -26,11 +26,11 @@ export class VerificationTokenRepository implements IVerificationTokenRepository
       .exec();
   }
 
-  async consume(id: any) {
+  async consume(id: Types.ObjectId | string) {
     await this.tokenModel.updateOne({ _id: id }, { consumedAt: new Date() }).exec();
   }
 
-  async invalidateAllForUser(userId: any, purpose: TokenPurpose) {
+  async invalidateAllForUser(userId: Types.ObjectId | string, purpose: TokenPurpose) {
     await this.tokenModel
       .updateMany({ userId, purpose, consumedAt: null }, { consumedAt: new Date() })
       .exec();

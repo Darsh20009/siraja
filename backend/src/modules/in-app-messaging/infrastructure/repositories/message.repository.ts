@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Message, MessageDocument } from '@database/mongoose/schemas';
 import {
   CreateMessageInput,
@@ -25,7 +25,7 @@ export class MessageRepository implements IMessageRepository {
       refId: input.refId ? new Types.ObjectId(input.refId) : undefined,
       readBy: new Map([[input.senderId, new Date()]]),
     });
-    return toItem(doc.toObject());
+    return toItem(doc.toObject() as unknown as FlattenMaps<Message> & { _id: Types.ObjectId });
   }
 
   async findById(tenantId: string, id: string): Promise<MessageItem | null> {
@@ -67,7 +67,7 @@ export class MessageRepository implements IMessageRepository {
   }
 }
 
-function toItem(doc: any): MessageItem {
+function toItem(doc: FlattenMaps<Message> & { _id: Types.ObjectId }): MessageItem {
   const readBy: Record<string, Date> = {};
   if (doc.readBy) {
     const map: Map<string, Date> | Record<string, Date> = doc.readBy;

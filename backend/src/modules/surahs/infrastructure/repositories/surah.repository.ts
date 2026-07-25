@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Surah, SurahDocument } from '@database/mongoose/schemas';
 import {
   CreateSurahInput,
@@ -39,7 +39,7 @@ export class SurahRepository implements ISurahRepository {
   }
 }
 
-function toRecord(doc: any): SurahRecord {
+function toRecord(doc: FlattenMaps<Surah> & { _id: Types.ObjectId }): SurahRecord {
   return {
     id: String(doc._id),
     surahNumber: doc.surahNumber,

@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { Public } from '../decorators/public.decorator';
 import { CurrentUser } from '../decorators/current-user.decorator';
+import { AccessTokenPayload } from '../../domain/value-objects/jwt-payload';
 import { extractRequestContext, extractTenantId } from '../helpers/request-context.helper';
 import { RegisterDto } from '../../application/dto/register.dto';
 import { LoginDto } from '../../application/dto/login.dto';
@@ -85,14 +86,14 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  logout(@Body() dto: RefreshTokenDto, @CurrentUser() user: any, @Req() req: Request) {
+  logout(@Body() dto: RefreshTokenDto, @CurrentUser() user: AccessTokenPayload, @Req() req: Request) {
     const { ipAddress } = extractRequestContext(req);
     return this.logoutUseCase.execute(dto.refreshToken, user.sub, user.tenantId, ipAddress);
   }
 
   @Post('logout-all')
   @HttpCode(HttpStatus.NO_CONTENT)
-  logoutAll(@CurrentUser() user: any, @Req() req: Request) {
+  logoutAll(@CurrentUser() user: AccessTokenPayload, @Req() req: Request) {
     const { ipAddress } = extractRequestContext(req);
     return this.logoutAllUseCase.execute(user.sub, user.tenantId, ipAddress);
   }

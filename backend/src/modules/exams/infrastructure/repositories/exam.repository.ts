@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Exam, ExamDocument } from '@database/mongoose/schemas';
 import {
   CreateExamInput,
@@ -200,7 +200,7 @@ function computePerformance(docs: { status: string; result: string; score?: numb
   return stat;
 }
 
-function toItem(doc: any): ExamItem {
+function toItem(doc: FlattenMaps<Exam> & { _id: Types.ObjectId }): ExamItem {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

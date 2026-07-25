@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { QuranNote, QuranNoteDocument } from '@database/mongoose/schemas';
 import {
   CreateQuranNoteInput,
@@ -73,7 +73,7 @@ export class QuranNoteRepository implements IQuranNoteRepository {
   }
 }
 
-function toRecord(doc: any): QuranNoteRecord {
+function toRecord(doc: FlattenMaps<QuranNote> & { _id: Types.ObjectId }): QuranNoteRecord {
   return {
     id: String(doc._id),
     scope: doc.scope,

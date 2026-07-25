@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Juz, JuzDocument, QuranPage, QuranPageDocument } from '@database/mongoose/schemas';
 import {
   CreateJuzInput,
@@ -52,7 +52,7 @@ export class QuranMetadataRepository implements IQuranMetadataRepository {
   }
 }
 
-function toJuzRecord(doc: any): JuzRecord {
+function toJuzRecord(doc: FlattenMaps<Juz> & { _id: Types.ObjectId }): JuzRecord {
   return {
     id: String(doc._id),
     juzNumber: doc.juzNumber,
@@ -63,7 +63,7 @@ function toJuzRecord(doc: any): JuzRecord {
   };
 }
 
-function toPageRecord(doc: any): QuranPageRecord {
+function toPageRecord(doc: FlattenMaps<QuranPage> & { _id: Types.ObjectId }): QuranPageRecord {
   return {
     id: String(doc._id),
     pageNumber: doc.pageNumber,

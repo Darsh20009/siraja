@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Sheikh, SheikhDocument } from '@database/mongoose/schemas';
 import {
   CreateSheikhInput,
@@ -74,7 +74,7 @@ export class SheikhRepository implements ISheikhRepository {
   }
 }
 
-function toRecord(doc: any): SheikhRecord {
+function toRecord(doc: FlattenMaps<Sheikh> & { _id: Types.ObjectId }): SheikhRecord {
   return {
     id: String(doc._id),
     userId: String(doc.user),

@@ -1,7 +1,7 @@
 /**
  * Convenience helpers for authenticating users inside E2E tests.
  */
-import * as request from 'supertest';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 
 export interface AuthTokens {

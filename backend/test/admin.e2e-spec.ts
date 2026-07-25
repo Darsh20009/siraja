@@ -10,7 +10,7 @@
  * - Support ticket creation and admin management
  */
 
-import * as request from 'supertest';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -55,7 +55,7 @@ describe('Admin Module (e2e)', () => {
 
     [regularToken, adminToken, superAdminToken] = await Promise.all([
       createUserWithRole(Role.STUDENT),
-      createUserWithRole(Role.ADMIN),
+      createUserWithRole(Role.TENANT_ADMIN),
       createUserWithRole(Role.SUPER_ADMIN),
     ]);
   });

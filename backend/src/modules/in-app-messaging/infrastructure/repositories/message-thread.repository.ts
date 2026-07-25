@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { MessageThread, MessageThreadDocument } from '@database/mongoose/schemas';
 import {
   CreateMessageThreadInput,
@@ -27,7 +27,7 @@ export class MessageThreadRepository implements IMessageThreadRepository {
       unreadCounts: new Map(),
       isArchived: false,
     });
-    return toItem(doc.toObject());
+    return toItem(doc.toObject() as unknown as FlattenMaps<MessageThread> & { _id: Types.ObjectId });
   }
 
   async findById(tenantId: string, id: string): Promise<MessageThreadItem | null> {
@@ -101,7 +101,7 @@ export class MessageThreadRepository implements IMessageThreadRepository {
   }
 }
 
-function toItem(doc: any): MessageThreadItem {
+function toItem(doc: FlattenMaps<MessageThread> & { _id: Types.ObjectId }): MessageThreadItem {
   const unreadCounts: Record<string, number> = {};
   if (doc.unreadCounts) {
     const map: Map<string, number> | Record<string, number> = doc.unreadCounts;

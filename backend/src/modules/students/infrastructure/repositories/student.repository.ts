@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Student, StudentDocument } from '@database/mongoose/schemas';
 import {
   CreateStudentInput,
@@ -137,7 +137,7 @@ export class StudentRepository implements IStudentRepository {
   }
 }
 
-function toRecord(doc: any): StudentRecord {
+function toRecord(doc: FlattenMaps<Student> & { _id: Types.ObjectId }): StudentRecord {
   return {
     id: String(doc._id),
     userId: String(doc.user),

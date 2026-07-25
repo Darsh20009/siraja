@@ -8,7 +8,7 @@
  * 4. Tenant-scoped data is isolated at the persistence layer.
  */
 
-import * as request from 'supertest';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { createTestApp, closeTestApp } from './helpers/app.helper';
 

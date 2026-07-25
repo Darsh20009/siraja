@@ -8,7 +8,7 @@
  * database is required.
  */
 
-import * as request from 'supertest';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { createTestApp, closeTestApp } from './helpers/app.helper';
 

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { NotificationTemplate, NotificationTemplateDocument } from '@database/mongoose/schemas';
 import {
   CreateNotificationTemplateInput,
@@ -137,7 +137,7 @@ export class NotificationTemplateRepository implements INotificationTemplateRepo
   }
 }
 
-function toItem(doc: any): NotificationTemplateItem {
+function toItem(doc: FlattenMaps<NotificationTemplate> & { _id: Types.ObjectId }): NotificationTemplateItem {
   return {
     id: String(doc._id),
     tenantId: doc.tenantId ? String(doc.tenantId) : null,

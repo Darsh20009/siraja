@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Ayah, AyahDocument } from '@database/mongoose/schemas';
 import {
   AyahRecord,
@@ -62,7 +62,7 @@ export class AyahRepository implements IAyahRepository {
   }
 }
 
-function toRecord(doc: any): AyahRecord {
+function toRecord(doc: FlattenMaps<Ayah> & { _id: Types.ObjectId }): AyahRecord {
   return {
     id: String(doc._id),
     globalAyahNumber: doc.globalAyahNumber,

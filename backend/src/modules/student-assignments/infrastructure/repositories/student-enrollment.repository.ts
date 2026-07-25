@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { StudentEnrollment, StudentEnrollmentDocument } from '@database/mongoose/schemas';
 import {
   CreateEnrollmentInput,
@@ -42,7 +42,7 @@ export class StudentEnrollmentRepository implements IStudentEnrollmentRepository
   }
 }
 
-function toRecord(doc: any): StudentEnrollmentRecord {
+function toRecord(doc: FlattenMaps<StudentEnrollment> & { _id: Types.ObjectId }): StudentEnrollmentRecord {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

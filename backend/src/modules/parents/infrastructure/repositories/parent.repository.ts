@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Parent, ParentDocument } from '@database/mongoose/schemas';
 import {
   CreateParentInput,
@@ -73,7 +73,7 @@ export class ParentRepository implements IParentRepository {
   }
 }
 
-function toRecord(doc: any): ParentRecord {
+function toRecord(doc: FlattenMaps<Parent> & { _id: Types.ObjectId }): ParentRecord {
   return {
     id: String(doc._id),
     userId: String(doc.user),

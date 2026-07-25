@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { QuranMistake, QuranMistakeDocument } from '@database/mongoose/schemas';
 import {
   AyahMistakeOverlayItem,
@@ -183,7 +183,7 @@ function mostFrequent<T>(values: T[]): T {
   return best;
 }
 
-function toRecord(doc: any): QuranMistakeItem {
+function toRecord(doc: FlattenMaps<QuranMistake> & { _id: Types.ObjectId }): QuranMistakeItem {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

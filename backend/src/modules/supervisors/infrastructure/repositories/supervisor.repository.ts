@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Supervisor, SupervisorDocument } from '@database/mongoose/schemas';
 import {
   CreateSupervisorInput,
@@ -72,7 +72,7 @@ export class SupervisorRepository implements ISupervisorRepository {
   }
 }
 
-function toRecord(doc: any): SupervisorRecord {
+function toRecord(doc: FlattenMaps<Supervisor> & { _id: Types.ObjectId }): SupervisorRecord {
   return {
     id: String(doc._id),
     userId: String(doc.user),

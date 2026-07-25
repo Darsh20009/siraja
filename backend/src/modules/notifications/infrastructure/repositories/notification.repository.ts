@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Notification, NotificationDocument } from '@database/mongoose/schemas';
 import {
   CreateNotificationInput,
@@ -34,7 +34,7 @@ export class NotificationRepository implements INotificationRepository {
       isRead: false,
       isArchived: false,
     });
-    return toItem(doc.toObject());
+    return toItem(doc.toObject() as unknown as FlattenMaps<Notification> & { _id: Types.ObjectId });
   }
 
   async createMany(inputs: CreateNotificationInput[]): Promise<NotificationItem[]> {
@@ -57,7 +57,7 @@ export class NotificationRepository implements INotificationRepository {
       })),
       { ordered: false },
     );
-    return (docs as NotificationDocument[]).map((d) => toItem(d.toObject()));
+    return (docs as NotificationDocument[]).map((d) => toItem(d.toObject() as unknown as FlattenMaps<Notification> & { _id: Types.ObjectId }));
   }
 
   async findById(tenantId: string, id: string): Promise<NotificationItem | null> {
@@ -176,7 +176,7 @@ export class NotificationRepository implements INotificationRepository {
   }
 }
 
-function toItem(doc: any): NotificationItem {
+function toItem(doc: FlattenMaps<Notification> & { _id: Types.ObjectId }): NotificationItem {
   return {
     id: String(doc._id),
     tenantId: String(doc.tenantId),

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { AyahNote, AyahNoteDocument } from '@database/mongoose/schemas';
 import {
   AyahNoteFilter,
@@ -71,7 +71,7 @@ export class AyahNoteRepository implements IAyahNoteRepository {
   }
 }
 
-function toRecord(doc: any): AyahNoteRecord {
+function toRecord(doc: FlattenMaps<AyahNote> & { _id: Types.ObjectId }): AyahNoteRecord {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

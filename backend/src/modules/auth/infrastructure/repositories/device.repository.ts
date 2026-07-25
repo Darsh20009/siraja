@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Device, DeviceDocument } from '@database/mongoose/schemas';
 import { IDeviceRepository, UpsertDeviceInput } from '../../domain/repositories/device.repository.interface';
 
@@ -31,15 +31,15 @@ export class DeviceRepository implements IDeviceRepository {
       .exec();
   }
 
-  findById(id: any) {
+  findById(id: Types.ObjectId | string) {
     return this.deviceModel.findById(id).exec();
   }
 
-  listForUser(userId: any) {
+  listForUser(userId: Types.ObjectId | string) {
     return this.deviceModel.find({ userId, isTrusted: true }).sort({ lastSeenAt: -1 }).exec();
   }
 
-  async revoke(id: any) {
+  async revoke(id: Types.ObjectId | string) {
     await this.deviceModel.updateOne({ _id: id }, { isTrusted: false, revokedAt: new Date() }).exec();
   }
 }

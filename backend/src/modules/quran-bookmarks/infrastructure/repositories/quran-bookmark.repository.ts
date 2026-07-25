@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import {
   QuranBookmark,
   QuranBookmarkDocument,
@@ -33,8 +33,8 @@ export class QuranBookmarkRepository implements IQuranBookmarkRepository {
         label: input.label,
       });
       return toRecord(doc);
-    } catch (error: any) {
-      if (error?.code === 11000) {
+    } catch (error: unknown) {
+      if ((error as NodeJS.ErrnoException & { code?: number })?.code === 11000) {
         throw new ConflictException('This Ayah is already bookmarked with this type.');
       }
       throw error;
@@ -103,7 +103,7 @@ export class QuranBookmarkRepository implements IQuranBookmarkRepository {
   }
 }
 
-function toRecord(doc: any): QuranBookmarkRecord {
+function toRecord(doc: FlattenMaps<QuranBookmark> & { _id: Types.ObjectId }): QuranBookmarkRecord {
   return {
     id: String(doc._id),
     surahNumber: doc.surahNumber,
@@ -114,7 +114,7 @@ function toRecord(doc: any): QuranBookmarkRecord {
   };
 }
 
-function toLastReadRecord(doc: any): QuranLastReadRecord {
+function toLastReadRecord(doc: FlattenMaps<QuranLastRead> & { _id: Types.ObjectId }): QuranLastReadRecord {
   return {
     surahNumber: doc.surahNumber,
     ayahNumber: doc.ayahNumber,

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { ReviewRecord, ReviewRecordDocument, QuranRange } from '@database/mongoose/schemas';
 import {
   CreateReviewRecordInput,
@@ -127,7 +127,7 @@ export class ReviewRecordRepository implements IReviewRecordRepository {
   }
 }
 
-function toRecord(doc: any): ReviewRecordItem {
+function toRecord(doc: FlattenMaps<ReviewRecord> & { _id: Types.ObjectId }): ReviewRecordItem {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

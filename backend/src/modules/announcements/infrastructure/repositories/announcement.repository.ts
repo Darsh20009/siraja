@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Announcement, AnnouncementDocument } from '@database/mongoose/schemas';
 import {
   AnnouncementItem,
@@ -182,7 +182,7 @@ export class AnnouncementRepository implements IAnnouncementRepository {
   }
 }
 
-function toItem(doc: any): AnnouncementItem {
+function toItem(doc: FlattenMaps<Announcement> & { _id: Types.ObjectId }): AnnouncementItem {
   return {
     id: String(doc._id),
     tenantId: String(doc.tenantId),

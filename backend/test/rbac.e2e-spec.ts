@@ -11,7 +11,7 @@
  * authorization module, and verify HTTP responses.
  */
 
-import * as request from 'supertest';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -153,7 +153,7 @@ describe('RBAC (e2e)', () => {
     let adminToken: string;
 
     beforeAll(async () => {
-      adminToken = await createUserWithRole(Role.ADMIN);
+      adminToken = await createUserWithRole(Role.TENANT_ADMIN);
     });
 
     it('can access admin dashboard', async () => {

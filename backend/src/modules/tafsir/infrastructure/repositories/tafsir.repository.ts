@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Tafsir, TafsirDocument } from '@database/mongoose/schemas';
 import {
   CreateTafsirInput,
@@ -31,7 +31,7 @@ export class TafsirRepository implements ITafsirRepository {
   }
 }
 
-function toRecord(doc: any): TafsirRecord {
+function toRecord(doc: FlattenMaps<Tafsir> & { _id: Types.ObjectId }): TafsirRecord {
   return {
     id: String(doc._id),
     surahNumber: doc.surahNumber,

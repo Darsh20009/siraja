@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { MemorizationRecord, MemorizationRecordDocument, QuranRange } from '@database/mongoose/schemas';
 import {
   CreateMemorizationRecordInput,
@@ -130,7 +130,7 @@ export class MemorizationRecordRepository implements IMemorizationRecordReposito
   }
 }
 
-function toRecord(doc: any): MemorizationRecordItem {
+function toRecord(doc: FlattenMaps<MemorizationRecord> & { _id: Types.ObjectId }): MemorizationRecordItem {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

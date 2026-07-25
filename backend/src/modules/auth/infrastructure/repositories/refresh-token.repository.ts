@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { RefreshToken, RefreshTokenDocument } from '@database/mongoose/schemas';
 import {
   CreateRefreshTokenInput,
@@ -21,19 +21,19 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
     return this.refreshTokenModel.findOne({ tokenHash }).select('+tokenHash').exec();
   }
 
-  async revokeById(id: any, reason: string, replacedByTokenId?: any) {
+  async revokeById(id: Types.ObjectId | string, reason: string, replacedByTokenId?: Types.ObjectId | string) {
     await this.refreshTokenModel
       .updateOne({ _id: id }, { revokedAt: new Date(), revokedReason: reason, replacedByTokenId: replacedByTokenId ?? null })
       .exec();
   }
 
-  async revokeAllForUser(userId: any, reason: string) {
+  async revokeAllForUser(userId: Types.ObjectId | string, reason: string) {
     await this.refreshTokenModel
       .updateMany({ userId, revokedAt: null }, { revokedAt: new Date(), revokedReason: reason })
       .exec();
   }
 
-  async revokeAllForDevice(deviceId: any, reason: string) {
+  async revokeAllForDevice(deviceId: Types.ObjectId | string, reason: string) {
     await this.refreshTokenModel
       .updateMany({ deviceId, revokedAt: null }, { revokedAt: new Date(), revokedReason: reason })
       .exec();
@@ -45,7 +45,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
       .exec();
   }
 
-  listActiveForUser(userId: any) {
+  listActiveForUser(userId: Types.ObjectId | string) {
     return this.refreshTokenModel
       .find({ userId, revokedAt: null, expiresAt: { $gt: new Date() } })
       .sort({ createdAt: -1 })

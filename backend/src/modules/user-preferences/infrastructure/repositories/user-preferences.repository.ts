@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { UserPreferences, UserPreferencesDocument } from '@database/mongoose/schemas';
 import {
   IUserPreferencesRepository,
@@ -95,7 +95,7 @@ export class UserPreferencesRepository implements IUserPreferencesRepository {
   }
 }
 
-function toItem(doc: any): UserPreferencesItem {
+function toItem(doc: FlattenMaps<UserPreferences> & { _id: Types.ObjectId }): UserPreferencesItem {
   return {
     id: String(doc._id),
     tenantId: String(doc.tenantId),

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { StudentProgress, StudentProgressDocument } from '@database/mongoose/schemas';
 import {
   IStudentProgressRepository,
@@ -66,7 +66,7 @@ export class StudentProgressRepository implements IStudentProgressRepository {
   }
 }
 
-function toRecord(doc: any): StudentProgressRecord {
+function toRecord(doc: FlattenMaps<StudentProgress> & { _id: Types.ObjectId }): StudentProgressRecord {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

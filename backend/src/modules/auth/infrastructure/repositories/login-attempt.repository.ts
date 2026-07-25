@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { LoginAttempt, LoginAttemptDocument } from '@database/mongoose/schemas';
 import {
   ILoginAttemptRepository,
@@ -17,7 +17,7 @@ export class LoginAttemptRepository implements ILoginAttemptRepository {
     await this.loginAttemptModel.create(input);
   }
 
-  countRecentFailures(tenantId: any, identifier: string, sinceMs: number) {
+  countRecentFailures(tenantId: Types.ObjectId | string, identifier: string, sinceMs: number) {
     return this.loginAttemptModel.countDocuments({
       tenantId,
       identifier: identifier.toLowerCase(),
@@ -26,7 +26,7 @@ export class LoginAttemptRepository implements ILoginAttemptRepository {
     });
   }
 
-  countRecentFromIp(tenantId: any, ipAddress: string, sinceMs: number) {
+  countRecentFromIp(tenantId: Types.ObjectId | string, ipAddress: string, sinceMs: number) {
     return this.loginAttemptModel.countDocuments({
       tenantId,
       ipAddress,
@@ -34,7 +34,7 @@ export class LoginAttemptRepository implements ILoginAttemptRepository {
     });
   }
 
-  async hasRecentSuccessFrom(userId: any, ipAddress: string, userAgent: string | undefined, sinceMs: number) {
+  async hasRecentSuccessFrom(userId: Types.ObjectId | string, ipAddress: string, userAgent: string | undefined, sinceMs: number) {
     const match = await this.loginAttemptModel
       .findOne({
         userId,

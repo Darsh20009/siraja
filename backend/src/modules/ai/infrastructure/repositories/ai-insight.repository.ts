@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { AiRequest, AiRequestDocument, AiReport, AiReportDocument } from '@database/mongoose/schemas';
 import { AiFeatureType, AiRequestStatus } from '@shared/enums/ai.enum';
 import {
@@ -57,7 +57,7 @@ export class AiInsightRepository implements IAiInsightRepository {
       modelVersion: input.modelVersion,
     });
 
-    return toItem(report.toObject());
+    return toItem(report.toObject() as unknown as FlattenMaps<AiReport> & { _id: Types.ObjectId });
   }
 
   async acknowledge(tenantId: string, reportId: string, userId: string): Promise<AiReportItem> {
@@ -97,13 +97,13 @@ export class AiInsightRepository implements IAiInsightRepository {
   }
 }
 
-function toItem(doc: any): AiReportItem {
+function toItem(doc: FlattenMaps<AiReport> & { _id: Types.ObjectId }): AiReportItem {
   return {
     id: String(doc._id),
     studentId: doc.student ? String(doc.student) : null,
     type: doc.type,
-    content: doc.summary?.content ?? '',
-    structured: doc.summary?.structured ?? {},
+    content: (doc.summary?.content as string) ?? '',
+    structured: (doc.summary?.structured as Record<string, unknown>) ?? {},
     sourceDataHash: doc.sourceDataHash,
     modelVersion: doc.modelVersion ?? null,
     acknowledgedBy: doc.acknowledgedBy ? String(doc.acknowledgedBy) : null,

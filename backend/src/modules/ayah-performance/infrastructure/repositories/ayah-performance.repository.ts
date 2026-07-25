@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { AyahPerformance, AyahPerformanceDocument } from '@database/mongoose/schemas';
 import { AyahPerformanceStatus, HeatmapLevel } from '@shared/enums/smart-mushaf.enum';
 import { EvaluationGrade } from '@shared/enums/memorization.enum';
@@ -350,7 +350,7 @@ export class AyahPerformanceRepository implements IAyahPerformanceRepository {
 // ── Helpers ───────────────────────────────────────────────────────────────
 
 /** Extract SM-2 state from a DB document (or return defaults if missing). */
-function extractSm2(doc: any): Sm2State {
+function extractSm2(doc: (FlattenMaps<AyahPerformance> & { _id: Types.ObjectId }) | null): Sm2State {
   return {
     smEasinessFactor: doc?.smEasinessFactor ?? 2.5,
     smInterval: doc?.smInterval ?? 0,
@@ -359,7 +359,7 @@ function extractSm2(doc: any): Sm2State {
   };
 }
 
-function toRecord(doc: any): AyahPerformanceRecord {
+function toRecord(doc: FlattenMaps<AyahPerformance> & { _id: Types.ObjectId }): AyahPerformanceRecord {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

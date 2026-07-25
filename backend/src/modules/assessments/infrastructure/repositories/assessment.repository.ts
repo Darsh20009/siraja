@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Assessment, AssessmentDocument } from '@database/mongoose/schemas';
 import {
   AssessmentItem,
@@ -93,7 +93,7 @@ export class AssessmentRepository implements IAssessmentRepository {
   }
 }
 
-function toItem(doc: any): AssessmentItem {
+function toItem(doc: FlattenMaps<Assessment> & { _id: Types.ObjectId }): AssessmentItem {
   return {
     id: String(doc._id),
     studentId: String(doc.student),

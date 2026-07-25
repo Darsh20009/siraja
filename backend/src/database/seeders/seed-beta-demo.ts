@@ -64,8 +64,8 @@ async function registerDemoUser(user: { email: string; fullName: string; role: s
     console.log(`  created ${user.role.padEnd(12)} ${user.email}`);
     return;
   }
-  const body: any = await res.json().catch(() => ({}));
-  const innerMessage = typeof body.message === 'object' ? body.message?.message : body.message;
+  const body: Record<string, unknown> = await res.json().catch(() => ({}));
+  const innerMessage = typeof body.message === 'object' ? (body.message as Record<string, unknown>)?.message : body.message;
   if (res.status === 400 && String(innerMessage || '').includes('already exists')) {
     console.log(`  exists  ${user.role.padEnd(12)} ${user.email} (skipped)`);
     return;

@@ -61,3 +61,4 @@ StudentSchema.index({ tenantId: 1, user: 1 }, { unique: true });
 StudentSchema.index({ tenantId: 1, group: 1 });
 StudentSchema.index({ tenantId: 1, parents: 1 });
 StudentSchema.index({ tenantId: 1, isActive: 1, isDeleted: 1 });
+StudentSchema.index({ tenantId: 1, sheikh: 1, enrolledAt: -1 });

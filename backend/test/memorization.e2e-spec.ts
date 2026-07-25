@@ -9,7 +9,7 @@
  * - Access control: only sheikh/admin can create/approve records
  */
 
-import * as request from 'supertest';
+import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

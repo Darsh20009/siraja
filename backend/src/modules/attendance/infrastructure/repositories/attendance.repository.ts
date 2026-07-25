@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Attendance, AttendanceDocument } from '@database/mongoose/schemas';
 import {
   AttendanceItem,
@@ -186,7 +186,7 @@ function computeRate(docs: { status: string }[]): AttendanceRateStat {
   return stat;
 }
 
-function toItem(doc: any): AttendanceItem {
+function toItem(doc: FlattenMaps<Attendance> & { _id: Types.ObjectId }): AttendanceItem {
   return {
     id: String(doc._id),
     sessionId: doc.session ? String(doc.session) : undefined,

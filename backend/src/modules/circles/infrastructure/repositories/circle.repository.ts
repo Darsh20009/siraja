@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FlattenMaps, Model, Types } from 'mongoose';
 import { Group, GroupDocument } from '@database/mongoose/schemas';
 import {
   CircleRecord,
@@ -101,7 +101,7 @@ export class CircleRepository implements ICircleRepository {
   }
 }
 
-function toRecord(doc: any): CircleRecord {
+function toRecord(doc: FlattenMaps<Group> & { _id: Types.ObjectId }): CircleRecord {
   return {
     id: String(doc._id),
     name: doc.name,

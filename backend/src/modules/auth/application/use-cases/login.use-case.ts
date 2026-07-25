@@ -1,5 +1,6 @@
 import { ForbiddenException, Inject, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { UserDocument } from '@database/mongoose/schemas';
 import { AuditAction } from '@shared/enums/audit.enum';
 import { UserStatus } from '@shared/enums/user-status.enum';
 import {
@@ -132,7 +133,7 @@ export class LoginUseCase {
     }
   }
 
-  private async handleFailedPassword(tenantId: Types.ObjectId | string, identifier: string, user: any, ctx: DeviceContext) {
+  private async handleFailedPassword(tenantId: Types.ObjectId | string, identifier: string, user: UserDocument, ctx: DeviceContext) {
     await this.recordFailure(tenantId, identifier, user._id, ctx, 'invalid_credentials');
     const lockUntil = await this.bruteForceGuard.computeLockout(tenantId, identifier);
     const update: Record<string, unknown> = { failedLoginCount: (user.failedLoginCount ?? 0) + 1 };
