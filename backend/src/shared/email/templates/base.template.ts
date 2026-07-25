@@ -4,6 +4,7 @@ import {
   GOOGLE_FONTS_LINK,
   SIRAJA_BRAND_DEFAULTS,
   getLogoMarkup,
+  getGeoPatternBand,
 } from '../brand/brand-config';
 
 // ─── Data contract ────────────────────────────────────────────────────────────
@@ -30,9 +31,10 @@ export interface BaseTemplateData {
   preheader?: string;
 }
 
-// ─── Geometric ornament ───────────────────────────────────────────────────────
-// Unicode-based, renders in every email client.
-const GEO_ROW = '✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦ &nbsp; ◆ &nbsp; ✦';
+// ─── Geometric ornament band ──────────────────────────────────────────────────
+// Computed at call-time so the band can reference the primary/accent colours
+// if we ever make it dynamic. For now it uses the fixed Siraja gold palette.
+// Outlook (MSO) receives only the thin gold fallback strip via VML conditional.
 
 // ─── Main template ────────────────────────────────────────────────────────────
 
@@ -268,14 +270,11 @@ ${preheaderHtml}
                      background:linear-gradient(160deg,${hdrDeep} 0%,${primaryColor} 55%,${hdrLight} 100%);
                      padding:0;text-align:center;">
 
-            <!-- Geometric ornament -->
+            <!-- Islamic geometric ornament band -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td align="center"
-                    style="padding:22px 20px 0;color:rgba(201,168,76,0.40);font-size:9px;
-                           letter-spacing:4px;font-family:Arial,sans-serif;
-                           overflow:hidden;white-space:nowrap;line-height:1.2;">
-                  ${GEO_ROW}
+                <td style="padding:18px 0 0;font-size:0;line-height:0;">
+                  ${getGeoPatternBand()}
                 </td>
               </tr>
             </table>

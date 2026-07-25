@@ -1,0 +1,175 @@
+Create a world-class email branding system for the Siraja Quran Learning Platform.
+
+Brand Name:
+سِراجا | Siraja
+
+Mission:
+An intelligent Quran memorization and learning platform for Quran academies, mosques, teachers, students, and parents.
+
+Design Requirements:
+
+1. Visual Identity
+- Premium Islamic modern design.
+- Elegant and trustworthy.
+- Arabic-first RTL layout.
+- Responsive on mobile and desktop.
+- Compatible with Gmail, Outlook, Apple Mail, Yahoo Mail.
+- Professional dark-mode support.
+
+2. Colors
+Primary:
+#1A6B4A (Deep Emerald Green)
+
+Secondary:
+#C9A84C (Islamic Gold)
+
+Background:
+#F8F7F3
+
+Text:
+#1F2937
+
+Success:
+#16A34A
+
+Warning:
+#D97706
+
+Error:
+#DC2626
+
+3. Typography
+Arabic:
+Cairo
+
+Fallback:
+Tahoma, Arial, sans-serif
+
+4. Logo
+Use Siraja's official lantern logo.
+
+If tenant logo exists:
+Display tenant logo.
+
+Otherwise:
+Display Siraja logo automatically.
+
+5. Header
+- Large premium hero section.
+- Islamic geometric pattern background.
+- Emerald gradient.
+- Gold accents.
+- Logo centered.
+- Platform name:
+  سِراجا
+- Subtitle:
+  منصة حفظ القرآن الكريم الذكية
+
+6. Footer
+Include:
+
+Website:
+https://siraja.website
+
+Support:
+support@siraja.website
+
+Copyright:
+© Siraja Platform
+
+Quran verse:
+﴿ نُورٌ عَلَىٰ نُورٍ ﴾
+
+7. Required Email Templates
+
+A) Welcome Email
+Purpose:
+Sent after registration.
+
+Contains:
+- Welcome message.
+- User name.
+- Platform introduction.
+- CTA button.
+
+B) Email Verification
+Contains:
+- Verification button.
+- Expiration notice.
+- Security warning.
+
+C) OTP Verification
+Contains:
+- Large OTP code.
+- Validity period.
+- Security notice.
+
+D) Password Reset
+Contains:
+- Reset button.
+- Expiration notice.
+- Security warning.
+
+E) Notification Email
+Contains:
+- Notification title.
+- Notification message.
+- Optional CTA button.
+
+F) System Alert
+Contains:
+- Severity level.
+- Alert details.
+- Support information.
+
+8. Accessibility
+- WCAG compliant.
+- High contrast.
+- Screen-reader friendly.
+- Semantic HTML.
+
+9. Dark Mode
+Support:
+- prefers-color-scheme: dark
+- Gmail dark mode selectors
+- Outlook dark mode
+
+10. Technical Requirements
+- Pure HTML email.
+- Inline CSS where necessary.
+- No JavaScript.
+- Maximum client compatibility.
+- Mobile responsive.
+- Table-based layout for email safety.
+
+11. Multi-Tenant Branding
+Allow optional overrides:
+
+{
+  name,
+  logoUrl,
+  primaryColor,
+  secondaryColor,
+  supportEmail,
+  customDomain
+}
+
+Fallback automatically to Siraja defaults.
+
+12. Output
+Generate:
+
+- Base email template
+- Welcome template
+- Verification template
+- OTP template
+- Password reset template
+- Notification template
+- System alert template
+- Branding service
+- Tenant branding support
+- Dark mode support
+- Reusable components
+
+Goal:
+The emails should feel like a premium Islamic SaaS product comparable to Stripe, Notion, Linear, and Shopify while preserving the spiritual identity of Quran education.

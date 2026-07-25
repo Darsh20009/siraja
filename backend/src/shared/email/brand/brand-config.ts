@@ -233,6 +233,76 @@ export function getCodeBoxHtml(code: string, primaryColor: string): string {
 </table>`;
 }
 
+// ─── Islamic geometric ornament band ─────────────────────────────────────────
+/**
+ * Returns an inline SVG band of 8-pointed Islamic stars connected by a
+ * geometric lattice. Used as the ornamental header row in all email templates.
+ *
+ * Wrapped in MSO conditionals so Outlook never sees SVG (it cannot render it).
+ * Modern clients — Gmail, Apple Mail, Yahoo, Samsung Mail — render it fully.
+ * Opacity is intentionally low so the emerald gradient shines through.
+ */
+export function getGeoPatternBand(): string {
+  const HEIGHT   = 40;
+  const Y        = HEIGHT / 2;   // vertical centre = 20
+  const R        = 13;           // outer star radius
+  const SPACING  = 52;           // horizontal distance between star centres
+  const COUNT    = Math.ceil(620 / SPACING) + 1;
+  const GOLD     = '#C9A84C';
+
+  /**
+   * 8-pointed star polygon centred at (cx, Y).
+   * Outer radius R, inner radius 5, interleaved outer/inner vertices.
+   */
+  function starPoints(cx: number): string {
+    return [
+      `${cx},${Y - R}`,           `${cx + 1.9},${Y - 4.6}`,
+      `${cx + 9.2},${Y - 9.2}`,  `${cx + 4.6},${Y - 1.9}`,
+      `${cx + R},${Y}`,           `${cx + 4.6},${Y + 1.9}`,
+      `${cx + 9.2},${Y + 9.2}`,  `${cx + 1.9},${Y + 4.6}`,
+      `${cx},${Y + R}`,           `${cx - 1.9},${Y + 4.6}`,
+      `${cx - 9.2},${Y + 9.2}`,  `${cx - 4.6},${Y + 1.9}`,
+      `${cx - R},${Y}`,           `${cx - 4.6},${Y - 1.9}`,
+      `${cx - 9.2},${Y - 9.2}`,  `${cx - 1.9},${Y - 4.6}`,
+    ].join(' ');
+  }
+
+  const els: string[] = [];
+
+  for (let i = 0; i < COUNT; i++) {
+    const cx = 26 + i * SPACING;
+
+    // 8-pointed star
+    els.push(
+      `<polygon points="${starPoints(cx)}" fill="none" stroke="${GOLD}" ` +
+      `stroke-width="1.2" stroke-linejoin="round"/>`
+    );
+
+    // Connector to next star
+    if (i < COUNT - 1) {
+      const mid      = cx + SPACING / 2;
+      const lineFrom = cx + R + 1;
+      const lineTo   = cx + SPACING - R - 1;
+      // Left segment
+      els.push(`<line x1="${lineFrom}" y1="${Y}" x2="${mid - 4}" y2="${Y}" stroke="${GOLD}" stroke-width="0.8" opacity="0.55"/>`);
+      // Central diamond
+      els.push(`<polygon points="${mid},${Y - 4} ${mid + 4},${Y} ${mid},${Y + 4} ${mid - 4},${Y}" fill="none" stroke="${GOLD}" stroke-width="0.9" opacity="0.70"/>`);
+      // Right segment
+      els.push(`<line x1="${mid + 4}" y1="${Y}" x2="${lineTo}" y2="${Y}" stroke="${GOLD}" stroke-width="0.8" opacity="0.55"/>`);
+    }
+  }
+
+  return `
+<!--[if !mso]><!-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 ${HEIGHT}"
+     width="100%" height="${HEIGHT}"
+     style="display:block;opacity:0.30;" aria-hidden="true" focusable="false">
+  ${els.join('\n  ')}
+</svg>
+<!--<![endif]-->
+<!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="64"><tr><td height="2" bgcolor="${GOLD}" style="height:2px;line-height:2px;font-size:0;opacity:0.5;">&nbsp;</td></tr></table><![endif]-->`;
+}
+
 // ─── URL safety helper ────────────────────────────────────────────────────────
 
 /** Returns true only for valid, publicly accessible HTTPS URLs. */

@@ -204,8 +204,8 @@ write('tenant-branded.html', welcomeEmailTemplate({
 const PREVIEWS = [
   { file: 'welcome.html',               label: 'ترحيب',                   cat: 'auth' },
   { file: 'verification.html',          label: 'تأكيد البريد',            cat: 'auth' },
-  { file: 'verification-with-otp.html', label: 'تأكيد البريد + OTP',      cat: 'auth' },
-  { file: 'otp.html',                   label: 'رمز التحقق OTP',           cat: 'auth' },
+  { file: 'verification-with-otp.html', label: 'تأكيد البريد + رمز',      cat: 'auth' },
+  { file: 'otp.html',                   label: 'رمز التحقق (OTP)',         cat: 'auth' },
   { file: 'password-reset.html',        label: 'إعادة تعيين كلمة المرور', cat: 'auth' },
   { file: 'notification-info.html',     label: 'إشعار — معلومات',         cat: 'notification' },
   { file: 'notification-success.html',  label: 'إشعار — نجاح',            cat: 'notification' },
