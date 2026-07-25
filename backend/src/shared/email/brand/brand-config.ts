@@ -338,8 +338,8 @@ export type EmailIllustrationType =
  */
 export function getEmailIllustration(
   type: EmailIllustrationType,
-  primaryColor = SIRAJA_COLORS.primary,
-  accentColor  = SIRAJA_COLORS.accent,
+  primaryColor: string = SIRAJA_COLORS.primary,
+  accentColor: string  = SIRAJA_COLORS.accent,
 ): string {
   const P  = primaryColor;
   const A  = accentColor;
