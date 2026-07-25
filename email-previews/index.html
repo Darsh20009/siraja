@@ -1,163 +1,184 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Siraja — Email Preview Gallery</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
-<style>
-  body { margin:0;padding:32px 24px 64px;background:#F8F7F3;font-family:'Cairo',Arial,sans-serif;direction:rtl; }
-  .hdr { background:linear-gradient(135deg,#0d4a32,#1A6B4A);color:#fff;padding:28px 32px;border-radius:12px;margin-bottom:32px; }
-  .hdr h1 { margin:0 0 6px;font-size:24px;letter-spacing:0.5px; }
-  .hdr p  { margin:0;font-size:12px;color:rgba(201,168,76,0.9); }
-  .badge { display:inline-block;background:rgba(201,168,76,0.25);color:#C9A84C;font-size:11px;padding:3px 10px;border-radius:20px;margin-right:10px; }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siraja Email Preview Catalogue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background: #F8F7F3;
+      font-family: 'Cairo', Tahoma, Arial, sans-serif;
+      direction: rtl;
+      color: #1F2937;
+    }
+    .header {
+      background: linear-gradient(160deg, #0d4a32 0%, #1A6B4A 55%, #22896a 100%);
+      padding: 48px 32px;
+      text-align: center;
+      color: #fff;
+    }
+    .header h1 { margin: 0 0 8px; font-size: 36px; font-weight: 900; letter-spacing: -0.5px; }
+    .header p  { margin: 0; color: #C9A84C; font-size: 15px; font-weight: 500; }
+    .badge {
+      display: inline-block;
+      background: #C9A84C22; color: #C9A84C;
+      border: 1.5px solid #C9A84C55; border-radius: 99px;
+      font-size: 12px; font-weight: 700; padding: 3px 14px; margin-top: 14px;
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+    .meta {
+      background: #fff; border: 1px solid #EEF0EC; border-radius: 12px;
+      padding: 18px 24px; margin: 0 0 32px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .meta-dot { width: 10px; height: 10px; border-radius: 50%; background: #1A6B4A; flex-shrink: 0; }
+    .meta p { margin: 0; font-size: 13.5px; color: #4B5563; line-height: 1.6; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      display: flex; flex-direction: column; align-items: center;
+      background: #fff; border: 1px solid #EEF0EC; border-radius: 16px;
+      padding: 28px 16px 22px;
+      text-decoration: none; color: inherit;
+      transition: all 0.18s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .card:hover {
+      border-color: #1A6B4A55;
+      box-shadow: 0 8px 24px rgba(26,107,74,0.14);
+      transform: translateY(-2px);
+    }
+    .card-icon  { font-size: 32px; margin: 0 0 10px; }
+    .card-label { font-size: 14px; font-weight: 700; color: #1F2937; margin: 0 0 6px; text-align: center; }
+    .card-file  { font-size: 11px; color: #9CA3AF; font-family: monospace; }
+    .footer {
+      text-align: center; padding: 32px; font-size: 12px; color: #9CA3AF;
+      border-top: 1px solid #EEF0EC; margin-top: 48px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0a1a11; color: #D1FAE5; }
+      .meta, .card { background: #0f1e16; border-color: #1a3828; }
+      .card-label  { color: #D1FAE5; }
+    }
+  </style>
 </head>
 <body>
-<div class="hdr">
-  <h1>📧 معرض قوالب بريد سراج</h1>
-  <p>
-    <span class="badge">12 قوالب</span>
-    Siraja Email Template Preview Gallery · Generated ٢٥‏/٧‏/٢٠٢٦
-  </p>
-</div>
-
-    <div style="margin-bottom:32px;">
-      <h2 style="font-size:15px;color:#1A6B4A;margin:0 0 14px;
-                 font-family:'Cairo',Arial,sans-serif;font-weight:700;">🔐 المصادقة</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
-        
-    <a href="welcome.html" target="welcome"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">ترحيب</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">welcome.html</div>
-    </a>
-    <a href="verification.html" target="verification"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">تأكيد البريد</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">verification.html</div>
-    </a>
-    <a href="verification-with-otp.html" target="verification-with-otp"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">تأكيد البريد + رمز</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">verification-with-otp.html</div>
-    </a>
-    <a href="otp.html" target="otp"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">رمز التحقق (OTP)</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">otp.html</div>
-    </a>
-    <a href="password-reset.html" target="password-reset"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">إعادة تعيين كلمة المرور</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">password-reset.html</div>
-    </a>
-      </div>
+  <div class="header">
+    <h1>📧 Siraja Email Previews</h1>
+    <p>كتالوج تصاميم البريد الإلكتروني — Premium Edition</p>
+    <div class="badge">18 قالب</div>
+  </div>
+  <div class="container">
+    <div class="meta">
+      <div class="meta-dot"></div>
+      <p>
+        جميع القوالب مُصمَّمة لأعلى معايير التوافق مع Outlook · Gmail · Apple Mail · Yahoo · Samsung Mail.
+        يمكنك فتح أي قالب في متصفحك لمعاينته — وللاختبار الكامل استخدم أداة مثل Litmus أو Email on Acid.
+        لإعادة توليد جميع الملفات: <strong>npm run email:preview</strong>
+      </p>
     </div>
-    <div style="margin-bottom:32px;">
-      <h2 style="font-size:15px;color:#1A6B4A;margin:0 0 14px;
-                 font-family:'Cairo',Arial,sans-serif;font-weight:700;">📢 الإشعارات</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
-        
-    <a href="notification-info.html" target="notification-info"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">إشعار — معلومات</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">notification-info.html</div>
-    </a>
-    <a href="notification-success.html" target="notification-success"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">إشعار — نجاح</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">notification-success.html</div>
-    </a>
-    <a href="notification-warning.html" target="notification-warning"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">إشعار — تحذير</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">notification-warning.html</div>
-    </a>
-      </div>
-    </div>
-    <div style="margin-bottom:32px;">
-      <h2 style="font-size:15px;color:#1A6B4A;margin:0 0 14px;
-                 font-family:'Cairo',Arial,sans-serif;font-weight:700;">🚨 تنبيهات النظام</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
-        
-    <a href="system-alert-info.html" target="system-alert-info"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">تنبيه نظام — معلومات</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">system-alert-info.html</div>
-    </a>
-    <a href="system-alert-warning.html" target="system-alert-warning"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">تنبيه نظام — تحذير</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">system-alert-warning.html</div>
-    </a>
-    <a href="system-alert-critical.html" target="system-alert-critical"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">تنبيه نظام — حرج</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">system-alert-critical.html</div>
-    </a>
-      </div>
-    </div>
-    <div style="margin-bottom:32px;">
-      <h2 style="font-size:15px;color:#1A6B4A;margin:0 0 14px;
-                 font-family:'Cairo',Arial,sans-serif;font-weight:700;">🏫 المستأجر المخصص</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
-        
-    <a href="tenant-branded.html" target="tenant-branded"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">مستأجر مخصص (دار الحفاظ)</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">tenant-branded.html</div>
-    </a>
-      </div>
-    </div>
+    <div class="grid">
+  <a href="welcome.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">ترحيب</div>
+    <div class="card-file">welcome.html</div>
+  </a>
+  <a href="verification.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تحقق من البريد</div>
+    <div class="card-file">verification.html</div>
+  </a>
+  <a href="otp.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">رمز التحقق OTP</div>
+    <div class="card-file">otp.html</div>
+  </a>
+  <a href="password-reset.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">إعادة تعيين كلمة المرور</div>
+    <div class="card-file">password-reset.html</div>
+  </a>
+  <a href="notification-info.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">إشعار — معلومة</div>
+    <div class="card-file">notification-info.html</div>
+  </a>
+  <a href="notification-success.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">إشعار — نجاح</div>
+    <div class="card-file">notification-success.html</div>
+  </a>
+  <a href="notification-warning.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">إشعار — تحذير</div>
+    <div class="card-file">notification-warning.html</div>
+  </a>
+  <a href="system-alert-info.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تنبيه نظام — معلومة</div>
+    <div class="card-file">system-alert-info.html</div>
+  </a>
+  <a href="system-alert-warning.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تنبيه نظام — تحذير</div>
+    <div class="card-file">system-alert-warning.html</div>
+  </a>
+  <a href="system-alert-critical.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تنبيه نظام — حرج</div>
+    <div class="card-file">system-alert-critical.html</div>
+  </a>
+  <a href="invitation.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">دعوة</div>
+    <div class="card-file">invitation.html</div>
+  </a>
+  <a href="weekly-summary.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">ملخص أسبوعي</div>
+    <div class="card-file">weekly-summary.html</div>
+  </a>
+  <a href="monthly-report.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تقرير شهري</div>
+    <div class="card-file">monthly-report.html</div>
+  </a>
+  <a href="security-alert-new-login.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تنبيه أمني — دخول جديد</div>
+    <div class="card-file">security-alert-new-login.html</div>
+  </a>
+  <a href="security-alert-suspicious.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تنبيه أمني — نشاط مشبوه</div>
+    <div class="card-file">security-alert-suspicious.html</div>
+  </a>
+  <a href="achievement.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">إنجاز</div>
+    <div class="card-file">achievement.html</div>
+  </a>
+  <a href="gamification-reward.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">مكافأة</div>
+    <div class="card-file">gamification-reward.html</div>
+  </a>
+  <a href="tenant-branded.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">تصميم مخصص للمستأجر</div>
+    <div class="card-file">tenant-branded.html</div>
+  </a></div>
+  </div>
+  <div class="footer">
+    Siraja Platform · Generated ٢٥‏/٧‏/٢٠٢٦ ·
+    <a href="https://siraja.website" style="color:#1A6B4A;">siraja.website</a>
+  </div>
 </body>
 </html>

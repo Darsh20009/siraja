@@ -8,6 +8,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <meta name="x-apple-disable-message-reformatting"/>
   <meta name="format-detection" content="telephone=no,address=no,email=no,date=no"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="supported-color-schemes" content="light dark"/>
   <title>سِراجا</title>
   <!--[if mso]>
   <noscript><xml>
@@ -19,7 +21,7 @@
   <![endif]-->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style type="text/css">
     /* ═══ RESET ═══════════════════════════════════════════════════════════════ */
     * { box-sizing: border-box; }
@@ -28,25 +30,44 @@
       -ms-text-size-adjust: 100%;
     }
     table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-    img { -ms-interpolation-mode: bicubic; border: 0; outline: 0; text-decoration: none; }
+    img { -ms-interpolation-mode: bicubic; border: 0; outline: 0; text-decoration: none; display: block; }
     a  { text-decoration: none; }
 
     /* ═══ BASE ═════════════════════════════════════════════════════════════════ */
     body {
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
       background-color: #F8F7F3;
       font-family: 'Cairo', 'Noto Sans Arabic', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
       direction: rtl;
       -webkit-font-smoothing: antialiased;
     }
-    .outer-wrapper {
-      background-color: #F8F7F3;
+    .outer-wrapper { background-color: #F8F7F3; }
+
+    /* ═══ ANIMATIONS ════════════════════════════════════════════════════════════ */
+    /* Apple Mail, iOS Mail, Samsung Mail — others ignore gracefully             */
+    @keyframes siraja-emerge {
+      from { opacity: 0; transform: translateY(18px) scale(0.99); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    }
+    @keyframes siraja-glow {
+      0%, 100% { box-shadow: 0 4px 20px rgba(26,107,74,0.32), 0 1px 4px rgba(0,0,0,0.10); }
+      50%       { box-shadow: 0 6px 28px rgba(26,107,74,0.50), 0 2px 8px rgba(0,0,0,0.14); }
+    }
+    .email-card {
+      animation: siraja-emerge 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .btn-primary:hover {
+      opacity: 0.92;
+      transform: translateY(-2px);
+    }
+    .btn-primary:focus {
+      outline: 3px solid #C9A84C;
+      outline-offset: 2px;
     }
 
     /* ═══ BODY CELL ════════════════════════════════════════════════════════════ */
     .email-body {
-      padding: 38px 42px 30px !important;
+      padding: 44px 48px 36px !important;
       color: #1F2937;
       font-size: 15px;
       line-height: 1.9;
@@ -56,27 +77,30 @@
     }
     .email-body h2 {
       color: #1A6B4A;
-      font-size: 21px;
-      font-weight: 700;
-      margin: 0 0 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #EEF0EC;
+      font-size: 23px;
+      font-weight: 800;
+      margin: 0 0 8px;
       font-family: 'Cairo', 'Noto Sans Arabic', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
+      letter-spacing: -0.2px;
+      line-height: 1.35;
+    }
+    .heading-rule {
+      width: 52px; height: 3px;
+      background: linear-gradient(to left, transparent, #C9A84C, #1A6B4A);
+      border-radius: 99px;
+      margin: 0 0 24px;
     }
     .email-body p  { margin: 0 0 16px; color: #4B5563; }
     .email-body strong { color: #1F2937; font-weight: 700; }
-    .email-body a  { color: #1A6B4A; text-decoration: none; }
+    .email-body a  { color: #1A6B4A; text-decoration: none; font-weight: 600; }
     .email-body a:hover { text-decoration: underline; }
-
-    /* CTA button wrapper — hides the fallback <a> from MSO */
-    .btn-wrap { text-align: center; margin: 28px 0; }
 
     /* Link fallback below buttons */
     .link-fallback {
       text-align: center;
       font-size: 12px;
       color: #9CA3AF;
-      margin: -12px 0 20px;
+      margin: -12px 0 22px;
       word-break: break-all;
       direction: ltr;
     }
@@ -86,23 +110,49 @@
     .section-divider {
       border: none;
       border-top: 1px solid #EEF0EC;
-      margin: 24px 0;
+      margin: 28px 0;
+    }
+
+    /* Premium inner card — 16px radius, soft shadow */
+    .inner-card {
+      background: #F8F7F3;
+      border: 1px solid #EEF0EC;
+      border-radius: 16px;
+      padding: 22px 26px;
+      margin: 20px 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
     }
 
     /* Feature list (welcome email) */
-    .feature-list { list-style: none; padding: 0; margin: 16px 0; }
+    .feature-list { list-style: none; padding: 0; margin: 16px 0 24px; }
     .feature-list li {
-      padding: 9px 4px;
+      padding: 11px 14px;
       border-bottom: 1px solid #EEF0EC;
       font-size: 14px;
       color: #4B5563;
+      display: flex;
+      align-items: center;
+      border-radius: 8px;
+      transition: background 0.15s ease;
     }
     .feature-list li:last-child { border-bottom: none; }
-    .feature-list li::before {
-      content: '✦';
-      color: #C9A84C;
-      margin-left: 10px;
-      font-size: 10px;
+
+    /* Stat grid */
+    .stat-label {
+      font-size: 11px;
+      color: #9CA3AF;
+      font-family: 'Cairo', 'Noto Sans Arabic', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
+      margin: 0 0 4px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .stat-value {
+      font-size: 26px;
+      font-weight: 900;
+      color: #1A6B4A;
+      font-family: 'Cairo', 'Noto Sans Arabic', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
+      margin: 0;
+      line-height: 1;
     }
 
     /* ═══ FOOTER ═══════════════════════════════════════════════════════════════ */
@@ -115,174 +165,335 @@
 
     /* ═══ MOBILE ════════════════════════════════════════════════════════════════ */
     @media only screen and (max-width: 620px) {
-      .email-outer-td { padding: 16px 8px 32px !important; }
+      .email-outer-td { padding: 12px 4px 28px !important; }
       .email-card     { border-radius: 0 !important; }
-      .email-body     { padding: 28px 22px 20px !important; }
-      .email-body h2  { font-size: 19px !important; }
-      .email-footer   { padding: 20px 16px !important; }
+      .email-body     { padding: 28px 20px 20px !important; }
+      .email-body h2  { font-size: 20px !important; }
+      .email-footer   { padding: 22px 16px !important; }
+      .stat-value     { font-size: 22px !important; }
+      .inner-card     { padding: 16px 18px !important; border-radius: 12px !important; }
     }
 
-    /* ═══ DARK MODE — Apple Mail, iOS Mail, Samsung Mail, Outlook.com ══════════ */
+    /* ═══ DARK MODE — Apple Mail, iOS, Samsung, Outlook.com ════════════════════ */
     @media (prefers-color-scheme: dark) {
-      body            { background-color: #0d1a12   !important; }
-      .outer-wrapper  { background-color: #0d1a12   !important; }
-      .email-body     { background-color: #111f17   !important;
+      body            { background-color: #0a1a11   !important; }
+      .outer-wrapper  { background-color: #0a1a11   !important; }
+      .email-card     { box-shadow: 0 8px 40px rgba(0,0,0,0.60) !important; }
+      .email-body     { background-color: #0f1e16   !important;
                         color:            #D1FAE5      !important; }
       .email-body p   { color: #9DC4B0            !important; }
-      .email-body h2  { color: #6EE7B7              !important;
-                        border-bottom-color: #1E3A2A !important; }
+      .email-body h2  { color: #6EE7B7              !important; }
       .email-body a   { color: #6EE7B7                 !important; }
       .email-body strong { color: #ffffff                                !important; }
-      .section-divider{ border-top-color: #1E3A2A   !important; }
-      .email-footer   { background-color: #091410 !important;
-                        border-top-color:  #1E3A2A  !important; }
+      .section-divider{ border-top-color: #1a3828   !important; }
+      .inner-card     { background-color: #132d22!important;
+                        border-color:     #1a3828   !important;
+                        box-shadow: none !important; }
+      .email-footer   { background-color: #081310 !important;
+                        border-top-color: #1a3828   !important; }
       .quran-verse    { color: #6EE7B7              !important; }
+      .quran-source   { color: #C9A84C                   !important; }
       .feature-list li{ color: #9DC4B0            !important;
-                        border-bottom-color: #1E3A2A !important; }
+                        border-bottom-color: #1a3828 !important; }
+      .stat-label     { color: #9DC4B0            !important; }
+      .stat-value     { color: #6EE7B7              !important; }
+      .link-fallback  { color: #9DC4B0            !important; }
+      .heading-rule   { opacity: 0.70 !important; }
     }
 
-    /* ═══ DARK MODE — Gmail web ([data-ogsc] attribute selector) ════════════════ */
-    [data-ogsc] body           { background-color: #0d1a12   !important; }
-    [data-ogsc] .outer-wrapper { background-color: #0d1a12   !important; }
-    [data-ogsc] .email-body    { background-color: #111f17   !important;
-                                  color:            #D1FAE5     !important; }
-    [data-ogsc] .email-body p  { color: #9DC4B0            !important; }
-    [data-ogsc] .email-body h2 { color: #6EE7B7              !important; }
-    [data-ogsc] .email-body a  { color: #6EE7B7                 !important; }
-    [data-ogsc] .email-footer  { background-color: #091410 !important; }
-    [data-ogsc] .quran-verse   { color: #6EE7B7              !important; }
+    /* ═══ DARK MODE — Gmail web ([data-ogsc]) ════════════════════════════════════ */
+    [data-ogsc] body            { background-color: #0a1a11   !important; }
+    [data-ogsc] .outer-wrapper  { background-color: #0a1a11   !important; }
+    [data-ogsc] .email-body     { background-color: #0f1e16   !important;
+                                   color:            #D1FAE5     !important; }
+    [data-ogsc] .email-body p   { color: #9DC4B0            !important; }
+    [data-ogsc] .email-body h2  { color: #6EE7B7              !important; }
+    [data-ogsc] .email-body a   { color: #6EE7B7                 !important; }
+    [data-ogsc] .email-body strong { color: #ffffff                                !important; }
+    [data-ogsc] .inner-card     { background-color: #132d22!important;
+                                   border-color:     #1a3828  !important; }
+    [data-ogsc] .email-footer   { background-color: #081310 !important;
+                                   border-top-color: #1a3828  !important; }
+    [data-ogsc] .quran-verse    { color: #6EE7B7              !important; }
+    [data-ogsc] .stat-value     { color: #6EE7B7              !important; }
+    [data-ogsc] .stat-label     { color: #9DC4B0            !important; }
+    [data-ogsc] .feature-list li{ color: #9DC4B0            !important; }
   </style>
 </head>
 <body style="margin:0;padding:0;background-color:#F8F7F3;" bgcolor="#F8F7F3">
 
-<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;">&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;">&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;</div>
 
-<!-- ╔══════════════════════════════════════════════════════════╗
-     ║  OUTER WRAPPER TABLE                                     ║
-     ╚══════════════════════════════════════════════════════════╝ -->
 <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
        class="outer-wrapper" bgcolor="#F8F7F3"
        style="background-color:#F8F7F3;">
   <tr>
     <td align="center" valign="top" class="email-outer-td"
-        style="padding:32px 16px 48px;">
+        style="padding:36px 16px 52px;">
 
       <!--[if mso]><table align="center" border="0" cellspacing="0" cellpadding="0" width="600"><tr><td align="center" valign="top" width="600"><![endif]-->
 
-      <!-- ╔══════════════════════════════════════════════════════╗
-           ║  EMAIL CARD                                          ║
-           ╚══════════════════════════════════════════════════════╝ -->
       <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%"
              class="email-card"
-             style="max-width:600px;background-color:#ffffff;border-radius:12px;
-                    overflow:hidden;box-shadow:0 4px 28px rgba(26,107,74,0.10);">
+             style="max-width:600px;background-color:#ffffff;border-radius:20px;
+                    overflow:hidden;box-shadow:0 8px 40px rgba(26,107,74,0.14),0 2px 10px rgba(0,0,0,0.07);">
 
-        <!-- ── Gold accent top strip ─────────────────────────────── -->
+        <!-- ── Gold top accent bar ──────────────────────────────────────────── -->
         <tr>
-          <td height="5" bgcolor="#C9A84C"
-              style="height:5px;line-height:5px;font-size:0;background-color:#C9A84C;">&nbsp;</td>
+          <td height="4" style="height:4px;line-height:4px;font-size:0;
+                                background:linear-gradient(90deg,#C9A84C,#E2C472,#C9A84C);">&nbsp;</td>
         </tr>
 
-        <!-- ── Header ───────────────────────────────────────────── -->
+        <!-- ── Premium Header ──────────────────────────────────────────────── -->
         <tr>
-          <td align="center" valign="top" bgcolor="#0d4a32"
+          <td align="center" valign="top"
               style="background-color:#0d4a32;
-                     background:linear-gradient(160deg,#0d4a32 0%,#1A6B4A 55%,#22896a 100%);
+                     background:radial-gradient(ellipse at 50% 0%,#22896a55 0%,#155c3e 40%,#0d4a32 100%),
+                                linear-gradient(170deg,#0d4a32 0%,#155c3e 55%,#1A6B4A 100%);
                      padding:0;text-align:center;">
 
             <!-- Islamic geometric ornament band -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td style="padding:18px 0 0;font-size:0;line-height:0;">
+                <td style="padding:20px 0 0;font-size:0;line-height:0;">
                   
 <!--[if !mso]><!-->
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 40"
-     width="100%" height="40"
-     style="display:block;opacity:0.30;" aria-hidden="true" focusable="false">
-  <polygon points="26,7 27.9,15.4 35.2,10.8 30.6,18.1 39,20 30.6,21.9 35.2,29.2 27.9,24.6 26,33 24.1,24.6 16.8,29.2 21.4,21.9 13,20 21.4,18.1 16.8,10.8 24.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="40" y1="20" x2="48" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="52,16 56,20 52,24 48,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="56" y1="20" x2="64" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="78,7 79.9,15.4 87.2,10.8 82.6,18.1 91,20 82.6,21.9 87.2,29.2 79.9,24.6 78,33 76.1,24.6 68.8,29.2 73.4,21.9 65,20 73.4,18.1 68.8,10.8 76.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="92" y1="20" x2="100" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="104,16 108,20 104,24 100,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="108" y1="20" x2="116" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="130,7 131.9,15.4 139.2,10.8 134.6,18.1 143,20 134.6,21.9 139.2,29.2 131.9,24.6 130,33 128.1,24.6 120.8,29.2 125.4,21.9 117,20 125.4,18.1 120.8,10.8 128.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="144" y1="20" x2="152" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="156,16 160,20 156,24 152,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="160" y1="20" x2="168" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="182,7 183.9,15.4 191.2,10.8 186.6,18.1 195,20 186.6,21.9 191.2,29.2 183.9,24.6 182,33 180.1,24.6 172.8,29.2 177.4,21.9 169,20 177.4,18.1 172.8,10.8 180.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="196" y1="20" x2="204" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="208,16 212,20 208,24 204,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="212" y1="20" x2="220" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="234,7 235.9,15.4 243.2,10.8 238.6,18.1 247,20 238.6,21.9 243.2,29.2 235.9,24.6 234,33 232.1,24.6 224.8,29.2 229.4,21.9 221,20 229.4,18.1 224.8,10.8 232.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="248" y1="20" x2="256" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="260,16 264,20 260,24 256,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="264" y1="20" x2="272" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="286,7 287.9,15.4 295.2,10.8 290.6,18.1 299,20 290.6,21.9 295.2,29.2 287.9,24.6 286,33 284.1,24.6 276.8,29.2 281.4,21.9 273,20 281.4,18.1 276.8,10.8 284.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="300" y1="20" x2="308" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="312,16 316,20 312,24 308,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="316" y1="20" x2="324" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="338,7 339.9,15.4 347.2,10.8 342.6,18.1 351,20 342.6,21.9 347.2,29.2 339.9,24.6 338,33 336.1,24.6 328.8,29.2 333.4,21.9 325,20 333.4,18.1 328.8,10.8 336.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="352" y1="20" x2="360" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="364,16 368,20 364,24 360,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="368" y1="20" x2="376" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="390,7 391.9,15.4 399.2,10.8 394.6,18.1 403,20 394.6,21.9 399.2,29.2 391.9,24.6 390,33 388.1,24.6 380.8,29.2 385.4,21.9 377,20 385.4,18.1 380.8,10.8 388.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="404" y1="20" x2="412" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="416,16 420,20 416,24 412,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="420" y1="20" x2="428" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="442,7 443.9,15.4 451.2,10.8 446.6,18.1 455,20 446.6,21.9 451.2,29.2 443.9,24.6 442,33 440.1,24.6 432.8,29.2 437.4,21.9 429,20 437.4,18.1 432.8,10.8 440.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="456" y1="20" x2="464" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="468,16 472,20 468,24 464,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="472" y1="20" x2="480" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="494,7 495.9,15.4 503.2,10.8 498.6,18.1 507,20 498.6,21.9 503.2,29.2 495.9,24.6 494,33 492.1,24.6 484.8,29.2 489.4,21.9 481,20 489.4,18.1 484.8,10.8 492.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="508" y1="20" x2="516" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="520,16 524,20 520,24 516,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="524" y1="20" x2="532" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="546,7 547.9,15.4 555.2,10.8 550.6,18.1 559,20 550.6,21.9 555.2,29.2 547.9,24.6 546,33 544.1,24.6 536.8,29.2 541.4,21.9 533,20 541.4,18.1 536.8,10.8 544.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="560" y1="20" x2="568" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="572,16 576,20 572,24 568,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="576" y1="20" x2="584" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="598,7 599.9,15.4 607.2,10.8 602.6,18.1 611,20 602.6,21.9 607.2,29.2 599.9,24.6 598,33 596.1,24.6 588.8,29.2 593.4,21.9 585,20 593.4,18.1 588.8,10.8 596.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
-  <line x1="612" y1="20" x2="620" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="624,16 628,20 624,24 620,20" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.70"/>
-  <line x1="628" y1="20" x2="636" y2="20" stroke="#C9A84C" stroke-width="0.8" opacity="0.55"/>
-  <polygon points="650,7 651.9,15.4 659.2,10.8 654.6,18.1 663,20 654.6,21.9 659.2,29.2 651.9,24.6 650,33 648.1,24.6 640.8,29.2 645.4,21.9 637,20 645.4,18.1 640.8,10.8 648.1,15.4" fill="none" stroke="#C9A84C" stroke-width="1.2" stroke-linejoin="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 52"
+     width="100%" height="52"
+     style="display:block;opacity:0.35;" aria-hidden="true" focusable="false">
+  <line x1="0" y1="6" x2="600" y2="6" stroke="#C9A84C" stroke-width="0.5" opacity="0.4"/>
+  <line x1="0" y1="46" x2="600" y2="46" stroke="#C9A84C" stroke-width="0.5" opacity="0.4"/>
+  <polygon points="28.00,12.00 30.10,20.92 37.90,16.10 33.08,23.90 42.00,26.00 33.08,28.10 37.90,35.90 30.10,31.08 28.00,40.00 25.90,31.08 18.10,35.90 22.92,28.10 14.00,26.00 22.92,23.90 18.10,16.10 25.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="28.00,20.12 29.78,24.22 33.88,26.00 29.78,27.78 28.00,31.88 26.22,27.78 22.12,26.00 26.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="43.5" y1="26" x2="51" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="61" y1="26" x2="68.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="56,21 61,26 56,31 51,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="56" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="47.25" y1="21" x2="47.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="47.25" y1="31" x2="47.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="84.00,12.00 86.10,20.92 93.90,16.10 89.08,23.90 98.00,26.00 89.08,28.10 93.90,35.90 86.10,31.08 84.00,40.00 81.90,31.08 74.10,35.90 78.92,28.10 70.00,26.00 78.92,23.90 74.10,16.10 81.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="84.00,20.12 85.78,24.22 89.88,26.00 85.78,27.78 84.00,31.88 82.22,27.78 78.12,26.00 82.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="99.5" y1="26" x2="107" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="117" y1="26" x2="124.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="112,21 117,26 112,31 107,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="112" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="103.25" y1="21" x2="103.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="103.25" y1="31" x2="103.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="140.00,12.00 142.10,20.92 149.90,16.10 145.08,23.90 154.00,26.00 145.08,28.10 149.90,35.90 142.10,31.08 140.00,40.00 137.90,31.08 130.10,35.90 134.92,28.10 126.00,26.00 134.92,23.90 130.10,16.10 137.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="140.00,20.12 141.78,24.22 145.88,26.00 141.78,27.78 140.00,31.88 138.22,27.78 134.12,26.00 138.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="155.5" y1="26" x2="163" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="173" y1="26" x2="180.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="168,21 173,26 168,31 163,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="168" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="159.25" y1="21" x2="159.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="159.25" y1="31" x2="159.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="196.00,12.00 198.10,20.92 205.90,16.10 201.08,23.90 210.00,26.00 201.08,28.10 205.90,35.90 198.10,31.08 196.00,40.00 193.90,31.08 186.10,35.90 190.92,28.10 182.00,26.00 190.92,23.90 186.10,16.10 193.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="196.00,20.12 197.78,24.22 201.88,26.00 197.78,27.78 196.00,31.88 194.22,27.78 190.12,26.00 194.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="211.5" y1="26" x2="219" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="229" y1="26" x2="236.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="224,21 229,26 224,31 219,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="224" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="215.25" y1="21" x2="215.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="215.25" y1="31" x2="215.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="252.00,12.00 254.10,20.92 261.90,16.10 257.08,23.90 266.00,26.00 257.08,28.10 261.90,35.90 254.10,31.08 252.00,40.00 249.90,31.08 242.10,35.90 246.92,28.10 238.00,26.00 246.92,23.90 242.10,16.10 249.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="252.00,20.12 253.78,24.22 257.88,26.00 253.78,27.78 252.00,31.88 250.22,27.78 246.12,26.00 250.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="267.5" y1="26" x2="275" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="285" y1="26" x2="292.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="280,21 285,26 280,31 275,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="280" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="271.25" y1="21" x2="271.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="271.25" y1="31" x2="271.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="308.00,12.00 310.10,20.92 317.90,16.10 313.08,23.90 322.00,26.00 313.08,28.10 317.90,35.90 310.10,31.08 308.00,40.00 305.90,31.08 298.10,35.90 302.92,28.10 294.00,26.00 302.92,23.90 298.10,16.10 305.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="308.00,20.12 309.78,24.22 313.88,26.00 309.78,27.78 308.00,31.88 306.22,27.78 302.12,26.00 306.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="323.5" y1="26" x2="331" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="341" y1="26" x2="348.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="336,21 341,26 336,31 331,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="336" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="327.25" y1="21" x2="327.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="327.25" y1="31" x2="327.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="364.00,12.00 366.10,20.92 373.90,16.10 369.08,23.90 378.00,26.00 369.08,28.10 373.90,35.90 366.10,31.08 364.00,40.00 361.90,31.08 354.10,35.90 358.92,28.10 350.00,26.00 358.92,23.90 354.10,16.10 361.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="364.00,20.12 365.78,24.22 369.88,26.00 365.78,27.78 364.00,31.88 362.22,27.78 358.12,26.00 362.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="379.5" y1="26" x2="387" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="397" y1="26" x2="404.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="392,21 397,26 392,31 387,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="392" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="383.25" y1="21" x2="383.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="383.25" y1="31" x2="383.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="420.00,12.00 422.10,20.92 429.90,16.10 425.08,23.90 434.00,26.00 425.08,28.10 429.90,35.90 422.10,31.08 420.00,40.00 417.90,31.08 410.10,35.90 414.92,28.10 406.00,26.00 414.92,23.90 410.10,16.10 417.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="420.00,20.12 421.78,24.22 425.88,26.00 421.78,27.78 420.00,31.88 418.22,27.78 414.12,26.00 418.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="435.5" y1="26" x2="443" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="453" y1="26" x2="460.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="448,21 453,26 448,31 443,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="448" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="439.25" y1="21" x2="439.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="439.25" y1="31" x2="439.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="476.00,12.00 478.10,20.92 485.90,16.10 481.08,23.90 490.00,26.00 481.08,28.10 485.90,35.90 478.10,31.08 476.00,40.00 473.90,31.08 466.10,35.90 470.92,28.10 462.00,26.00 470.92,23.90 466.10,16.10 473.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="476.00,20.12 477.78,24.22 481.88,26.00 477.78,27.78 476.00,31.88 474.22,27.78 470.12,26.00 474.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="491.5" y1="26" x2="499" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="509" y1="26" x2="516.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="504,21 509,26 504,31 499,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="504" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="495.25" y1="21" x2="495.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="495.25" y1="31" x2="495.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="532.00,12.00 534.10,20.92 541.90,16.10 537.08,23.90 546.00,26.00 537.08,28.10 541.90,35.90 534.10,31.08 532.00,40.00 529.90,31.08 522.10,35.90 526.92,28.10 518.00,26.00 526.92,23.90 522.10,16.10 529.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="532.00,20.12 533.78,24.22 537.88,26.00 533.78,27.78 532.00,31.88 530.22,27.78 526.12,26.00 530.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="547.5" y1="26" x2="555" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="565" y1="26" x2="572.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="560,21 565,26 560,31 555,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="560" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="551.25" y1="21" x2="551.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="551.25" y1="31" x2="551.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="588.00,12.00 590.10,20.92 597.90,16.10 593.08,23.90 602.00,26.00 593.08,28.10 597.90,35.90 590.10,31.08 588.00,40.00 585.90,31.08 578.10,35.90 582.92,28.10 574.00,26.00 582.92,23.90 578.10,16.10 585.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="588.00,20.12 589.78,24.22 593.88,26.00 589.78,27.78 588.00,31.88 586.22,27.78 582.12,26.00 586.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="603.5" y1="26" x2="611" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="621" y1="26" x2="628.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="616,21 621,26 616,31 611,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="616" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="607.25" y1="21" x2="607.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="607.25" y1="31" x2="607.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="644.00,12.00 646.10,20.92 653.90,16.10 649.08,23.90 658.00,26.00 649.08,28.10 653.90,35.90 646.10,31.08 644.00,40.00 641.90,31.08 634.10,35.90 638.92,28.10 630.00,26.00 638.92,23.90 634.10,16.10 641.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="644.00,20.12 645.78,24.22 649.88,26.00 645.78,27.78 644.00,31.88 642.22,27.78 638.12,26.00 642.22,24.22" fill="#C9A84C" opacity="0.50"/>
+  <line x1="659.5" y1="26" x2="667" y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <line x1="677" y1="26" x2="684.5"   y2="26" stroke="#C9A84C" stroke-width="0.7" opacity="0.50"/>
+  <polygon points="672,21 677,26 672,31 667,26" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.65"/>
+  <circle cx="672" cy="26" r="1.4" fill="#C9A84C" opacity="0.55"/>
+  <line x1="663.25" y1="21" x2="663.25" y2="17" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <line x1="663.25" y1="31" x2="663.25" y2="35" stroke="#C9A84C" stroke-width="0.6" opacity="0.30"/>
+  <polygon points="700.00,12.00 702.10,20.92 709.90,16.10 705.08,23.90 714.00,26.00 705.08,28.10 709.90,35.90 702.10,31.08 700.00,40.00 697.90,31.08 690.10,35.90 694.92,28.10 686.00,26.00 694.92,23.90 690.10,16.10 697.90,20.92" fill="none" stroke="#C9A84C" stroke-width="1.1" stroke-linejoin="round"/>
+  <polygon points="700.00,20.12 701.78,24.22 705.88,26.00 701.78,27.78 700.00,31.88 698.22,27.78 694.12,26.00 698.22,24.22" fill="#C9A84C" opacity="0.50"/>
 </svg>
 <!--<![endif]-->
-<!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="64"><tr><td height="2" bgcolor="#C9A84C" style="height:2px;line-height:2px;font-size:0;opacity:0.5;">&nbsp;</td></tr></table><![endif]-->
+<!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="100%"><tr><td height="3" bgcolor="#C9A84C" style="height:3px;line-height:3px;font-size:0;opacity:0.6;">&nbsp;</td></tr></table><![endif]-->
                 </td>
               </tr>
             </table>
 
-            <!-- Logo -->
+            <!-- Logo — frosted glass circle -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td align="center" style="padding:16px 24px 4px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" width="56" height="68" role="img" aria-label="Siraja" style="display:block;margin:0 auto 8px;">
-  <circle cx="40" cy="7" r="5" fill="none" stroke="#C9A84C" stroke-width="2.5"/>
-  <line x1="40" y1="12" x2="40" y2="19" stroke="#C9A84C" stroke-width="2" stroke-linecap="round"/>
-  <path d="M27 19 Q40 12.5 53 19 L51 28 L29 28 Z" fill="#C9A84C"/>
-  <rect x="29" y="27.5" width="22" height="4" rx="2" fill="#A87B28"/>
-  <path d="M33 31.5 L47 31.5 L53.5 43 L53.5 63 L47 74.5 L33 74.5 L26.5 63 L26.5 43 Z"
-        fill="rgba(201,168,76,0.07)" stroke="#C9A84C" stroke-width="2.2" stroke-linejoin="round"/>
-  <line x1="40"   y1="31.5" x2="40"   y2="74.5" stroke="#C9A84C" stroke-width="1"   opacity="0.30"/>
-  <line x1="26.5" y1="53"   x2="53.5" y2="53"   stroke="#C9A84C" stroke-width="1"   opacity="0.30"/>
-  <line x1="33"   y1="31.5" x2="26.5" y2="43"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
-  <line x1="47"   y1="31.5" x2="53.5" y2="43"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
-  <line x1="33"   y1="74.5" x2="26.5" y2="63"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
-  <line x1="47"   y1="74.5" x2="53.5" y2="63"   stroke="#C9A84C" stroke-width="0.8" opacity="0.22"/>
-  <ellipse cx="40" cy="53" rx="13" ry="15" fill="#FCD34D" opacity="0.10"/>
-  <ellipse cx="40" cy="53" rx="7"  ry="9"  fill="#FCD34D" opacity="0.18"/>
-  <circle  cx="40" cy="53" r="3.5"          fill="#FCD34D" opacity="0.55"/>
-  <rect x="29" y="74.5" width="22" height="4" rx="2" fill="#A87B28"/>
-  <path d="M36 78.5 L44 78.5 L42 84 L40 87.5 L38 84 Z" fill="#C9A84C"/>
-  <circle cx="40" cy="91" r="3.5" fill="#C9A84C"/>
-  <circle cx="15.5" cy="53" r="4.5" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
-  <line   x1="20"   y1="53" x2="26.5" y2="53"   stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
-  <circle cx="64.5" cy="53" r="4.5" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
-  <line   x1="53.5" y1="53" x2="60"   y2="53"   stroke="#C9A84C" stroke-width="1.5" opacity="0.60"/>
+                <td align="center" style="padding:16px 24px 8px;">
+                  <!--[if !mso]><!-->
+                  <div style="display:inline-block;
+                              background:rgba(255,255,255,0.08);
+                              border:1.5px solid rgba(201,168,76,0.40);
+                              border-radius:50%;
+                              padding:20px;
+                              mso-hide:all;
+                              box-shadow:0 0 52px rgba(201,168,76,0.20),0 8px 28px rgba(0,0,0,0.18),inset 0 1px 0 rgba(255,255,255,0.12);">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" width="58" height="72" role="img" aria-label="سِراجا" style="display:block;margin:0 auto 6px;">
+  <!-- Hanging chain -->
+  <line x1="40" y1="0" x2="40" y2="10" stroke="#C9A84C" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="40" cy="4" r="2.5" fill="#C9A84C"/>
+
+  <!-- Top cap -->
+  <path d="M28 18 Q40 10 52 18 L50 26 L30 26 Z" fill="#C9A84C"/>
+  <rect x="30" y="25" width="20" height="3.5" rx="1.75" fill="#A87B28"/>
+
+  <!-- Top decorative ring -->
+  <ellipse cx="40" cy="28.75" rx="10" ry="2" fill="none" stroke="#C9A84C" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- Body — octagonal with subtle fill -->
+  <path d="M32 29 L48 29 L56 40 L56 62 L48 73 L32 73 L24 62 L24 40 Z"
+        fill="rgba(201,168,76,0.06)" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- Inner body glow panels -->
+  <path d="M35 33 L45 33 L51 41 L51 61 L45 69 L35 69 L29 61 L29 41 Z"
+        fill="rgba(252,211,77,0.08)" stroke="#C9A84C" stroke-width="0.8" opacity="0.45"/>
+
+  <!-- Lattice lines horizontal -->
+  <line x1="25" y1="51" x2="55" y2="51" stroke="#C9A84C" stroke-width="0.8" opacity="0.28"/>
+  <line x1="26.5" y1="44" x2="53.5" y2="44" stroke="#C9A84C" stroke-width="0.6" opacity="0.18"/>
+  <line x1="26.5" y1="58" x2="53.5" y2="58" stroke="#C9A84C" stroke-width="0.6" opacity="0.18"/>
+
+  <!-- Lattice lines vertical -->
+  <line x1="40" y1="29" x2="40" y2="73" stroke="#C9A84C" stroke-width="0.8" opacity="0.20"/>
+
+  <!-- Lattice diagonal cuts (cross-hatching) -->
+  <line x1="32" y1="29" x2="24" y2="40" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+  <line x1="48" y1="29" x2="56" y2="40" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+  <line x1="32" y1="73" x2="24" y2="62" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+  <line x1="48" y1="73" x2="56" y2="62" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+
+  <!-- Glow core — layered for depth -->
+  <ellipse cx="40" cy="51" rx="14" ry="16" fill="#FCD34D" opacity="0.07"/>
+  <ellipse cx="40" cy="51" rx="8"  ry="10" fill="#FCD34D" opacity="0.14"/>
+  <ellipse cx="40" cy="51" rx="4.5" ry="5.5" fill="#FCD34D" opacity="0.30"/>
+  <circle  cx="40" cy="51" r="2.5" fill="#FDE68A" opacity="0.80"/>
+
+  <!-- Light rays emanating from core -->
+  <line x1="40" y1="37" x2="40" y2="31" stroke="#FCD34D" stroke-width="1.2" opacity="0.22" stroke-linecap="round"/>
+  <line x1="48" y1="40" x2="52" y2="36" stroke="#FCD34D" stroke-width="1"   opacity="0.18" stroke-linecap="round"/>
+  <line x1="32" y1="40" x2="28" y2="36" stroke="#FCD34D" stroke-width="1"   opacity="0.18" stroke-linecap="round"/>
+
+  <!-- Bottom cap -->
+  <rect x="30" y="73" width="20" height="3.5" rx="1.75" fill="#A87B28"/>
+  <path d="M35 76.5 L45 76.5 L43 83 L40 87 L37 83 Z" fill="#C9A84C"/>
+  <circle cx="40" cy="91" r="3" fill="#C9A84C"/>
+
+  <!-- Side accent rings -->
+  <circle cx="14" cy="51" r="4" fill="none" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
+  <line x1="18"  y1="51" x2="24" y2="51" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
+  <circle cx="66" cy="51" r="4" fill="none" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
+  <line x1="56"  y1="51" x2="62" y2="51" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
 </svg>
+                  </div>
+                  <!--<![endif]-->
+                  <!--[if mso]><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100" width="58" height="72" role="img" aria-label="سِراجا" style="display:block;margin:0 auto 6px;">
+  <!-- Hanging chain -->
+  <line x1="40" y1="0" x2="40" y2="10" stroke="#C9A84C" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="40" cy="4" r="2.5" fill="#C9A84C"/>
+
+  <!-- Top cap -->
+  <path d="M28 18 Q40 10 52 18 L50 26 L30 26 Z" fill="#C9A84C"/>
+  <rect x="30" y="25" width="20" height="3.5" rx="1.75" fill="#A87B28"/>
+
+  <!-- Top decorative ring -->
+  <ellipse cx="40" cy="28.75" rx="10" ry="2" fill="none" stroke="#C9A84C" stroke-width="1.2" opacity="0.7"/>
+
+  <!-- Body — octagonal with subtle fill -->
+  <path d="M32 29 L48 29 L56 40 L56 62 L48 73 L32 73 L24 62 L24 40 Z"
+        fill="rgba(201,168,76,0.06)" stroke="#C9A84C" stroke-width="2" stroke-linejoin="round"/>
+
+  <!-- Inner body glow panels -->
+  <path d="M35 33 L45 33 L51 41 L51 61 L45 69 L35 69 L29 61 L29 41 Z"
+        fill="rgba(252,211,77,0.08)" stroke="#C9A84C" stroke-width="0.8" opacity="0.45"/>
+
+  <!-- Lattice lines horizontal -->
+  <line x1="25" y1="51" x2="55" y2="51" stroke="#C9A84C" stroke-width="0.8" opacity="0.28"/>
+  <line x1="26.5" y1="44" x2="53.5" y2="44" stroke="#C9A84C" stroke-width="0.6" opacity="0.18"/>
+  <line x1="26.5" y1="58" x2="53.5" y2="58" stroke="#C9A84C" stroke-width="0.6" opacity="0.18"/>
+
+  <!-- Lattice lines vertical -->
+  <line x1="40" y1="29" x2="40" y2="73" stroke="#C9A84C" stroke-width="0.8" opacity="0.20"/>
+
+  <!-- Lattice diagonal cuts (cross-hatching) -->
+  <line x1="32" y1="29" x2="24" y2="40" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+  <line x1="48" y1="29" x2="56" y2="40" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+  <line x1="32" y1="73" x2="24" y2="62" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+  <line x1="48" y1="73" x2="56" y2="62" stroke="#C9A84C" stroke-width="0.6" opacity="0.16"/>
+
+  <!-- Glow core — layered for depth -->
+  <ellipse cx="40" cy="51" rx="14" ry="16" fill="#FCD34D" opacity="0.07"/>
+  <ellipse cx="40" cy="51" rx="8"  ry="10" fill="#FCD34D" opacity="0.14"/>
+  <ellipse cx="40" cy="51" rx="4.5" ry="5.5" fill="#FCD34D" opacity="0.30"/>
+  <circle  cx="40" cy="51" r="2.5" fill="#FDE68A" opacity="0.80"/>
+
+  <!-- Light rays emanating from core -->
+  <line x1="40" y1="37" x2="40" y2="31" stroke="#FCD34D" stroke-width="1.2" opacity="0.22" stroke-linecap="round"/>
+  <line x1="48" y1="40" x2="52" y2="36" stroke="#FCD34D" stroke-width="1"   opacity="0.18" stroke-linecap="round"/>
+  <line x1="32" y1="40" x2="28" y2="36" stroke="#FCD34D" stroke-width="1"   opacity="0.18" stroke-linecap="round"/>
+
+  <!-- Bottom cap -->
+  <rect x="30" y="73" width="20" height="3.5" rx="1.75" fill="#A87B28"/>
+  <path d="M35 76.5 L45 76.5 L43 83 L40 87 L37 83 Z" fill="#C9A84C"/>
+  <circle cx="40" cy="91" r="3" fill="#C9A84C"/>
+
+  <!-- Side accent rings -->
+  <circle cx="14" cy="51" r="4" fill="none" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
+  <line x1="18"  y1="51" x2="24" y2="51" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
+  <circle cx="66" cy="51" r="4" fill="none" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
+  <line x1="56"  y1="51" x2="62" y2="51" stroke="#C9A84C" stroke-width="1.4" opacity="0.55"/>
+</svg><![endif]-->
                 </td>
               </tr>
             </table>
@@ -290,10 +501,10 @@
             <!-- Brand name -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td align="center" style="padding:2px 24px 4px;">
-                  <h1 style="margin:0;color:#ffffff;font-size:36px;font-weight:800;
-                             letter-spacing:1px;line-height:1.2;
-                             text-shadow:0 2px 10px rgba(0,0,0,0.28);
+                <td align="center" style="padding:4px 32px 2px;">
+                  <h1 style="margin:0;color:#ffffff;font-size:38px;font-weight:900;
+                             letter-spacing:0.5px;line-height:1.2;
+                             text-shadow:0 2px 16px rgba(0,0,0,0.35),0 0 40px rgba(201,168,76,0.15);
                              font-family:'Cairo',Tahoma,Arial,sans-serif;">سِراجا</h1>
                 </td>
               </tr>
@@ -302,157 +513,236 @@
             <!-- Tagline -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td align="center" style="padding:4px 24px 14px;">
-                  <p style="margin:0;color:#C9A84C;font-size:12.5px;font-weight:500;
-                            font-family:'Cairo',Tahoma,Arial,sans-serif;opacity:0.95;">منصة حفظ القرآن الكريم الذكية</p>
+                <td align="center" style="padding:6px 32px 16px;">
+                  <p style="margin:0;color:#C9A84C;font-size:13px;font-weight:500;
+                            font-family:'Cairo',Tahoma,Arial,sans-serif;opacity:0.92;
+                            letter-spacing:0.3px;">منصة حفظ القرآن الكريم الذكية</p>
                 </td>
               </tr>
             </table>
 
-            <!-- Gold divider (Outlook: solid gold cell; others: gradient) -->
+            <!-- Decorative gold divider -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td align="center" style="padding:0 0 18px;">
-                  <!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="64"><tr><td height="2" bgcolor="#C9A84C" style="height:2px;line-height:2px;font-size:0;">&nbsp;</td></tr></table><![endif]-->
+                <td align="center" style="padding:0 0 22px;">
+                  <!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="80"><tr><td height="2" bgcolor="#C9A84C" style="height:2px;line-height:2px;font-size:0;">&nbsp;</td></tr></table><![endif]-->
                   <!--[if !mso]><!-->
-                  <div style="width:64px;height:2px;background:linear-gradient(90deg,transparent,#C9A84C,transparent);margin:0 auto;mso-hide:all;"></div>
+                  <div style="display:flex;align-items:center;justify-content:center;gap:8px;mso-hide:all;">
+                    <div style="width:32px;height:1px;background:linear-gradient(to right,transparent,#C9A84C80);"></div>
+                    <div style="width:8px;height:8px;background:#C9A84C;transform:rotate(45deg);border-radius:1px;"></div>
+                    <div style="width:48px;height:2px;background:#C9A84C;border-radius:99px;"></div>
+                    <div style="width:8px;height:8px;background:#C9A84C;transform:rotate(45deg);border-radius:1px;"></div>
+                    <div style="width:32px;height:1px;background:linear-gradient(to left,transparent,#C9A84C80);"></div>
+                  </div>
                   <!--<![endif]-->
+                  <!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="80"><tr><td height="2" bgcolor="#C9A84C" style="height:2px;line-height:2px;font-size:0;">&nbsp;</td></tr></table><![endif]-->
                 </td>
               </tr>
             </table>
 
-            <!-- Bottom shimmer line (decorative) -->
+            <!-- Shimmer border -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td height="1" bgcolor="#1A6B4A"
-                    style="height:1px;line-height:1px;font-size:0;
-                           background:linear-gradient(90deg,transparent,rgba(201,168,76,0.45),transparent);">&nbsp;</td>
+                <td height="1" style="height:1px;line-height:1px;font-size:0;
+                                       background:linear-gradient(90deg,transparent,rgba(201,168,76,0.40),rgba(255,255,255,0.12),rgba(201,168,76,0.40),transparent);">&nbsp;</td>
               </tr>
             </table>
 
           </td>
         </tr>
-        <!-- ── /Header ─────────────────────────────────────────── -->
+        <!-- ── /Header ─────────────────────────────────────────────────────── -->
 
-        <!-- ── Body ─────────────────────────────────────────────── -->
+        <!-- ── Body ──────────────────────────────────────────────────────────── -->
         <tr>
           <td class="email-body"
               bgcolor="#ffffff"
-              style="padding:38px 42px 30px;color:#1F2937;font-size:15px;
+              style="padding:44px 48px 36px;color:#1F2937;font-size:15px;
                      line-height:1.9;direction:rtl;font-family:'Cairo', 'Noto Sans Arabic', Tahoma, 'Arial Unicode MS', Arial, sans-serif;
                      background-color:#ffffff;">
             
-    <h2 style="color:#1A6B4A;font-size:21px;font-weight:700;margin:0 0 20px;
-               padding-bottom:10px;border-bottom:2px solid #EEF0EC;
-               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      ⚠️ تسجيل دخول غير مألوف
-    </h2>
+    
+<!--[if !mso]><!-->
+<div style="text-align:center;margin:0 0 24px;mso-hide:all;" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" width="90" height="96" viewBox="0 0 90 96" aria-hidden="true">
+  <!-- Ripple rings -->
+  <circle cx="45" cy="44" r="36" fill="none" stroke="#1A6B4A" stroke-width="0.8" opacity="0.15"/>
+  <circle cx="45" cy="44" r="28" fill="none" stroke="#1A6B4A" stroke-width="0.8" opacity="0.20"/>
+  <!-- Bell body -->
+  <path d="M45 12 C30 12 20 24 20 38 L18 62 L72 62 L70 38 C70 24 60 12 45 12 Z"
+        fill="#1A6B4A12" stroke="#1A6B4A" stroke-width="2.2" stroke-linejoin="round"/>
+  <!-- Bell bottom rim -->
+  <path d="M14 62 Q14 68 45 68 Q76 68 76 62 Z"
+        fill="#1A6B4A" opacity="0.18" stroke="#1A6B4A" stroke-width="1.6"/>
+  <!-- Bell clapper -->
+  <line x1="45" y1="68" x2="45" y2="76" stroke="#1A6B4A" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="45" cy="80" r="5" fill="#1A6B4A" opacity="0.50"/>
+  <!-- Hanger -->
+  <line x1="45" y1="6" x2="45" y2="12" stroke="#1A6B4A" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="45" cy="5" r="3" fill="#1A6B4A" opacity="0.60"/>
+  <!-- Notification dot -->
+  <circle cx="65" cy="18" r="9" fill="#C9A84C" stroke="#ffffff" stroke-width="2.5"/>
+  <!-- Inner lines (motion) -->
+  <path d="M28 38 Q28 32 30 28" stroke="#1A6B4A" stroke-width="1.2" fill="none" opacity="0.30" stroke-linecap="round"/>
+  <path d="M62 38 Q62 32 60 28" stroke="#1A6B4A" stroke-width="1.2" fill="none" opacity="0.30" stroke-linecap="round"/>
+</svg>
+</div>
+<!--<![endif]-->
 
-    <p style="margin:0 0 16px;color:#4B5563;font-size:15px;line-height:1.9;
+    <h2 style="color:#1A6B4A;font-size:23px;font-weight:800;margin:0 0 8px;
+               font-family:'Cairo',Tahoma,Arial,sans-serif;">
+      ⚠️&nbsp; تذكير: اشتراكك على وشك الانتهاء
+    </h2>
+    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,#C9A84C,#1A6B4A);
+                border-radius:99px;margin:0 0 24px;"></div>
+
+    <p style="margin:0 0 20px;color:#4B5563;font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:#1F2937;">عمر حسن</strong>،
+      مرحباً <strong style="color:#1F2937;">سارة الغامدي</strong>،
     </p>
 
     
 <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
-       style="margin:20px 0;border-radius:8px;overflow:hidden;">
+       style="margin:18px 0;border-radius:12px;overflow:hidden;
+              box-shadow:0 2px 8px rgba(0,0,0,0.06);">
   <tr>
-    <td width="4" style="width:4px;min-width:4px;background-color:#D97706;font-size:0;line-height:0;">&nbsp;</td>
-    <td style="padding:14px 18px;background-color:#FEF3C7;color:#78350F;font-size:13.5px;line-height:1.75;font-family:'Cairo',Tahoma,Arial,sans-serif;border-top:1px solid #D9770622;border-bottom:1px solid #D9770622;border-right:1px solid #D9770622;">لاحظنا تسجيل دخول إلى حسابك من موقع أو جهاز غير مألوف:<br/><br/>
-    <strong>عنوان IP:</strong> 185.220.101.42<br/>
-    <strong>الجهاز:</strong> Chrome / Linux<br/><br/>
-    إذا لم تكن أنت، <strong>غيّر كلمة مرورك فوراً</strong> وراجع الأجهزة المرتبطة بحسابك.</td>
+    <td width="5" style="width:5px;min-width:5px;background-color:#D97706;font-size:0;line-height:0;border-radius:12px 0 0 12px;">&nbsp;</td>
+    <td style="padding:16px 20px;background-color:#FFFBEB;color:#78350F;
+               font-size:13.5px;line-height:1.75;font-family:'Cairo',Tahoma,Arial,sans-serif;
+               border-top:1px solid #D9770620;border-bottom:1px solid #D9770620;
+               border-right:1px solid #D9770620;border-radius:0 12px 12px 0;">ينتهي اشتراكك خلال 3 أيام. جدد الآن للاستمرار في الاستفادة من جميع ميزات المنصة.</td>
   </tr>
 </table>
 
     
+<div class="btn-wrap" style="text-align:center;margin:28px 0;">
+<!--[if mso]>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
+  href="https://siraja.website/renew"
+  style="height:52px;v-text-anchor:middle;width:240px;"
+  arcsize="50%"
+  strokecolor="#C9A84C"
+  strokeweight="1.5px"
+  fillcolor="#1A6B4A">
+  <w:anchorlock/>
+  <center style="color:#ffffff;font-family:Tahoma,sans-serif;font-size:15px;font-weight:bold;letter-spacing:0.5px;">تجديد الاشتراك</center>
+</v:roundrect>
+<![endif]-->
+<!--[if !mso]><!-->
+<a href="https://siraja.website/renew" target="_blank" rel="noopener noreferrer"
+   class="btn-primary"
+   style="background:linear-gradient(145deg,#1A6B4Add 0%,#1A6B4A 60%,#0d4a32 100%);
+          border:1.5px solid #C9A84C;
+          border-radius:50px;
+          color:#ffffff!important;
+          display:inline-block;
+          font-family:'Cairo',Tahoma,Arial,sans-serif;
+          font-size:15px;
+          font-weight:700;
+          letter-spacing:0.4px;
+          mso-hide:all;
+          padding:15px 40px;
+          text-decoration:none;
+          transition:all 0.2s ease;
+          box-shadow:0 4px 20px rgba(26,107,74,0.35),0 1px 4px rgba(0,0,0,0.12);"
+   aria-label="تجديد الاشتراك">تجديد الاشتراك</a>
+<!--<![endif]-->
+</div>
 
-    <hr style="border:none;border-top:1px solid #EEF0EC;margin:24px 0;"/>
+    <hr style="border:none;border-top:1px solid #EEF0EC;margin:28px 0 18px;"/>
 
-    <p style="font-size:13px;color:#9CA3AF;margin:0;
+    <p style="font-size:13px;color:#9CA3AF;text-align:center;margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      للمساعدة تواصل معنا على
-      <a href="mailto:support@siraja.website" style="color:#1A6B4A;">support@siraja.website</a>
+      هذا إشعار تلقائي من منصة سِراجا
     </p>
   
           </td>
         </tr>
-        <!-- ── /Body ─────────────────────────────────────────────── -->
+        <!-- ── /Body ──────────────────────────────────────────────────────────── -->
 
-        <!-- ── Footer ───────────────────────────────────────────── -->
+        <!-- ── Premium Footer ─────────────────────────────────────────────────── -->
         <tr>
           <td class="email-footer" bgcolor="#F4F3EE" align="center"
               style="background-color:#F4F3EE;border-top:1px solid #DDE6E0;
-                     padding:28px 32px 24px;text-align:center;direction:rtl;">
+                     padding:32px 36px 28px;text-align:center;direction:rtl;">
+
+            <!-- Ornamental footer divider -->
+            <!--[if !mso]><!-->
+            <div style="margin:0 auto 22px;mso-hide:all;display:flex;align-items:center;justify-content:center;gap:6px;">
+              <div style="width:24px;height:1px;background:linear-gradient(to right,transparent,#C9A84C60);"></div>
+              <div style="width:5px;height:5px;background:#C9A84C;transform:rotate(45deg);border-radius:1px;opacity:0.70;"></div>
+              <div style="width:36px;height:1px;background:#C9A84C;opacity:0.45;border-radius:99px;"></div>
+              <div style="width:5px;height:5px;background:#C9A84C;transform:rotate(45deg);border-radius:1px;opacity:0.70;"></div>
+              <div style="width:24px;height:1px;background:linear-gradient(to left,transparent,#C9A84C60);"></div>
+            </div>
+            <!--<![endif]-->
 
             <!-- Quranic verse -->
             <p class="quran-verse"
-               style="margin:0 0 3px;color:#1A6B4A;font-size:16px;font-weight:700;
-                      font-family:'Cairo',Tahoma,Arial,sans-serif;">﴿ نُورٌ عَلَىٰ نُورٍ ﴾</p>
+               style="margin:0 0 2px;color:#1A6B4A;font-size:19px;font-weight:800;
+                      font-family:'Cairo',Tahoma,Arial,sans-serif;letter-spacing:0.5px;">
+              ﴿ نُورٌ عَلَىٰ نُورٍ ﴾
+            </p>
             <p class="quran-source"
-               style="margin:0 0 18px;color:#C9A84C;font-size:11px;
-                      font-family:'Cairo',Tahoma,Arial,sans-serif;">سورة النور — آية ٣٥</p>
+               style="margin:0 0 24px;color:#C9A84C;font-size:11.5px;font-weight:500;
+                      font-family:'Cairo',Tahoma,Arial,sans-serif;letter-spacing:0.3px;">
+              سورة النور — الآية ٣٥
+            </p>
 
-            <!-- Gold ornamental divider -->
-            <!--[if mso]><table align="center" border="0" cellpadding="0" cellspacing="0" width="44"><tr><td height="1" bgcolor="#C9A84C" style="height:1px;line-height:1px;font-size:0;opacity:0.5;">&nbsp;</td></tr></table><![endif]-->
-            <!--[if !mso]><!-->
-            <div style="width:44px;height:1px;background-color:#C9A84C;opacity:0.5;margin:0 auto 18px;mso-hide:all;"></div>
-            <!--<![endif]-->
+            <!-- Social links (tenant custom) -->
+            
 
-            <!-- Social / contact bar -->
+            <!-- Website & support row -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
                 <td align="center" style="padding:0 0 14px;">
                   <a href="https://siraja.website" target="_blank" rel="noopener noreferrer"
-                     style="color:#1A6B4A;font-size:12.5px;font-weight:600;
+                     style="display:inline-block;color:#1A6B4A;font-size:12.5px;font-weight:700;
                             font-family:'Cairo',Tahoma,Arial,sans-serif;text-decoration:none;
-                            margin:0 10px;white-space:nowrap;">🌐&nbsp; siraja.website</a>
+                            margin:0 12px;white-space:nowrap;">🌐&nbsp; siraja.website</a>
                   <a href="mailto:support@siraja.website"
-                     style="color:#1A6B4A;font-size:12.5px;font-weight:600;
+                     style="display:inline-block;color:#1A6B4A;font-size:12.5px;font-weight:700;
                             font-family:'Cairo',Tahoma,Arial,sans-serif;text-decoration:none;
-                            margin:0 10px;white-space:nowrap;">✉&nbsp; support@siraja.website</a>
+                            margin:0 12px;white-space:nowrap;">✉&nbsp; support@siraja.website</a>
                 </td>
               </tr>
             </table>
 
-            <!-- Secondary links -->
+            <!-- Policy links -->
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
               <tr>
-                <td align="center" style="padding:0 0 10px;">
+                <td align="center" style="padding:0 0 14px;">
                   <a href="https://siraja.website/privacy"
                      style="color:#9CA3AF;font-size:11px;
-                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 5px;">سياسة الخصوصية</a>
-                  <span style="color:#9CA3AF;font-size:11px;margin:0 2px;">·</span>
+                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 6px;">سياسة الخصوصية</a>
+                  <span style="color:#EEF0EC;font-size:11px;margin:0 2px;">·</span>
                   <a href="https://siraja.website/terms"
                      style="color:#9CA3AF;font-size:11px;
-                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 5px;">شروط الاستخدام</a>
-                  <span style="color:#9CA3AF;font-size:11px;margin:0 2px;">·</span>
+                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 6px;">شروط الاستخدام</a>
+                  <span style="color:#EEF0EC;font-size:11px;margin:0 2px;">·</span>
                   <a href="https://siraja.website/unsubscribe"
                      style="color:#9CA3AF;font-size:11px;
-                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 5px;">إلغاء الاشتراك</a>
+                            font-family:Tahoma,Arial,sans-serif;text-decoration:none;margin:0 6px;">إلغاء الاشتراك</a>
                 </td>
               </tr>
             </table>
 
             <!-- Copyright -->
             <p style="margin:0;color:#9CA3AF;font-size:11px;
-                      font-family:Tahoma,Arial,sans-serif;line-height:1.8;">
+                      font-family:Tahoma,Arial,sans-serif;line-height:1.9;">
               © 2026 منصة سِراجا · جميع الحقوق محفوظة
             </p>
 
           </td>
         </tr>
-        <!-- ── /Footer ─────────────────────────────────────────── -->
+        <!-- ── /Footer ─────────────────────────────────────────────────────── -->
 
       </table>
-      <!-- ╚══════════════════════════════════════════════════════╝ -->
 
       <!--[if mso]></td></tr></table><![endif]-->
 
     </td>
   </tr>
 </table>
-<!-- ╚══════════════════════════════════════════════════════════╝ -->
 
 </body>
 </html>

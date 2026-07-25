@@ -4,9 +4,7 @@ import { getButtonHtml, getCardHtml, getCodeBoxHtml, getEmailIllustration, SIRAJ
 export interface VerificationTemplateData extends BaseTemplateData {
   fullName: string;
   verificationUrl: string;
-  /** Optional OTP code displayed alongside the link */
   verificationCode?: string;
-  /** Link validity in hours (default: 24) */
   expiresInHours?: number;
 }
 
@@ -19,82 +17,78 @@ export function verificationEmailTemplate(data: VerificationTemplateData): {
     fullName,
     verificationUrl,
     verificationCode,
-    expiresInHours = 24,
-    tenantName   = SIRAJA_BRAND_DEFAULTS.tenantName,
-    primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
-    accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
-    supportEmail = SIRAJA_BRAND_DEFAULTS.supportEmail,
+    expiresInHours   = 24,
+    tenantName        = SIRAJA_BRAND_DEFAULTS.tenantName,
+    primaryColor      = SIRAJA_BRAND_DEFAULTS.primaryColor,
+    accentColor       = SIRAJA_BRAND_DEFAULTS.accentColor,
+    supportEmail      = SIRAJA_BRAND_DEFAULTS.supportEmail,
   } = data;
 
   const subject = `✉️ تأكيد بريدك الإلكتروني — ${tenantName}`;
 
   const illustration = getEmailIllustration('verification', primaryColor, accentColor);
 
-  const codeSection = verificationCode
-    ? getCodeBoxHtml(verificationCode, primaryColor) +
-      `<p style="text-align:center;font-size:12.5px;color:${SIRAJA_COLORS.textMuted};margin:-8px 0 20px;
-                 font-family:'Cairo',Tahoma,Arial,sans-serif;">أدخل هذا الرمز في التطبيق</p>`
-    : '';
-
   const ctaButton = getButtonHtml({
-    href:         verificationUrl,
-    label:        '✔ تأكيد البريد الإلكتروني',
+    href:  verificationUrl,
+    label: '✅ تأكيد البريد الإلكتروني',
     primaryColor,
     accentColor,
-    width:        260,
+    width: 270,
   });
 
-  const expiryCard = getCardHtml(
-    `⏱&nbsp; هذا الرابط صالح لمدة <strong>${expiresInHours} ساعة</strong> من وقت إرساله.`,
-    'info',
-  );
+  const codeBox = verificationCode
+    ? `<p style="margin:16px 0 4px;color:${SIRAJA_COLORS.textSecondary};font-size:14px;
+                font-family:'Cairo',Tahoma,Arial,sans-serif;text-align:center;">
+         أو أدخل رمز التحقق يدوياً:
+       </p>
+       ${getCodeBoxHtml(verificationCode, primaryColor)}`
+    : '';
 
-  const headingRule = `<div style="width:48px;height:3px;background:${accentColor};background:linear-gradient(to left,transparent,${accentColor},${primaryColor});border-radius:2px;margin:0 0 22px;"></div>`;
+  const expiryCard = getCardHtml(
+    `⏱ ينتهي هذا الرابط خلال <strong>${expiresInHours} ساعة</strong>. إذا لم تطلب هذا التأكيد يمكنك تجاهل هذا البريد بأمان.`,
+    'warning'
+  );
 
   const body = `
     ${illustration}
 
-    <h2 style="color:${primaryColor};font-size:22px;font-weight:700;margin:0 0 6px;
+    <h2 style="color:${primaryColor};font-size:23px;font-weight:800;margin:0 0 8px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      🌟 أهلاً وسهلاً، ${fullName}!
+      تحقق من بريدك الإلكتروني
     </h2>
-    ${headingRule}
+    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+                border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 16px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      شكراً لانضمامك إلى <strong style="color:${SIRAJA_COLORS.textPrimary};">${tenantName}</strong>،
-      رفيقك في رحلة حفظ كتاب الله الكريم. خطوة واحدة تفصلك عن بدء رحلتك —
-      قم بتأكيد بريدك الإلكتروني:
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${fullName}</strong>،
+      خطوة واحدة تفصلك عن الانضمام إلى <strong style="color:${SIRAJA_COLORS.textPrimary};">${tenantName}</strong>.
+      اضغط الزر أدناه لتأكيد بريدك وتفعيل حسابك.
     </p>
 
-    ${codeSection}
+    ${ctaButton}
+    ${codeBox}
 
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
-      <tr><td align="center" style="padding:24px 0 0;">${ctaButton}</td></tr>
-    </table>
-
-    <p style="text-align:center;font-size:12px;color:${SIRAJA_COLORS.textMuted};margin:8px 0 20px;
-              word-break:break-all;direction:ltr;font-family:Tahoma,Arial,sans-serif;">
-      <a href="${verificationUrl}" style="color:${primaryColor};">${verificationUrl}</a>
+    <p class="link-fallback"
+       style="text-align:center;font-size:12px;color:${SIRAJA_COLORS.textMuted};
+              margin:-8px 0 24px;word-break:break-all;direction:ltr;
+              font-family:Tahoma,Arial,sans-serif;">
+      لا يعمل الزر؟ انسخ هذا الرابط:
+      <a href="${verificationUrl}" style="color:${primaryColor};text-decoration:underline;">${verificationUrl}</a>
     </p>
 
     ${expiryCard}
 
-    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:26px 0;"/>
-
-    <p style="font-size:13px;color:${SIRAJA_COLORS.textMuted};margin:0 0 10px;
-              font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      إذا لم تقم بإنشاء حساب في منصة ${tenantName}، يمكنك تجاهل هذه الرسالة بأمان.
-    </p>
+    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:26px 0 18px;"/>
 
     <p style="font-size:13px;color:${SIRAJA_COLORS.textMuted};margin:0;
-              font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      للمساعدة تواصل معنا على
-      <a href="mailto:${supportEmail}" style="color:${primaryColor};">${supportEmail}</a>
+              font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.8;">
+      تحتاج إلى مساعدة؟ تواصل معنا على
+      <a href="mailto:${supportEmail}" style="color:${primaryColor};text-decoration:none;font-weight:600;">${supportEmail}</a>
     </p>
   `;
 
-  const text = `أهلاً ${fullName}،\n\nشكراً لانضمامك إلى منصة ${tenantName}.\n\nيرجى تأكيد بريدك الإلكتروني عبر الرابط:\n${verificationUrl}\n\nصالح لمدة ${expiresInHours} ساعة.\n\nفريق ${tenantName}`;
+  const text = `مرحباً ${fullName}،\n\nأكّد بريدك الإلكتروني عبر:\n${verificationUrl}${verificationCode ? `\n\nأو الرمز: ${verificationCode}` : ''}\n\nينتهي الرابط خلال ${expiresInHours} ساعة.\n\nفريق ${tenantName}`;
 
   return { subject, html: baseEmailTemplate(body, data), text };
 }

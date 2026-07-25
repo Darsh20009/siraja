@@ -1,27 +1,21 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface MonthlyReportSummary {
-  totalSessions:   number;
-  totalVerses:     number;
-  /** Number of complete juz memorized this month (optional) */
-  completedJuz?:   number;
-  /** Average revision score 0-100 */
-  averageScore:    number;
-  /** Sessions with perfect score */
+  totalSessions: number;
+  totalVerses: number;
+  completedJuz?: number;
+  averageScore: number;
   perfectSessions: number;
-  /** Longest consecutive-day streak */
-  longestStreak:   number;
+  longestStreak: number;
 }
 
 export interface MonthlyReportTemplateData extends BaseTemplateData {
   studentName: string;
-  /** Human-readable month label, e.g. "يناير ٢٠٢٦" */
-  monthLabel:  string;
-  summary:     MonthlyReportSummary;
-  /** Key highlights / achievements as text items */
+  monthLabel: string;
+  summary: MonthlyReportSummary;
   highlights?: string[];
-  reportUrl:   string;
+  reportUrl: string;
 }
 
 export function monthlyReportEmailTemplate(data: MonthlyReportTemplateData): {
@@ -33,7 +27,7 @@ export function monthlyReportEmailTemplate(data: MonthlyReportTemplateData): {
     studentName,
     monthLabel,
     summary,
-    highlights = [],
+    highlights,
     reportUrl,
     tenantName   = SIRAJA_BRAND_DEFAULTS.tenantName,
     primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
@@ -46,92 +40,98 @@ export function monthlyReportEmailTemplate(data: MonthlyReportTemplateData): {
 
   const ctaButton = getButtonHtml({
     href:  reportUrl,
-    label: '📄 عرض التقرير الكامل',
+    label: '📋 التقرير الشهري الكامل',
     primaryColor,
     accentColor,
-    width: 240,
+    width: 250,
   });
 
-  const headingRule = `<div style="width:48px;height:3px;background:${accentColor};background:linear-gradient(to left,transparent,${accentColor},${primaryColor});border-radius:2px;margin:0 0 22px;"></div>`;
+  const statItems = [
+    { label: 'إجمالي الجلسات',   value: summary.totalSessions,  icon: '📚' },
+    { label: 'آيات محفوظة',       value: summary.totalVerses,    icon: '📖' },
+    { label: 'جلسات مثالية',     value: summary.perfectSessions, icon: '⭐' },
+    { label: 'متوسط الدرجات',   value: `${summary.averageScore}%`, icon: '🎯' },
+    { label: 'أطول سلسلة',       value: `${summary.longestStreak} يوم`, icon: '🔥' },
+    { label: 'أجزاء مكتملة',    value: summary.completedJuz ?? 0, icon: '📗' },
+  ];
 
-  // ── Stats cells ──────────────────────────────────────────────────────────────
-  function statCell(label: string, value: string | number, unit = '') {
-    return `<td align="center" style="padding:14px 8px;background:${SIRAJA_COLORS.bgPage};
-                border:1px solid ${SIRAJA_COLORS.borderLight};border-radius:8px;width:33%;">
-      <p style="font-size:11px;color:${SIRAJA_COLORS.textMuted};margin:0 0 4px;
-                font-family:'Cairo',Tahoma,Arial,sans-serif;">${label}</p>
-      <p style="font-size:22px;font-weight:800;color:${primaryColor};margin:0;
-                font-family:'Cairo',Tahoma,Arial,sans-serif;">${value}<span style="font-size:12px;font-weight:500;color:${SIRAJA_COLORS.textMuted};"> ${unit}</span></p>
+  function statCell(s: typeof statItems[0]): string {
+    return `<td align="center" valign="top" width="33%"
+                style="padding:18px 8px;border-left:1px solid ${SIRAJA_COLORS.borderLight};">
+      <p style="margin:0 0 4px;font-size:22px;line-height:1;">${s.icon}</p>
+      <p style="margin:0 0 3px;font-size:24px;font-weight:900;color:${primaryColor};
+                font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1;">${s.value}</p>
+      <p style="margin:0;font-size:11px;color:${SIRAJA_COLORS.textMuted};
+                font-family:'Cairo',Tahoma,Arial,sans-serif;font-weight:500;">${s.label}</p>
     </td>`;
   }
 
-  const statsHtml = `
+  const row1 = statItems.slice(0, 3);
+  const row2 = statItems.slice(3, 6);
+
+  const statsGrid = `
 <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
-       style="margin:0 0 8px;border-collapse:separate;border-spacing:8px;">
+       style="margin:20px 0;background:${SIRAJA_COLORS.bgPage};border-radius:16px;
+              overflow:hidden;border:1px solid ${SIRAJA_COLORS.borderLight};
+              box-shadow:0 2px 12px rgba(0,0,0,0.04);">
+  <tr>${row1.map(s => statCell(s)).join('')}</tr>
   <tr>
-    ${statCell('إجمالي الجلسات',     summary.totalSessions,   'جلسة')}
-    ${statCell('الآيات المحفوظة',    summary.totalVerses,     'آية')}
-    ${statCell('جلسات مثالية',       summary.perfectSessions, 'جلسة')}
+    <td colspan="3" height="1" style="height:1px;line-height:1px;font-size:0;
+                                       background-color:${SIRAJA_COLORS.borderLight};">&nbsp;</td>
   </tr>
-  <tr style="height:8px;"><td colspan="3"></td></tr>
-  <tr>
-    ${statCell('متوسط التقييم',      `${summary.averageScore}`, '%')}
-    ${statCell('أطول سلسلة متواصلة', summary.longestStreak,   'يوم')}
-    ${summary.completedJuz != null ? statCell('أجزاء مكتملة', summary.completedJuz, 'جزء 🎉') : statCell('مستوى الأداء', summary.averageScore >= 85 ? '✨ ممتاز' : summary.averageScore >= 70 ? '👍 جيد جداً' : '💪 جيد', '')}
-  </tr>
+  <tr>${row2.map(s => statCell(s)).join('')}</tr>
 </table>`;
 
-  const highlightsHtml = highlights.length > 0
-    ? `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
-             style="margin:16px 0;border-radius:10px;overflow:hidden;">
-        <tr>
-          <td width="4" style="width:4px;min-width:4px;background-color:${accentColor};font-size:0;">&nbsp;</td>
-          <td style="padding:16px 18px;background:${SIRAJA_COLORS.bgPage};border:1px solid ${SIRAJA_COLORS.borderLight};border-right:none;">
-            <p style="font-size:14px;font-weight:700;color:${SIRAJA_COLORS.textPrimary};margin:0 0 10px;
-                      font-family:'Cairo',Tahoma,Arial,sans-serif;">🌟 أبرز إنجازات الشهر</p>
-            <ul style="margin:0;padding-right:20px;color:${SIRAJA_COLORS.textSecondary};font-size:14px;
-                       line-height:1.9;font-family:'Cairo',Tahoma,Arial,sans-serif;">
-              ${highlights.map(h => `<li>${h}</li>`).join('')}
-            </ul>
-          </td>
-        </tr>
-      </table>`
+  const highlightsSection = highlights?.length
+    ? `<div style="margin:20px 0;background:${SIRAJA_COLORS.bgPage};border-radius:16px;
+                   border:1px solid ${SIRAJA_COLORS.borderLight};padding:20px 24px;">
+         <p style="margin:0 0 12px;font-size:15px;font-weight:700;color:${primaryColor};
+                   font-family:'Cairo',Tahoma,Arial,sans-serif;">✨ أبرز ما حققته هذا الشهر:</p>
+         ${highlights.map(h => `
+           <p style="margin:0 0 8px;font-size:14px;color:${SIRAJA_COLORS.textSecondary};
+                     font-family:'Cairo',Tahoma,Arial,sans-serif;padding-right:20px;position:relative;">
+             <span style="color:${accentColor};font-weight:700;margin-left:8px;">✦</span>${h}
+           </p>`).join('')}
+       </div>`
     : '';
+
+  const scoreCard = summary.averageScore >= 90
+    ? getCardHtml(`🏆 <strong>أداء استثنائي!</strong> متوسط درجاتك ${summary.averageScore}% — في أعلى 10% من الطلاب!`, 'success')
+    : summary.averageScore >= 75
+    ? getCardHtml(`⭐ <strong>أداء ممتاز!</strong> متوسط درجاتك ${summary.averageScore}% — استمر على هذا المستوى!`, 'info')
+    : getCardHtml(`💪 <strong>تقدم جيد!</strong> متوسط درجاتك ${summary.averageScore}% — مع مزيد من الجهد ستصل إلى القمة!`, 'warning');
 
   const body = `
     ${illustration}
 
-    <h2 style="color:${primaryColor};font-size:22px;font-weight:700;margin:0 0 6px;
+    <h2 style="color:${primaryColor};font-size:23px;font-weight:800;margin:0 0 8px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      📅 تقرير ${monthLabel}
+      تقريرك الشهري 📅
     </h2>
-    ${headingRule}
+    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+                border-radius:99px;margin:0 0 24px;"></div>
 
-    <p style="margin:0 0 6px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
+    <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${studentName}</strong>،
-    </p>
-    <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:14px;
-              font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      هذا ملخص أدائك خلال شهر <strong style="color:${SIRAJA_COLORS.textPrimary};">${monthLabel}</strong>:
+      بارك الله فيك <strong style="color:${SIRAJA_COLORS.textPrimary};">${studentName}</strong>،
+      إليك تقرير أدائك الشهري لشهر <strong style="color:${SIRAJA_COLORS.textPrimary};">${monthLabel}</strong>:
     </p>
 
-    ${statsHtml}
-    ${highlightsHtml}
+    ${statsGrid}
+    ${scoreCard}
+    ${highlightsSection}
 
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
-      <tr><td align="center" style="padding:20px 0 0;">${ctaButton}</td></tr>
-    </table>
+    ${ctaButton}
 
-    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:28px 0 22px;"/>
+    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:28px 0 18px;"/>
 
     <p style="font-size:14px;color:${SIRAJA_COLORS.textMuted};text-align:center;margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      نسأل الله أن يبارك في مسيرتك ويثبتك على حفظ كتابه الكريم 🤲
+      كل آية تحفظها هي نور يضيء طريقك 🌟
     </p>
   `;
 
-  const text = `تقرير ${monthLabel}\n\nمرحباً ${studentName}،\n\n• الجلسات: ${summary.totalSessions}\n• الآيات: ${summary.totalVerses}\n• متوسط التقييم: ${summary.averageScore}%\n• الجلسات المثالية: ${summary.perfectSessions}\n• أطول سلسلة: ${summary.longestStreak} يوم\n\nعرض التقرير: ${reportUrl}\n\nفريق ${tenantName}`;
+  const text = `تقرير شهر ${monthLabel}\n\nبارك الله فيك ${studentName}!\n\nإحصائياتك:\n- إجمالي الجلسات: ${summary.totalSessions}\n- آيات محفوظة: ${summary.totalVerses}\n- جلسات مثالية: ${summary.perfectSessions}\n- متوسط الدرجات: ${summary.averageScore}%\n- أطول سلسلة: ${summary.longestStreak} يوم${summary.completedJuz ? `\n- أجزاء مكتملة: ${summary.completedJuz}` : ''}\n\n${highlights?.length ? `أبرز الإنجازات:\n${highlights.map(h => `- ${h}`).join('\n')}\n\n` : ''}التقرير الكامل: ${reportUrl}\n\nفريق ${tenantName}`;
 
   return { subject, html: baseEmailTemplate(body, data), text };
 }

@@ -1,440 +1,444 @@
 # Siraja Email Design System
-
-> Premium email identity for the Siraja Quran Learning Platform.
-> Comparable to Stripe, Linear, and Apple — Islamic-first, Arabic RTL.
+## Premium Edition — Enterprise Grade
 
 ---
 
-## Table of Contents
+## Overview
 
-1. [Design Philosophy](#design-philosophy)
-2. [Design Tokens](#design-tokens)
-3. [Brand Guidelines](#brand-guidelines)
-4. [Component Library](#component-library)
-5. [Template Catalogue](#template-catalogue)
-6. [Accessibility](#accessibility)
-7. [Dark Mode](#dark-mode)
-8. [Compatibility Matrix](#compatibility-matrix)
-9. [Developer Guide](#developer-guide)
-10. [Customisation Guide](#customisation-guide)
+The Siraja Email Design System delivers a **world-class email experience** comparable to Stripe, Notion, Linear, and Apple — built for Arabic-first, RTL content, cross-client compatibility, and Quran-centred branding.
 
----
-
-## Design Philosophy
-
-Every Siraja email should feel like it comes from a premium Islamic SaaS product — not a generic mailer. Three principles guide all decisions:
-
-**Restraint** — every element earns its place. Generous whitespace, purposeful colour, and disciplined typography create calm and trust.
-
-**Islamic identity** — the emerald + gold palette, the Cairo typeface, the Arabic RTL flow, and the Quranic verse in every footer root the product in its spiritual purpose without being decorative for decoration's sake.
-
-**Maximum compatibility** — emails must render identically on a 2014 Outlook desktop and a 2025 iPhone 16. We use table-based layouts, inline CSS, MSO VML conditionals, and graceful CSS feature detection.
+Every email shares a single cohesive design language: premium Islamic geometric art, radiant gradients, Cairo typography, gold accent system, and a Quran verse footer.
 
 ---
 
 ## Design Tokens
 
-All tokens live in `backend/src/shared/email/brand/brand-config.ts` → `SIRAJA_COLORS`.
-
-### Colour Palette
+### Color Palette
 
 | Token | Hex | Usage |
 |---|---|---|
-| `primary` | `#1A6B4A` | CTA buttons, headings, links, icon fills |
-| `primaryDeep` | `#0d4a32` | Header gradient start, dark accents |
-| `primaryLight` | `#22896a` | Header gradient end, hover hints |
-| `accent` | `#C9A84C` | Gold decorative elements, dividers, borders |
-| `accentDeep` | `#A87B28` | Pressed state, shadows on gold |
-| `bgPage` | `#F8F7F3` | Email outer background, inner cards |
-| `bgCard` | `#ffffff` | Email card body |
-| `bgFooter` | `#F4F3EE` | Footer area |
-| `bgInfoCard` | `#EEF7F2` | Info callout backgrounds |
-| `bgWarnCard` | `#FEF3C7` | Warning callout backgrounds |
-| `bgDangerCard` | `#FEE2E2` | Error callout backgrounds |
-| `textPrimary` | `#1F2937` | Body text, strong emphasis |
-| `textSecondary` | `#4B5563` | Standard paragraph text |
-| `textMuted` | `#9CA3AF` | Timestamps, footnotes, meta |
-| `textLink` | `#1A6B4A` | Inline links |
-| `success` | `#16A34A` | Success states |
-| `warning` | `#D97706` | Warning badges and callouts |
-| `error` | `#DC2626` | Error states, security alerts |
-| `border` | `#DDE6E0` | Card borders, separators |
-| `borderLight` | `#EEF0EC` | Subtle inner dividers |
+| `primary` | `#1A6B4A` | Brand emerald — headings, buttons, links |
+| `primaryDeep` | `#0d4a32` | Header gradient dark stop |
+| `primaryLight` | `#22896a` | Header gradient light stop |
+| `primaryMid` | `#155c3e` | Header gradient mid tone |
+| `accent` | `#C9A84C` | Gold — dividers, decorations, chips |
+| `accentDeep` | `#A87B28` | Gold dark — caps, rings |
+| `accentLight` | `#E2C472` | Gold light — shimmer effects |
+| `bgPage` | `#F8F7F3` | Warm off-white outer background |
+| `bgCard` | `#ffffff` | Email body card background |
+| `bgFooter` | `#F4F3EE` | Footer zone background |
+| `textPrimary` | `#1F2937` | Body text — charcoal |
+| `textSecondary` | `#4B5563` | Paragraph text |
+| `textMuted` | `#9CA3AF` | Footnotes, metadata |
+| `border` | `#DDE6E0` | Footer dividers |
+| `borderLight` | `#EEF0EC` | Inner card borders, separators |
 
-### Dark Mode Tokens
+### Dark Mode Palette
 
-| Token | Hex | Replaces |
-|---|---|---|
-| `darkBgPage` | `#0d1a12` | `bgPage` |
-| `darkBgCard` | `#111f17` | `bgCard` |
-| `darkBgFooter` | `#091410` | `bgFooter` |
-| `darkText` | `#D1FAE5` | `textPrimary` |
-| `darkTextMuted` | `#9DC4B0` | `textMuted` |
-| `darkHeading` | `#6EE7B7` | heading colours |
-| `darkBgInfoCard` | `#14302A` | `bgInfoCard` |
-| `darkBorder` | `#1E3A2A` | `border` |
-| `darkLink` | `#6EE7B7` | `textLink` |
-
----
-
-## Brand Guidelines
+| Token | Hex |
+|---|---|
+| `darkBgPage` | `#0a1a11` |
+| `darkBgCard` | `#0f1e16` |
+| `darkBgFooter` | `#081310` |
+| `darkText` | `#D1FAE5` |
+| `darkTextMuted` | `#9DC4B0` |
+| `darkHeading` | `#6EE7B7` |
+| `darkLink` | `#6EE7B7` |
+| `darkBorder` | `#1a3828` |
 
 ### Typography
 
-**Primary:** Cairo (Google Fonts — loaded in `<head>` via `GOOGLE_FONTS_LINK`)  
-**Fallback stack:** `'Noto Sans Arabic', Tahoma, 'Arial Unicode MS', Arial, sans-serif`
+```
+Font family: 'Cairo', 'Noto Sans Arabic', Tahoma, 'Arial Unicode MS', Arial, sans-serif
+Weights:     400 (regular) · 500 · 600 · 700 · 800 · 900
+Source:      Google Fonts — preconnect optimised, loaded via <link>
+Fallback:    Tahoma → Arial Unicode MS → Arial (covers Outlook where Google Fonts fail)
+```
 
-- Gmail strips `<link>` tags → Cairo doesn't load → Tahoma fallback is always applied in Gmail web. Tahoma is RTL-capable on Windows and looks excellent.
-- **Never** use Traditional Arabic, Simplified Arabic, or any decorative Arabic web font — they are unavailable cross-platform.
-- Body `line-height`: 1.9 (Arabic needs more breathing room than Latin text).
-- Heading font size: 22px at weight 800.
-- Body paragraph: 15px at weight 400.
-
-### Logo
-
-The Siraja logo is an octagonal Islamic lantern rendered as an inline SVG (`SIRAJA_LOGO_SVG` in `brand-config.ts`). It requires no external HTTP request and renders on every client including Outlook, ProtonMail, and Fastmail.
-
-In the email header, the logo is wrapped in a **frosted glass circle** — a translucent `rgba(255,255,255,0.09)` circle with a gold border and a radial glow shadow. Outlook sees only the raw logo via MSO conditional fallback.
-
-Tenant logos must be:
-- An HTTPS URL (validated by `isSafeLogoUrl()`)
-- Served from Cloudflare R2 or another CDN (no data: URIs)
-- Displayed at 60×60px with `border-radius: 10px; object-fit: contain`
-
-### Header
-
-- Deep emerald linear gradient: `160deg, #0d4a32 → #1A6B4A → #22896a`
-- Islamic geometric SVG band (8-pointed stars with gold lattice connectors)
-- Frosted glass logo container
-- Platform name in white Cairo 800 weight, 36px
-- Gold tagline at 12.5px opacity 0.96
-- Gold decorative divider
-- Shimmer line at base of header
-
-### Footer
-
-- Cream background (`#F4F3EE`), 1px border above
-- Quranic verse: ﴿ نُورٌ عَلَىٰ نُورٍ ﴾ — سورة النور آية ٣٥
-- Gold ornamental divider
-- Custom tenant social links (optional)
-- Website + support email bar
-- Privacy · Terms · Unsubscribe links
-- Copyright line with optional `footerText`
+| Use | Size | Weight |
+|---|---|---|
+| Brand name (h1) | 38px | 900 |
+| Section heading (h2) | 23px | 800 |
+| Body paragraph | 15px | 400 |
+| List item | 14px | 400 |
+| Footer body | 13px | 400 |
+| Label / meta | 11–12px | 500–700 |
+| Stat value | 24–26px | 900 |
 
 ---
 
 ## Component Library
 
-All helpers are exported from `backend/src/shared/email/brand/brand-config.ts`.
+### 1. Email Shell (`baseEmailTemplate`)
 
-### `getButtonHtml(opts)`
+The outer container rendered by every template.
 
-Generates an Outlook-safe CTA button using VML for MSO and a styled anchor for all other clients.
+**Structure:**
+```
+outer-wrapper (table, full-width, bgPage background)
+  └── email-card (max-width:600px, 20px border-radius, shadow)
+        ├── gold top accent bar (4px, gradient)
+        ├── header (radial gradient + geometric band + logo + name + tagline + divider)
+        ├── body (44px/48px padding, template-specific content)
+        └── footer (Quran verse + social + contact + policy + copyright)
+```
 
-```typescript
+**Header anatomy:**
+- Radial gradient: `radial-gradient(ellipse at 50% 0%, hdrLight 0%, hdrMid 40%, hdrDeep 100%) + linear-gradient`
+- Islamic geometric SVG band: 8-pointed stars with diamond nodes (opacity 0.35, Outlook receives gold strip)
+- Logo: frosted glass circle (`rgba(255,255,255,0.08)` + gold border + glow shadow) containing inline SVG lantern or tenant `<img>`
+- Brand name: 38px/900 white, text-shadow for depth
+- Tagline: gold accent, 13px
+- Decorative divider: diamond ◆ nodes with gradient lines + shimmer border
+
+**Footer anatomy:**
+- Ornamental divider (5-segment: fade–diamond–bar–diamond–fade)
+- Quranic verse: ﴿ نُورٌ عَلَىٰ نُورٍ ﴾ (سورة النور — ٣٥)
+- Social link row (tenant-configurable)
+- Website 🌐 + Support ✉ links
+- Policy links (Privacy · Terms · Unsubscribe)
+- Copyright + optional tenant footer text
+
+### 2. Lantern Logo (`SIRAJA_LOGO_SVG`)
+
+Premium Islamic lantern — octagonal glass body with glowing light core:
+- Chain + hanging ring
+- Gold top cap + decorative ring
+- Octagonal body with lattice lines (horizontal, vertical, diagonal)
+- 3-layer glow core (ellipses + circle)
+- Light rays emanating from core
+- Bottom cap + drip + base circle
+- Side accent rings
+
+Dimensions: 58×72px viewBox 0 0 80 100. Inline SVG = zero HTTP requests.
+
+### 3. Geometric Header Band (`getGeoPatternBand`)
+
+Full-width SVG ornament band (600×52px, opacity 0.35):
+- Top/bottom decorative thin lines
+- 8-pointed stars with 4-pointed inner fill
+- Connected by diamond nodes with gradient connector lines
+- Accent dashes above/below connectors
+- Outlook fallback: 3px gold solid strip
+
+### 4. Pill-Gradient Button (`getButtonHtml`)
+
+Cross-client pill button with full Outlook VML support:
+
+```ts
 getButtonHtml({
-  href:         string,   // destination URL
-  label:        string,   // button text (Arabic)
-  primaryColor: string,   // background fill
-  accentColor:  string,   // border stroke
-  width?:       number,   // px (default: 240)
+  href:         string;      // destination URL
+  label:        string;      // button text
+  primaryColor: string;      // fill colour
+  accentColor:  string;      // border colour
+  width?:       number;      // default 240px
+  variant?:     'primary' | 'danger' | 'success';  // default 'primary'
 })
 ```
 
-MSO renders a VML `<v:roundrect>`, all other clients render a CSS anchor with:
-- `border-radius: 50px` (pill shape)
-- Gradient background from `primaryColor`
-- 2px gold border
-- Box shadow for depth
+**Modern clients:** CSS pill — `border-radius:50px`, gradient fill, gold border, box-shadow, hover animation
+**Outlook:** `<v:roundrect>` VML with `arcsize="50%"` — renders as a rounded rectangle
 
-### `getCardHtml(content, type?)`
+### 5. Premium Cards (`getCardHtml`)
 
-Outlook-safe callout card with a coloured left border.
+Left-border accent card with soft background:
 
-```typescript
-getCardHtml(content: string, type?: 'info' | 'success' | 'warning' | 'danger')
+```ts
+getCardHtml(content: string, type: 'info' | 'success' | 'warning' | 'danger')
 ```
 
-Uses a narrow `<td>` left cell for the colour bar (works in Outlook without VML).
+| Type | Border | Background |
+|---|---|---|
+| info | `#1A6B4A` | `#EEF7F2` |
+| success | `#16A34A` | `#DCFCE7` |
+| warning | `#D97706` | `#FFFBEB` |
+| danger | `#DC2626` | `#FEF2F2` |
 
-### `getCodeBoxHtml(code, primaryColor)`
+5px left accent strip + 12px border-radius + subtle shadow. Outlook-safe table layout.
 
-Monospaced OTP / verification code display.
+### 6. OTP Code Box (`getCodeBoxHtml`)
 
-```typescript
-getCodeBoxHtml(code: string, primaryColor: string)
+Prominent monospace code display:
+- Gradient background (`primaryColor 0a → 18`)
+- Dashed border with rounded corners (16px)
+- 40px monospace, 18px letter-spacing, font-weight 900
+- Inset shadow for depth
+
+### 7. Stat Grid
+
+2×3 icon + value + label grid. Used by weekly summary and monthly report.
+
+```ts
+getStatBoxHtml(stats: Array<{ label: string; value: string | number }>)
 ```
 
-Large `Courier New` font, 38px, letter-spacing 14px, dashed emerald border.
+- `bgPage` background, 16px radius, subtle shadow
+- `stat-value`: 26px / weight 900 / primaryColor
+- `stat-label`: 11px / muted / uppercase
+- Horizontal divider between rows
 
-### `getEmailIllustration(type, primaryColor?, accentColor?)`
+### 8. Social Links (`getSocialLinksHtml`)
 
-Returns a contextual inline SVG illustration wrapped in MSO conditionals.
-
-```typescript
-getEmailIllustration(
-  type:         EmailIllustrationType,
-  primaryColor?: string,
-  accentColor?:  string,
-)
+```ts
+getSocialLinksHtml(links: SocialLink[], primaryColor: string)
 ```
 
-Available types: `welcome`, `verification`, `otp`, `password-reset`, `notification`, `system-alert`, `invitation`, `weekly-summary`, `monthly-report`, `security-alert`, `achievement`, `gamification-reward`.
-
-Outlook sees nothing (MSO conditional). Modern clients see a ~80–96px SVG centred at the top of the email body.
-
-### `getSocialLinksHtml(links, primaryColor)`
-
-Renders a row of pipe-separated text links in the footer.
-
-```typescript
-getSocialLinksHtml(
-  links: { label: string; url: string }[],
-  primaryColor: string,
-)
+```ts
+interface SocialLink {
+  label: string;
+  url:   string;
+  icon?: string;  // emoji shown before label
+}
 ```
 
-### `getGeoPatternBand()`
+Renders as inline `<a>` elements separated by · dots.
 
-Returns the Islamic geometric SVG ornament band used in the header. 8-pointed stars connected by diamond lattice connectors, gold at 30% opacity. MSO sees a thin gold fallback strip.
+### 9. SVG Illustrations (`getEmailIllustration`)
+
+Per-template premium inline SVG (no external resources):
+
+| Type | Illustration | Key Elements |
+|---|---|---|
+| `welcome` | Open Quran book | Radiant light rays, golden stars, text lines |
+| `verification` | Shield + checkmark | Trust rings, gold accent dots |
+| `otp` | Lock + keyhole | Sparkle circles, shackle |
+| `password-reset` | Key + rings | Key teeth, arrow hint, sparkles |
+| `notification` | Bell + ripples | Notification dot, clapper |
+| `system-alert` | Server rack | 3 servers, alert badge |
+| `invitation` | Open doorway | Golden light beam, welcome path |
+| `weekly-summary` | Bar chart | Trend line with dots, up arrow |
+| `monthly-report` | Calendar | Achievement highlight dots, ring posts |
+| `security-alert` | Shield + exclamation | Red accent, urgency dots |
+| `achievement` | Trophy + star | Cup handles, star polygon, sparkles |
+| `gamification-reward` | Medal + ribbon | Badge star, ribbon panels |
+
+All wrapped in `<!--[if !mso]><!-- ... --><![endif]-->` so Outlook skips them cleanly.
 
 ---
 
 ## Template Catalogue
 
-| Template | Function | Key DTOs |
+| Template | Function | Key Data Fields |
 |---|---|---|
-| Welcome | `welcomeEmailTemplate()` | `fullName`, `loginUrl`, `role?` |
-| Email Verification | `verificationEmailTemplate()` | `fullName`, `verificationUrl`, `verificationCode?`, `expiresInHours?` |
-| OTP | `otpEmailTemplate()` | `fullName`, `otpCode`, `expiresInMinutes?`, `purpose?` |
-| Password Reset | `passwordResetEmailTemplate()` | `fullName`, `resetUrl`, `expiresInMinutes?`, `requestIp?` |
-| Notification | `notificationEmailTemplate()` | `recipientName`, `title`, `message`, `type?`, `actionUrl?`, `actionLabel?` |
-| System Alert | `systemAlertEmailTemplate()` | `severity`, `title`, `message`, `details?`, `timestamp` |
-| Invitation | `invitationEmailTemplate()` | `inviteeName`, `inviterName`, `role?`, `inviteUrl`, `expiresInDays?`, `personalMessage?`, `academyName?` |
-| Weekly Summary | `weeklySummaryEmailTemplate()` | `studentName`, `weekLabel`, `stats`, `topAchievement?`, `nextGoal?`, `dashboardUrl` |
-| Monthly Report | `monthlyReportEmailTemplate()` | `studentName`, `monthLabel`, `summary`, `highlights?`, `reportUrl` |
-| Security Alert | `securityAlertEmailTemplate()` | `fullName`, `alertType`, `details?`, `actionUrl?`, `actionLabel?` |
-| Achievement | `achievementEmailTemplate()` | `studentName`, `achievementTitle`, `achievementDescription`, `achievementType?`, `points?`, `level?`, `dashboardUrl`, `shareUrl?` |
-| Gamification Reward | `gamificationRewardEmailTemplate()` | `studentName`, `rewardTitle`, `rewardDescription`, `rewardType?`, `pointsEarned?`, `totalPoints?`, `badgeLevel?`, `rank?`, `dashboardUrl` |
+| Welcome | `welcomeEmailTemplate` | `fullName`, `loginUrl`, `role?` |
+| Verification | `verificationEmailTemplate` | `fullName`, `verificationUrl`, `verificationCode?`, `expiresInHours?` |
+| OTP | `otpEmailTemplate` | `fullName`, `otpCode`, `expiresInMinutes?`, `purpose?` |
+| Password Reset | `passwordResetEmailTemplate` | `fullName`, `resetUrl`, `expiresInMinutes?`, `requestIp?` |
+| Notification | `notificationEmailTemplate` | `recipientName`, `title`, `message`, `type?`, `actionUrl?`, `actionLabel?` |
+| System Alert | `systemAlertEmailTemplate` | `severity`, `title`, `message`, `details?`, `timestamp` |
+| Invitation | `invitationEmailTemplate` | `inviteeName`, `inviterName`, `role?`, `inviteUrl`, `expiresInDays?`, `personalMessage?`, `academyName?` |
+| Weekly Summary | `weeklySummaryEmailTemplate` | `studentName`, `weekLabel`, `stats`, `topAchievement?`, `nextGoal?`, `dashboardUrl` |
+| Monthly Report | `monthlyReportEmailTemplate` | `studentName`, `monthLabel`, `summary`, `highlights?`, `reportUrl` |
+| Security Alert | `securityAlertEmailTemplate` | `fullName`, `alertType`, `details?`, `actionUrl?`, `actionLabel?` |
+| Achievement | `achievementEmailTemplate` | `studentName`, `achievementTitle`, `achievementDescription`, `achievementType?`, `points?`, `level?`, `dashboardUrl`, `shareUrl?` |
+| Gamification Reward | `gamificationRewardEmailTemplate` | `studentName`, `rewardTitle`, `rewardDescription`, `rewardType?`, `pointsEarned?`, `totalPoints?`, `badgeLevel?`, `rank?`, `dashboardUrl` |
 
-### Sending via `EmailTemplateService`
-
-```typescript
-@Injectable()
-class MyService {
-  constructor(private readonly emailTemplate: EmailTemplateService) {}
-
-  async notify(to: string) {
-    await this.emailTemplate.sendWelcome(to, { fullName: 'أحمد', loginUrl: '...', ...brand });
-    await this.emailTemplate.sendAchievement(to, { studentName: 'أحمد', ... });
-    // etc.
-  }
-}
-```
+All templates extend `BaseTemplateData` and return `{ subject, html, text }`.
 
 ---
 
 ## Accessibility
 
-All templates meet **WCAG 2.1 AA** contrast requirements:
-- Primary on white: `#1A6B4A` / `#ffffff` → 5.8:1 ✅
-- Body text on white: `#4B5563` / `#ffffff` → 7.0:1 ✅
-- Muted text on white: `#9CA3AF` / `#ffffff` → 3.0:1 (AA large text) ✅
-- Gold on dark header: `#C9A84C` / `#0d4a32` → 4.6:1 ✅
-
-**Semantic HTML:**
-- `<h1>` in header (brand name), `<h2>` in body (email title)
-- `role="presentation"` on all layout tables
-- `role="img"` and `aria-hidden="true"` on SVG illustrations
-- `alt` text on all `<img>` tags
-
-**Screen readers:**
-- Inline SVG illustrations are hidden from assistive tech (`aria-hidden="true"`)
-- All links have descriptive text, never "click here"
-- Plain-text fallback included with every email
+- **WCAG AA contrast**: Primary green on white 7.2:1 · Gold on dark 4.6:1
+- **Semantic HTML**: `role="presentation"` on layout tables, meaningful `alt` on images
+- **Screen readers**: `aria-hidden="true"` on decorative SVGs, `focusable="false"` on geo band
+- **Keyboard navigation**: All interactive links are `<a>` elements with `aria-label`
+- **High contrast**: Dark mode palette maintains AA contrast throughout
+- **Preheader**: Hidden inbox preview text via `display:none` zero-height div
 
 ---
 
 ## Dark Mode
 
-Two separate detection strategies are used simultaneously:
+Three-layer dark mode strategy ensures coverage across all major clients:
 
-### Strategy 1: `@media (prefers-color-scheme: dark)`
+### Layer 1 — `@media (prefers-color-scheme: dark)`
+Covers: Apple Mail · iOS Mail · Samsung Mail · Outlook.com · Yahoo Mail (partial)
 
-Works in: Apple Mail (macOS/iOS), Samsung Mail, Outlook.com, Yahoo Mail, Proton Mail, Fastmail.
+### Layer 2 — `[data-ogsc]` attribute selectors
+Covers: Gmail web dark mode (Gmail overrides `@media` queries)
 
-All background, text, border, and card colours are overridden using `!important` on classes defined in `<style>`.
+### Layer 3 — Inline `bgcolor` attributes
+Outlook ignores CSS entirely. For the header/footer backgrounds we use both `bgcolor=""` HTML attributes and inline `style=""` so Outlook renders the correct light-mode colours.
 
-### Strategy 2: `[data-ogsc]` attribute selector
+### Dark mode token mapping
 
-Works in: Gmail web (Chrome, Firefox, Safari).
-
-Gmail strips `@media` queries but preserves attribute selectors. The `[data-ogsc]` attribute is injected by Gmail when dark mode is enabled.
-
-**Header** — always dark (emerald gradient), so no inversion is needed in either mode.
-
-**What adapts:**
-- Page background → `#0d1a12`
-- Card body → `#111f17`
-- Text → `#D1FAE5`
-- Headings → `#6EE7B7`
-- Links → `#6EE7B7`
-- Inner cards → `#14302A`
-- Footer → `#091410`
-- Borders → `#1E3A2A`
+| Light | Dark |
+|---|---|
+| `bgPage` #F8F7F3 | `darkBgPage` #0a1a11 |
+| `bgCard` #ffffff | `darkBgCard` #0f1e16 |
+| `bgFooter` #F4F3EE | `darkBgFooter` #081310 |
+| `textPrimary` #1F2937 | `darkText` #D1FAE5 |
+| `textSecondary` #4B5563 | `darkTextMuted` #9DC4B0 |
+| Headings `primary` | `darkHeading` #6EE7B7 |
+| Links `primary` | `darkLink` #6EE7B7 |
+| `borderLight` | `darkBorder` #1a3828 |
 
 ---
 
 ## Compatibility Matrix
 
-| Client | HTML | Dark Mode | Animation | SVG Illustrations |
-|---|---|---|---|---|
-| Apple Mail (macOS) | ✅ | ✅ `@media` | ✅ | ✅ |
-| Apple Mail (iOS) | ✅ | ✅ `@media` | ✅ | ✅ |
-| Gmail Web (Chrome) | ✅ | ✅ `[data-ogsc]` | ❌ (ignored) | ✅ |
-| Gmail App (Android) | ✅ | ❌ (not supported) | ❌ | ✅ |
-| Gmail App (iOS) | ✅ | ❌ | ❌ | ✅ |
-| Outlook 2016-2021 | ✅ VML | ❌ | ❌ | ❌ (MSO fallback) |
-| Outlook.com | ✅ | ✅ `@media` | ❌ | ✅ |
-| Outlook Mobile | ✅ | ❌ | ❌ | ✅ |
-| Yahoo Mail | ✅ | ✅ `@media` | ❌ | ✅ |
-| Samsung Mail | ✅ | ✅ `@media` | ✅ | ✅ |
-| Proton Mail | ✅ | ✅ `@media` | ❌ | ✅ |
-| Fastmail | ✅ | ✅ `@media` | ❌ | ✅ |
-| Thunderbird | ✅ | ✅ `@media` | ❌ | ✅ |
+| Client | Layout | Buttons | Illustrations | Dark Mode | Animations |
+|---|---|---|---|---|---|
+| Outlook 2016-2021 | ✅ VML+table | ✅ VML roundrect | ➖ hidden | ➖ n/a | ➖ n/a |
+| Outlook 2024 | ✅ | ✅ | ✅ | ➖ | ➖ |
+| Gmail Web | ✅ | ✅ | ✅ | ✅ `[data-ogsc]` | ➖ |
+| Gmail iOS/Android | ✅ | ✅ | ✅ | ✅ | ➖ |
+| Apple Mail macOS | ✅ | ✅ | ✅ | ✅ `@media` | ✅ |
+| iOS Mail | ✅ | ✅ | ✅ | ✅ `@media` | ✅ |
+| Outlook.com | ✅ | ✅ | ✅ | ✅ `@media` | ➖ |
+| Yahoo Mail | ✅ | ✅ | ✅ | ✅ partial | ➖ |
+| Samsung Mail | ✅ | ✅ | ✅ | ✅ `@media` | ✅ |
+| Thunderbird | ✅ | ✅ | ✅ | ✅ | ➖ |
+| ProtonMail | ✅ | ✅ | ✅ | ✅ | ➖ |
+| Fastmail | ✅ | ✅ | ✅ | ✅ | ➖ |
 
-**Animations** are CSS `@keyframes` applied to `.email-card`. They are fully safe to include — clients that don't support them render the email statically (no broken layout).
+---
 
-**SVG illustrations** are wrapped in `<!--[if !mso]><!-->...<!--<![endif]-->` conditionals so Outlook never attempts to render them (which would produce red broken-image boxes).
+## Mobile
+
+- Max-width: 600px, scales to 100% on smaller screens
+- `@media only screen and (max-width: 620px)`:
+  - Border radius removed (`email-card`)
+  - Padding reduced: body 28px/20px, footer 22px/16px
+  - Headings shrink to 20px
+  - Stat values shrink to 22px
+  - Inner cards: 16px padding, 12px radius
+
+---
+
+## Performance
+
+- **HTML size**: All templates render 25–55 KB (within Gmail's 102 KB clipping threshold)
+- **Zero external images**: All illustrations and logo are inline SVG
+- **Google Fonts**: Loaded via `<link>` with `preconnect` hints — fails gracefully to Tahoma
+- **Inlined CSS**: All styles inlined or in `<style>` — no external stylesheet requests
+- **No JavaScript**: Email clients strip JS. All interactions use plain anchor links
 
 ---
 
 ## Developer Guide
 
-### Regenerating previews
+### Sending an email
+
+```ts
+// Inject EmailTemplateService
+constructor(
+  private readonly emailTemplate: EmailTemplateService,
+  private readonly emailBrand: EmailBrandService,
+) {}
+
+// Resolve brand data for a tenant
+const brand = this.emailBrand.resolve(tenantBranding);
+
+// Send
+await this.emailTemplate.sendWelcome(user.email, {
+  ...brand,
+  fullName: user.fullName,
+  loginUrl: 'https://siraja.website/login',
+});
+```
+
+### All APIs (EmailTemplateService)
+
+```ts
+sendWelcome(to, data: WelcomeTemplateData)
+sendVerification(to, data: VerificationTemplateData)
+sendOtp(to, data: OtpTemplateData)
+sendPasswordReset(to, data: PasswordResetTemplateData)
+sendNotification(to, data: NotificationTemplateData)
+sendSystemAlert(to, data: SystemAlertTemplateData)
+sendInvitation(to, data: InvitationTemplateData)
+sendWeeklySummary(to, data: WeeklySummaryTemplateData)
+sendMonthlyReport(to, data: MonthlyReportTemplateData)
+sendSecurityAlert(to, data: SecurityAlertTemplateData)
+sendAchievement(to, data: AchievementTemplateData)
+sendGamificationReward(to, data: GamificationRewardTemplateData)
+```
+
+All methods are non-fatal — email errors are caught, logged, and never crash the calling flow.
+
+### Generating previews
 
 ```bash
 cd backend
 npm run email:preview
 ```
 
-This runs `scripts/generate-email-previews.ts` which renders all 21 preview HTML files plus `index.html` into `email-previews/`.
+Open `email-previews/index.html` in a browser to browse all 18 rendered templates.
+
+---
+
+## Customization Guide
+
+### Tenant branding via `EmailBrandService`
+
+```ts
+// Pass a TenantBrandingInput — any field can be omitted
+const brand = emailBrandService.resolve({
+  name:         'دار الحفاظ',
+  logoUrl:      'https://r2.daralhuffaz.com/logo.png',  // HTTPS only
+  tagline:      'أكاديمية متخصصة في حفظ القرآن الكريم',
+  colors: {
+    primary: '#1B4F72',
+    accent:  '#F39C12',
+  },
+  supportEmail: 'support@daralhuffaz.com',
+  customDomain: 'daralhuffaz.com',  // → websiteUrl = https://daralhuffaz.com
+  socialLinks: [
+    { icon: '🐦', label: 'تويتر',    url: 'https://twitter.com/daralhuffaz' },
+    { icon: '📸', label: 'إنستغرام', url: 'https://instagram.com/daralhuffaz' },
+  ],
+  footerText: 'مرخصة من وزارة التعليم — رقم الترخيص: ١٢٣٤٥',
+});
+```
 
 ### Adding a new template
 
 1. Create `backend/src/shared/email/templates/my-template.template.ts`
-2. Export `MyTemplateData extends BaseTemplateData` and `myEmailTemplate(data): { subject, html, text }`
-3. Use `getEmailIllustration()` for the illustration (add a new type if needed)
-4. Add a `sendMyTemplate()` method to `EmailTemplateService`
-5. Add a preview case to `scripts/generate-email-previews.ts`
+2. Export interface extending `BaseTemplateData` and a function returning `{ subject, html, text }`
+3. Add `send*` method to `EmailTemplateService`
+4. Add an import in `email-template.service.ts`
+5. Add a preview case in `scripts/generate-email-previews.ts`
 6. Run `npm run email:preview` to verify
-
-### Resolving brand data
-
-```typescript
-// In a use case or service:
-const brand = this.emailBrandService.resolve(tenantBranding ?? null);
-const { html, subject, text } = welcomeEmailTemplate({
-  ...brand,
-  fullName,
-  loginUrl,
-});
-await this.emailTemplateService.sendWelcome(user.email, { ...brand, fullName, loginUrl });
-```
-
-`emailBrandService.resolve(null)` always returns valid Siraja platform defaults.
-
-### Template anatomy
-
-```typescript
-import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getEmailIllustration, getButtonHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
-
-export interface MyTemplateData extends BaseTemplateData {
-  // your additional fields
-}
-
-export function myEmailTemplate(data: MyTemplateData): { subject: string; html: string; text: string } {
-  const { primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor, accentColor = SIRAJA_BRAND_DEFAULTS.accentColor } = data;
-
-  const illustration = getEmailIllustration('notification', primaryColor, accentColor);
-  const headingRule  = `<div style="width:48px;height:3px;background:${accentColor};background:linear-gradient(to left,transparent,${accentColor},${primaryColor});border-radius:2px;margin:0 0 22px;"></div>`;
-
-  const body = `
-    ${illustration}
-    <h2 style="color:${primaryColor};font-size:22px;font-weight:700;margin:0 0 6px;font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      عنوان البريد
-    </h2>
-    ${headingRule}
-    <!-- body content -->
-  `;
-
-  return {
-    subject: 'موضوع البريد',
-    html:    baseEmailTemplate(body, data),
-    text:    'نسخة النص العادي',
-  };
-}
-```
 
 ---
 
-## Customisation Guide
+## File Structure
 
-### Tenant overrides via `EmailBrandService`
-
-Pass a `TenantBrandingInput` object to `emailBrandService.resolve()`:
-
-```typescript
-const brand = this.emailBrandService.resolve({
-  name:        'دار الحفاظ',
-  tagline:     'حلقات القرآن الكريم',
-  logoUrl:     'https://cdn.daralhuffaz.com/logo.png',  // HTTPS only
-  colors: {
-    primary: '#1B4F8A',   // custom blue
-    accent:  '#D4A84B',   // custom gold
-  },
-  supportEmail: 'info@daralhuffaz.com',
-  customDomain: 'app.daralhuffaz.com',
-  socialLinks: [
-    { label: 'الموقع الرسمي', url: 'https://daralhuffaz.com' },
-    { label: 'تويتر',        url: 'https://twitter.com/daralhuffaz' },
-  ],
-  footerText: 'أكاديمية دار الحفاظ — المملكة العربية السعودية',
-});
 ```
+backend/src/shared/email/
+├── brand/
+│   ├── brand-config.ts          ← SIRAJA_COLORS, tokens, helpers, illustrations
+│   └── email-brand.service.ts   ← Tenant override resolver
+├── templates/
+│   ├── base.template.ts         ← Premium email shell
+│   ├── welcome.template.ts
+│   ├── verification.template.ts
+│   ├── otp.template.ts
+│   ├── password-reset.template.ts
+│   ├── notification.template.ts
+│   ├── system-alert.template.ts
+│   ├── invitation.template.ts
+│   ├── weekly-summary.template.ts
+│   ├── monthly-report.template.ts
+│   ├── security-alert.template.ts
+│   ├── achievement.template.ts
+│   └── gamification-reward.template.ts
+├── providers/
+│   └── smtp-email.provider.ts   ← Nodemailer SMTP delivery
+├── email-template.service.ts    ← Public API — send* methods
+├── email-provider.interface.ts  ← IEmailProvider contract
+└── email.module.ts              ← NestJS module registration
 
-Any field not provided falls back to the Siraja platform defaults automatically.
+backend/scripts/
+└── generate-email-previews.ts   ← npm run email:preview
 
-### Fields that can be overridden per tenant
+email-previews/                  ← Generated static HTML (git-ignored optional)
+├── index.html
+├── welcome.html
+└── ...
 
-| Field | Type | Effect |
-|---|---|---|
-| `name` | `string` | Platform name in header and footer |
-| `tagline` | `string` | Subtitle under the logo in the header |
-| `logoUrl` | `string` | Logo image (HTTPS CDN URL). Absent → Siraja SVG |
-| `colors.primary` | `string` | Heading, button, link, accent bar colour |
-| `colors.accent` | `string` | Gold decorative elements, button border |
-| `supportEmail` | `string` | Support email in footer and callout cards |
-| `customDomain` | `string` | Base URL for website link (protocol-free, e.g. `app.example.com`) |
-| `socialLinks` | `{ label, url }[]` | Extra link row in footer |
-| `footerText` | `string` | Custom notice below the copyright line |
-
-### Logo requirements
-
-- Must be served over HTTPS
-- Recommended: square, 120×120px minimum, PNG or WebP
-- Displayed at 60×60px in the email header
-- Invalid / non-HTTPS URLs fall back to the Siraja SVG silently
-
-### Template-level overrides
-
-Any `BaseTemplateData` field can also be set per-email-send without going through `EmailBrandService`:
-
-```typescript
-await this.emailTemplateService.sendWelcome(to, {
-  ...brand,
-  primaryColor: '#9B2335',  // one-off override for this email only
-  preheader: 'Custom inbox preview text',
-});
+docs/
+└── email-design-system.md       ← This file
 ```

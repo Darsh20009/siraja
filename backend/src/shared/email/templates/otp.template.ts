@@ -1,18 +1,10 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getCodeBoxHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getCardHtml, getCodeBoxHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface OtpTemplateData extends BaseTemplateData {
-  /** Recipient's display name */
   fullName: string;
-  /** The OTP code to display (typically 4-8 digits) */
   otpCode: string;
-  /** How many minutes the OTP is valid for (default: 10) */
   expiresInMinutes?: number;
-  /**
-   * Context for the OTP — tells the user what they're confirming.
-   * e.g. 'تأكيد بريدك الإلكتروني' | 'تسجيل الدخول' | 'تغيير كلمة المرور'
-   * Defaults to generic 'تأكيد الهوية'
-   */
   purpose?: string;
 }
 
@@ -25,65 +17,54 @@ export function otpEmailTemplate(data: OtpTemplateData): {
     fullName,
     otpCode,
     expiresInMinutes = 10,
-    purpose = 'تأكيد الهوية',
-    tenantName   = SIRAJA_BRAND_DEFAULTS.tenantName,
-    primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
-    accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
+    purpose          = 'تسجيل الدخول',
+    tenantName       = SIRAJA_BRAND_DEFAULTS.tenantName,
+    primaryColor     = SIRAJA_BRAND_DEFAULTS.primaryColor,
+    accentColor      = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
 
   const subject = `🔑 رمز التحقق الخاص بك — ${tenantName}`;
 
   const illustration = getEmailIllustration('otp', primaryColor, accentColor);
-  const codeBox      = getCodeBoxHtml(otpCode, primaryColor);
-  const expiryCard   = getCardHtml(
-    `⏱&nbsp; هذا الرمز صالح لمدة <strong>${expiresInMinutes} دقيقة</strong> فقط من لحظة إرساله.`,
-    'info',
-  );
-  const securityCard = getCardHtml(
-    `🔒&nbsp; <strong>لا تشارك هذا الرمز مع أحد.</strong> لن يطلب منك فريق ${tenantName} هذا الرمز أبداً.`,
-    'warning',
+
+  const codeBox = getCodeBoxHtml(otpCode, primaryColor);
+
+  const expiryCard = getCardHtml(
+    `⏱ هذا الرمز صالح لمدة <strong>${expiresInMinutes} دقيقة</strong> فقط ولاستخدام واحد.`,
+    'warning'
   );
 
-  const headingRule = `<div style="width:48px;height:3px;background:${accentColor};background:linear-gradient(to left,transparent,${accentColor},${primaryColor});border-radius:2px;margin:0 0 22px;"></div>`;
+  const securityCard = getCardHtml(
+    `🔒 <strong>تنبيه أمني:</strong> لا تشارك هذا الرمز مع أحد. لن يطلب منك فريق ${tenantName} هذا الرمز أبداً عبر الهاتف أو البريد الإلكتروني.`,
+    'danger'
+  );
 
   const body = `
     ${illustration}
 
-    <h2 style="color:${primaryColor};font-size:22px;font-weight:700;margin:0 0 6px;
+    <h2 style="color:${primaryColor};font-size:23px;font-weight:800;margin:0 0 8px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      🔑 رمز التحقق الخاص بك
+      رمز التحقق الخاص بك
     </h2>
-    ${headingRule}
+    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+                border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 8px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
       مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${fullName}</strong>،
     </p>
-
-    <p style="margin:0 0 8px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
+    <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      استخدم رمز التحقق أدناه لإتمام عملية <strong style="color:${SIRAJA_COLORS.textPrimary};">${purpose}</strong>:
+      استخدم الرمز أدناه لإتمام عملية <strong style="color:${SIRAJA_COLORS.textPrimary};">${purpose}</strong>:
     </p>
 
     ${codeBox}
 
-    <p style="text-align:center;font-size:12.5px;color:${SIRAJA_COLORS.textMuted};margin:-8px 0 20px;
-              font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      أدخل هذا الرمز في التطبيق للمتابعة
-    </p>
-
     ${expiryCard}
     ${securityCard}
-
-    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:26px 0;"/>
-
-    <p style="font-size:13px;color:${SIRAJA_COLORS.textMuted};margin:0;
-              font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      إذا لم تطلب هذا الرمز، تجاهل هذه الرسالة بأمان — لن يحدث أي تغيير في حسابك.
-    </p>
   `;
 
-  const text = `رمز التحقق الخاص بك — ${tenantName}\n\nمرحباً ${fullName}،\n\nرمز التحقق الخاص بك هو:\n\n${otpCode}\n\nصالح لمدة ${expiresInMinutes} دقيقة.\n\nلا تشارك هذا الرمز مع أحد.\n\nفريق ${tenantName}`;
+  const text = `مرحباً ${fullName}،\n\nرمز التحقق الخاص بك هو: ${otpCode}\n\nصالح لـ ${expiresInMinutes} دقيقة فقط.\n\nلا تشارك هذا الرمز مع أحد.\nفريق ${tenantName}`;
 
   return { subject, html: baseEmailTemplate(body, data), text };
 }

@@ -1,469 +1,430 @@
+#!/usr/bin/env ts-node
 /**
- * generate-email-previews.ts
- * ──────────────────────────
- * Renders all Siraja email templates to static HTML files under email-previews/.
+ * Siraja Email Preview Generator
+ * ───────────────────────────────
+ * Renders every email template with realistic sample data and writes
+ * static HTML files to /email-previews/ at the repo root.
  *
- * Run via:
- *   npm run email:preview          (from backend/)
+ * Usage:
+ *   npm run email:preview          (from /backend)
+ *   npx ts-node scripts/generate-email-previews.ts
  *
- * Or manually:
- *   cd backend && npx ts-node -P tsconfig.json --require tsconfig-paths/register scripts/generate-email-previews.ts
- *
- * Output (email-previews/):
- *   index.html                       Gallery navigation
- *   welcome.html                     Welcome email
- *   verification.html                Email verification (link only)
- *   verification-with-otp.html       Email verification (link + OTP code)
- *   otp.html                         Standalone OTP verification
- *   password-reset.html              Password reset
- *   notification-info.html           Notification — info
- *   notification-success.html        Notification — success
- *   notification-warning.html        Notification — warning
- *   system-alert-info.html           System alert — info
- *   system-alert-warning.html        System alert — warning
- *   system-alert-critical.html       System alert — critical
- *   invitation.html                  Invitation to join
- *   weekly-summary.html              Weekly progress summary
- *   monthly-report.html              Monthly report
- *   security-alert-login.html        Security alert — new login
- *   security-alert-suspicious.html   Security alert — suspicious activity
- *   achievement-juz.html             Achievement — juz memorized
- *   achievement-streak.html          Achievement — streak milestone
- *   gamification-badge.html          Gamification — badge earned
- *   gamification-leaderboard.html    Gamification — leaderboard rank
- *   tenant-branded.html              Welcome with custom tenant palette
+ * Output:
+ *   /email-previews/
+ *     index.html                  — browsable catalogue of all templates
+ *     welcome.html
+ *     verification.html
+ *     otp.html
+ *     password-reset.html
+ *     notification-info.html
+ *     notification-success.html
+ *     notification-warning.html
+ *     system-alert-info.html
+ *     system-alert-warning.html
+ *     system-alert-critical.html
+ *     invitation.html
+ *     weekly-summary.html
+ *     monthly-report.html
+ *     security-alert-new-login.html
+ *     security-alert-suspicious.html
+ *     achievement.html
+ *     gamification-reward.html
+ *     tenant-branded.html         — all fields with custom tenant branding
  */
 
 import * as fs   from 'fs';
 import * as path from 'path';
 
-import { welcomeEmailTemplate }           from '@shared/email/templates/welcome.template';
-import { verificationEmailTemplate }      from '@shared/email/templates/verification.template';
-import { otpEmailTemplate }               from '@shared/email/templates/otp.template';
-import { passwordResetEmailTemplate }     from '@shared/email/templates/password-reset.template';
-import { notificationEmailTemplate }      from '@shared/email/templates/notification.template';
-import { systemAlertEmailTemplate }       from '@shared/email/templates/system-alert.template';
-import { invitationEmailTemplate }        from '@shared/email/templates/invitation.template';
-import { weeklySummaryEmailTemplate }     from '@shared/email/templates/weekly-summary.template';
-import { monthlyReportEmailTemplate }     from '@shared/email/templates/monthly-report.template';
-import { securityAlertEmailTemplate }     from '@shared/email/templates/security-alert.template';
-import { achievementEmailTemplate }       from '@shared/email/templates/achievement.template';
-import { gamificationRewardEmailTemplate }from '@shared/email/templates/gamification-reward.template';
-import { SIRAJA_BRAND_DEFAULTS }          from '@shared/email/brand/brand-config';
+// ─── Templates ───────────────────────────────────────────────────────────────
+import { welcomeEmailTemplate }           from '../src/shared/email/templates/welcome.template';
+import { verificationEmailTemplate }      from '../src/shared/email/templates/verification.template';
+import { otpEmailTemplate }               from '../src/shared/email/templates/otp.template';
+import { passwordResetEmailTemplate }     from '../src/shared/email/templates/password-reset.template';
+import { notificationEmailTemplate }      from '../src/shared/email/templates/notification.template';
+import { systemAlertEmailTemplate }       from '../src/shared/email/templates/system-alert.template';
+import { invitationEmailTemplate }        from '../src/shared/email/templates/invitation.template';
+import { weeklySummaryEmailTemplate }     from '../src/shared/email/templates/weekly-summary.template';
+import { monthlyReportEmailTemplate }     from '../src/shared/email/templates/monthly-report.template';
+import { securityAlertEmailTemplate }     from '../src/shared/email/templates/security-alert.template';
+import { achievementEmailTemplate }       from '../src/shared/email/templates/achievement.template';
+import { gamificationRewardEmailTemplate } from '../src/shared/email/templates/gamification-reward.template';
 
-// ─── Output directory ─────────────────────────────────────────────────────────
+// ─── Shared sample brand data ─────────────────────────────────────────────────
 
-const OUT_DIR = path.resolve(__dirname, '../../email-previews');
-if (!fs.existsSync(OUT_DIR)) fs.mkdirSync(OUT_DIR, { recursive: true });
+const BASE = {
+  tenantName:   'سِراجا',
+  primaryColor: '#1A6B4A',
+  accentColor:  '#C9A84C',
+  supportEmail: 'support@siraja.website',
+  websiteUrl:   'https://siraja.website',
+};
 
-function write(filename: string, html: string): void {
-  fs.writeFileSync(path.join(OUT_DIR, filename), html, 'utf-8');
-  console.log(`  ✓  ${filename}`);
-}
-
-// ─── Brand datasets ───────────────────────────────────────────────────────────
-
-const BRAND = { ...SIRAJA_BRAND_DEFAULTS };
-
-// Example tenant with custom palette (royal-blue Quran academy)
 const TENANT_BRAND = {
   tenantName:    'دار الحفاظ',
-  tenantTagline: 'حلقات القرآن الكريم',
-  primaryColor:  '#1B4F8A',
-  accentColor:   '#D4A84B',
-  supportEmail:  'info@daralhuffaz.com',
+  tenantTagline: 'أكاديمية متخصصة في حفظ القرآن الكريم',
+  primaryColor:  '#1B4F72',
+  accentColor:   '#F39C12',
+  supportEmail:  'support@daralhuffaz.com',
   websiteUrl:    'https://daralhuffaz.com',
   socialLinks: [
-    { label: 'الموقع',   url: 'https://daralhuffaz.com' },
-    { label: 'تويتر',   url: 'https://twitter.com/daralhuffaz' },
+    { icon: '🐦', label: 'تويتر',      url: 'https://twitter.com/daralhuffaz' },
+    { icon: '📸', label: 'إنستغرام',   url: 'https://instagram.com/daralhuffaz' },
+    { icon: '💬', label: 'واتساب',     url: 'https://wa.me/966500000000' },
   ],
-  footerText: 'أكاديمية دار الحفاظ للقرآن الكريم — المملكة العربية السعودية',
+  footerText: 'مرخصة من وزارة التعليم — رقم الترخيص: ١٢٣٤٥',
 };
 
-// ─── Render previews ──────────────────────────────────────────────────────────
+// ─── Render map ───────────────────────────────────────────────────────────────
 
-console.log('\n📧  Generating Siraja email previews …\n');
+type Preview = { file: string; label: string; html: string };
+const previews: Preview[] = [];
 
-// 1 — Welcome
-write('welcome.html', welcomeEmailTemplate({
-  ...BRAND,
-  fullName: 'أحمد محمد',
-  loginUrl: 'https://siraja.website/auth/login',
-  preheader: 'حسابك في منصة سراج جاهز — ابدأ رحلة الحفظ اليوم',
-}).html);
+function add(file: string, label: string, result: { html: string }): void {
+  previews.push({ file, label, html: result.html });
+}
 
-// 2 — Email Verification (link only)
-write('verification.html', verificationEmailTemplate({
-  ...BRAND,
-  fullName: 'أحمد محمد',
-  verificationUrl: 'https://siraja.website/auth/verify-email?token=abc123xyz',
-  expiresInHours: 24,
-  preheader: 'تأكيد بريدك الإلكتروني — خطوة واحدة تفصلك عن بدء رحلتك',
-}).html);
+// Welcome
+add('welcome', 'ترحيب',
+  welcomeEmailTemplate({ ...BASE, fullName: 'أحمد محمد الشمري', loginUrl: 'https://siraja.website/login' }));
 
-// 3 — Email Verification (link + OTP)
-write('verification-with-otp.html', verificationEmailTemplate({
-  ...BRAND,
-  fullName: 'فاطمة علي',
-  verificationUrl: 'https://siraja.website/auth/verify-email?token=def456uvw',
-  verificationCode: '842917',
-  expiresInHours: 24,
-  preheader: 'رمز التحقق: 842917 — صالح لمدة 24 ساعة',
-}).html);
+// Verification
+add('verification', 'تحقق من البريد',
+  verificationEmailTemplate({
+    ...BASE,
+    fullName:         'فاطمة عبدالله',
+    verificationUrl:  'https://siraja.website/verify?token=abc123',
+    verificationCode: 'A7B2C9',
+    expiresInHours:   24,
+  }));
 
-// 4 — OTP (standalone)
-write('otp.html', otpEmailTemplate({
-  ...BRAND,
-  fullName: 'خالد إبراهيم',
-  otpCode: '391746',
-  expiresInMinutes: 10,
-  purpose: 'تسجيل الدخول',
-  preheader: 'رمز التحقق: 391746 — صالح لمدة 10 دقائق',
-}).html);
+// OTP
+add('otp', 'رمز التحقق OTP',
+  otpEmailTemplate({
+    ...BASE,
+    fullName:         'محمد العتيبي',
+    otpCode:          '847 291',
+    expiresInMinutes: 10,
+    purpose:          'تسجيل الدخول',
+  }));
 
-// 5 — Password Reset
-write('password-reset.html', passwordResetEmailTemplate({
-  ...BRAND,
-  fullName: 'خالد إبراهيم',
-  resetUrl: 'https://siraja.website/auth/reset-password?token=rst789ghi',
-  expiresInMinutes: 60,
-  requestIp: '102.134.81.55',
-  preheader: 'طلب إعادة تعيين كلمة المرور — صالح لمدة 60 دقيقة',
-}).html);
+// Password Reset
+add('password-reset', 'إعادة تعيين كلمة المرور',
+  passwordResetEmailTemplate({
+    ...BASE,
+    fullName:          'عبدالرحمن السالم',
+    resetUrl:          'https://siraja.website/reset?token=xyz789',
+    expiresInMinutes:  30,
+    requestIp:         '102.43.21.11',
+  }));
 
-// 6 — Notification: Info
-write('notification-info.html', notificationEmailTemplate({
-  ...BRAND,
-  recipientName: 'أحمد محمد',
-  type: 'info',
-  title: 'جلسة مراجعة جديدة',
-  message: `تمت جدولة جلسة مراجعة جديدة مع الشيخ عبد الله الحامد.<br/><br/>
-    <strong>الموعد:</strong> الإثنين 22 يناير 2026 — 4:00 مساءً<br/>
-    <strong>الحلقة:</strong> حلقة الفجر الصباحية`,
-  actionUrl:   'https://siraja.website/dashboard/sessions',
-  actionLabel: 'عرض الجلسة',
-  preheader: 'لديك جلسة مراجعة مجدولة — الإثنين 4:00 مساءً',
-}).html);
+// Notification – info
+add('notification-info', 'إشعار — معلومة',
+  notificationEmailTemplate({
+    ...BASE,
+    recipientName: 'سارة الغامدي',
+    title:         'تحديث جدول الحلقة',
+    message:       'تم تحديث جدول حلقتك الأسبوعية. سيبدأ الجدول الجديد من الأحد القادم الساعة 8:00 صباحاً.',
+    type:          'info',
+    actionUrl:     'https://siraja.website/schedule',
+    actionLabel:   'عرض الجدول الجديد',
+  }));
 
-// 7 — Notification: Success
-write('notification-success.html', notificationEmailTemplate({
-  ...BRAND,
-  recipientName: 'فاطمة علي',
-  type: 'success',
-  title: 'تم تسليم حفظ الجزء الثلاثين! 🏆',
-  message: `أحسنتِ! لقد أتممتِ حفظ الجزء الثلاثين بنجاح وحصلتِ على شهادة الإتمام.<br/><br/>
-    <strong>التقييم:</strong> ممتاز ✨<br/>
-    <strong>عدد الأخطاء:</strong> 2 أخطاء فقط`,
-  actionUrl:   'https://siraja.website/dashboard/certificates',
-  actionLabel: 'عرض الشهادة',
-  preheader: 'مبروك! أكملتِ حفظ الجزء الثلاثين بتقييم ممتاز',
-}).html);
+// Notification – success
+add('notification-success', 'إشعار — نجاح',
+  notificationEmailTemplate({
+    ...BASE,
+    recipientName: 'سارة الغامدي',
+    title:         'اكتملت عملية الدفع بنجاح',
+    message:       'تم تجديد اشتراكك في المنصة بنجاح. يمكنك الاستمرار في رحلة الحفظ دون انقطاع.',
+    type:          'success',
+  }));
 
-// 8 — Notification: Warning
-write('notification-warning.html', notificationEmailTemplate({
-  ...BRAND,
-  recipientName: 'عمر حسن',
-  type: 'warning',
-  title: 'تسجيل دخول غير مألوف',
-  message: `لاحظنا تسجيل دخول إلى حسابك من موقع أو جهاز غير مألوف:<br/><br/>
-    <strong>عنوان IP:</strong> 185.220.101.42<br/>
-    <strong>الجهاز:</strong> Chrome / Linux<br/><br/>
-    إذا لم تكن أنت، <strong>غيّر كلمة مرورك فوراً</strong> وراجع الأجهزة المرتبطة بحسابك.`,
-  preheader: 'تحذير: تسجيل دخول من جهاز غير معروف',
-}).html);
+// Notification – warning
+add('notification-warning', 'إشعار — تحذير',
+  notificationEmailTemplate({
+    ...BASE,
+    recipientName: 'سارة الغامدي',
+    title:         'تذكير: اشتراكك على وشك الانتهاء',
+    message:       'ينتهي اشتراكك خلال 3 أيام. جدد الآن للاستمرار في الاستفادة من جميع ميزات المنصة.',
+    type:          'warning',
+    actionUrl:     'https://siraja.website/renew',
+    actionLabel:   'تجديد الاشتراك',
+  }));
 
-// 9 — System Alert: Info
-write('system-alert-info.html', systemAlertEmailTemplate({
-  ...BRAND,
-  severity: 'info',
-  title: 'اكتمال عملية النسخ الاحتياطي',
-  message: 'تمت عملية النسخ الاحتياطي اليومية للبيانات بنجاح.',
-  details: {
-    'حجم النسخة': '2.4 GB',
-    'المدة':      '4m 12s',
-    'البيئة':     'production',
-    'الموقع':     'Cloudflare R2 — eu-west',
-  },
-  timestamp: new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' }),
-}).html);
+// System Alert – info
+add('system-alert-info', 'تنبيه نظام — معلومة',
+  systemAlertEmailTemplate({
+    ...BASE,
+    severity:  'info',
+    title:     'تحديث مجدول للمنصة',
+    message:   'سيتم إجراء تحديث للنظام يوم الجمعة 2:00-4:00 صباحاً بتوقيت الرياض. قد تتعذر بعض العمليات خلال هذه الفترة.',
+    details:   { 'نوع التحديث': 'قاعدة البيانات', 'المدة المتوقعة': '2 ساعة', 'التأثير': 'محدود' },
+    timestamp: new Date().toISOString(),
+  }));
 
-// 10 — System Alert: Warning
-write('system-alert-warning.html', systemAlertEmailTemplate({
-  ...BRAND,
-  severity: 'warning',
-  title: 'معدل استخدام API مرتفع',
-  message: 'تجاوز معدل طلبات Moonshot AI 85% من الحصة الشهرية.',
-  details: {
-    'الطلبات المستخدمة': '8,500',
-    'الحصة الكاملة':     '10,000',
-    'نسبة الاستهلاك':    '85%',
-    'إعادة التعيين':     '1 فبراير 2026',
-  },
-  timestamp: new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' }),
-}).html);
+// System Alert – warning
+add('system-alert-warning', 'تنبيه نظام — تحذير',
+  systemAlertEmailTemplate({
+    ...BASE,
+    severity:  'warning',
+    title:     'ارتفاع غير معتاد في استخدام الذاكرة',
+    message:   'رصدنا ارتفاعاً في استخدام الذاكرة وصل إلى 78%. يُرجى المراجعة.',
+    details:   { 'الاستخدام الحالي': '78%', 'الحد الأقصى': '16 GB', 'الوقت': '14:32 UTC' },
+    timestamp: new Date().toISOString(),
+  }));
 
-// 11 — System Alert: Critical
-write('system-alert-critical.html', systemAlertEmailTemplate({
-  ...BRAND,
-  severity: 'critical',
-  title: 'فشل الاتصال بقاعدة البيانات',
-  message: 'فشل الاتصال بـ MongoDB Atlas بعد 3 محاولات متتالية. قد تكون الخدمة متأثرة.',
-  details: {
-    'رمز الخطأ':   'ECONNREFUSED',
-    'المضيف':      'cluster0.siraja.mongodb.net',
-    'المحاولات':   '3 / 3',
-    'آخر نجاح':    'منذ 5 دقائق',
-  },
-  timestamp: new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' }),
-}).html);
+// System Alert – critical
+add('system-alert-critical', 'تنبيه نظام — حرج',
+  systemAlertEmailTemplate({
+    ...BASE,
+    severity:  'critical',
+    title:     'فشل الاتصال بقاعدة البيانات',
+    message:   'انقطع الاتصال بقاعدة بيانات MongoDB Atlas. الخدمة متوقفة جزئياً.',
+    details:   { 'الخطأ': 'ECONNREFUSED', 'المضيف': 'cluster0.mongodb.net', 'المحاولات': 5 },
+    timestamp: new Date().toISOString(),
+  }));
 
-// 12 — Invitation
-write('invitation.html', invitationEmailTemplate({
-  ...BRAND,
-  inviteeName:     'نورة سالم',
-  inviterName:     'الشيخ عبد الله الحامد',
-  role:            'طالبة',
-  inviteUrl:       'https://siraja.website/invite?token=inv_abc123',
-  expiresInDays:   7,
-  personalMessage: 'يسعدني دعوتك للانضمام إلى حلقتنا — أتمنى لك رحلة موفقة في حفظ كتاب الله.',
-  academyName:     'حلقة الفجر الصباحية',
-  preheader: 'لديك دعوة للانضمام إلى حلقة القرآن الكريم',
-}).html);
+// Invitation
+add('invitation', 'دعوة',
+  invitationEmailTemplate({
+    ...BASE,
+    inviteeName:     'نورة الزهراني',
+    inviterName:     'الشيخ عبدالله القحطاني',
+    role:            'طالبة',
+    inviteUrl:       'https://siraja.website/invite?token=inv_abc',
+    expiresInDays:   7,
+    personalMessage: 'يسعدني دعوتك للانضمام إلى حلقتنا المتميزة في حفظ القرآن الكريم.',
+    academyName:     'دار الحفاظ',
+  }));
 
-// 13 — Weekly Summary
-write('weekly-summary.html', weeklySummaryEmailTemplate({
-  ...BRAND,
-  studentName: 'أحمد محمد',
-  weekLabel:   '١٤ – ٢٠ يناير ٢٠٢٦',
-  stats: {
-    sessionsCompleted: 5,
-    versesMemorized:   42,
-    revisionScore:     87,
-    attendanceRate:    100,
-    streak:            12,
-  },
-  topAchievement: 'أتممت حفظ سورة الملك كاملةً بلا أخطاء في جلسة واحدة! 🎉',
-  nextGoal:       'إتمام مراجعة الجزء التاسع والعشرين بنسبة 90%+',
-  dashboardUrl:   'https://siraja.website/dashboard',
-  preheader: 'ملخص أسبوعك: 42 آية محفوظة، 12 يومًا متواصلة 🔥',
-}).html);
+// Weekly Summary
+add('weekly-summary', 'ملخص أسبوعي',
+  weeklySummaryEmailTemplate({
+    ...BASE,
+    studentName:    'خالد العمري',
+    weekLabel:      'الأسبوع 14-20 يوليو 2026',
+    stats: {
+      sessionsCompleted: 6,
+      versesMemorized:   22,
+      revisionScore:     88,
+      attendanceRate:    92,
+      streak:            12,
+    },
+    topAchievement: 'أكمل حفظ سورة الكهف كاملة خلال هذا الأسبوع',
+    nextGoal:       'البدء في حفظ سورة مريم مع مراجعة يومية',
+    dashboardUrl:   'https://siraja.website/dashboard',
+  }));
 
-// 14 — Monthly Report
-write('monthly-report.html', monthlyReportEmailTemplate({
-  ...BRAND,
-  studentName: 'فاطمة علي',
-  monthLabel:  'يناير ٢٠٢٦',
-  summary: {
-    totalSessions:   22,
-    totalVerses:     186,
-    completedJuz:    1,
-    averageScore:    91,
-    perfectSessions: 8,
-    longestStreak:   18,
-  },
-  highlights: [
-    'إتمام حفظ الجزء الثلاثين بالكامل',
-    '8 جلسات مثالية بدون أي أخطاء',
-    'أطول سلسلة متواصلة: 18 يوماً',
-    'تصدّر لوحة الشرف الأسبوعية مرتين',
-  ],
-  reportUrl:   'https://siraja.website/reports/jan-2026',
-  preheader: 'تقريرك الشهري جاهز — يناير كان شهراً رائعاً! 🌟',
-}).html);
+// Monthly Report
+add('monthly-report', 'تقرير شهري',
+  monthlyReportEmailTemplate({
+    ...BASE,
+    studentName: 'ريم السلمي',
+    monthLabel:  'يونيو 2026',
+    summary: {
+      totalSessions:   24,
+      totalVerses:     89,
+      completedJuz:    2,
+      averageScore:    91,
+      perfectSessions: 8,
+      longestStreak:   18,
+    },
+    highlights: [
+      'أكملت حفظ الجزء الثالث والرابع من القرآن الكريم',
+      'حضور مثالي 100% خلال الأسبوعين الأخيرين',
+      'حصلت على المركز الأول في لوحة الشرف الشهرية',
+      'سجلت أعلى درجة مراجعة في تاريخ الحلقة: 98%',
+    ],
+    reportUrl: 'https://siraja.website/reports/june-2026',
+  }));
 
-// 15 — Security Alert: New Login
-write('security-alert-login.html', securityAlertEmailTemplate({
-  ...BRAND,
-  fullName:  'خالد إبراهيم',
-  alertType: 'login',
-  details: {
-    device:   'Safari / iPhone 15 Pro',
-    location: 'الرياض، المملكة العربية السعودية',
-    ip:       '102.134.81.55',
-    time:     new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' }),
-  },
-  preheader: 'تسجيل دخول جديد إلى حسابك من iPhone في الرياض',
-}).html);
+// Security Alert – new login
+add('security-alert-new-login', 'تنبيه أمني — دخول جديد',
+  securityAlertEmailTemplate({
+    ...BASE,
+    fullName:  'عمر الحربي',
+    alertType: 'new-login',
+    details: {
+      device:   'iPhone 15 Pro — iOS 17',
+      location: 'الرياض، المملكة العربية السعودية',
+      ip:       '105.163.0.42',
+      time:     new Date().toLocaleString('ar-SA'),
+    },
+    actionUrl: 'https://siraja.website/security',
+  }));
 
-// 16 — Security Alert: Suspicious Activity
-write('security-alert-suspicious.html', securityAlertEmailTemplate({
-  ...BRAND,
-  fullName:  'عمر حسن',
-  alertType: 'suspicious_activity',
-  details: {
-    device:   'Chrome / Linux',
-    location: 'لندن، المملكة المتحدة',
-    ip:       '185.220.101.42',
-    time:     new Date().toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh' }),
-  },
-  actionUrl:   'https://siraja.website/account/security',
-  actionLabel: '🔒 تأمين الحساب فوراً',
-  preheader: '[تحذير] نشاط مريب رُصد على حسابك — يُرجى المراجعة',
-}).html);
+// Security Alert – suspicious
+add('security-alert-suspicious', 'تنبيه أمني — نشاط مشبوه',
+  securityAlertEmailTemplate({
+    ...BASE,
+    fullName:    'عمر الحربي',
+    alertType:   'suspicious-activity',
+    details: {
+      device:   'جهاز غير معروف',
+      location: 'Dubai, UAE',
+      ip:       '185.220.101.7',
+      time:     new Date().toLocaleString('ar-SA'),
+    },
+    actionUrl:   'https://siraja.website/security/lock',
+    actionLabel: 'تأمين الحساب فوراً',
+  }));
 
-// 17 — Achievement: Juz Memorized
-write('achievement-juz.html', achievementEmailTemplate({
-  ...BRAND,
-  studentName:            'أحمد محمد',
-  achievementTitle:       'إتمام حفظ الجزء الثلاثين 📖',
-  achievementDescription: 'لقد أتممت حفظ الجزء الثلاثين كاملاً بتقييم ممتاز. هذا إنجاز عظيم في مسيرتك مع كتاب الله.',
-  achievementType:        'juz',
-  points:                 500,
-  level:                  'حافظ متقدم',
-  dashboardUrl:           'https://siraja.website/dashboard',
-  shareUrl:               'https://siraja.website/share/achievement/juz-30',
-  preheader: 'تهانينا! أكملت حفظ الجزء الثلاثين بتقييم ممتاز 🎉',
-}).html);
+// Achievement
+add('achievement', 'إنجاز',
+  achievementEmailTemplate({
+    ...BASE,
+    studentName:            'يوسف الرشيدي',
+    achievementTitle:       'حافظ الجزء العاشر',
+    achievementDescription: 'أتممت حفظ الجزء العاشر من القرآن الكريم كاملاً مع ضبط التجويد بإتقان تام.',
+    achievementType:        'memorization',
+    points:                 500,
+    level:                  'المستوى الذهبي',
+    dashboardUrl:           'https://siraja.website/achievements',
+    shareUrl:               'https://siraja.website/share/achievement/123',
+  }));
 
-// 18 — Achievement: Streak
-write('achievement-streak.html', achievementEmailTemplate({
-  ...BRAND,
-  studentName:            'فاطمة علي',
-  achievementTitle:       'سلسلة 30 يوماً متواصلاً 🔥',
-  achievementDescription: 'واصلت التعلم 30 يوماً متتالياً دون انقطاع. هذا الثبات هو مفتاح الإتقان.',
-  achievementType:        'streak',
-  points:                 200,
-  dashboardUrl:           'https://siraja.website/dashboard',
-  preheader: '🔥 30 يوماً متواصلاً — عزيمتك لا تُقهر!',
-}).html);
+// Gamification Reward
+add('gamification-reward', 'مكافأة',
+  gamificationRewardEmailTemplate({
+    ...BASE,
+    studentName:       'منى الجهني',
+    rewardTitle:       'بطل الأسبوع',
+    rewardDescription: 'حصلت على المركز الأول في لوحة الشرف هذا الأسبوع بفضل مثابرتك وتفوقك المستمر.',
+    rewardType:        'weekly-top',
+    pointsEarned:      250,
+    totalPoints:       3840,
+    badgeLevel:        'gold',
+    rank:              1,
+    dashboardUrl:      'https://siraja.website/leaderboard',
+  }));
 
-// 19 — Gamification: Badge
-write('gamification-badge.html', gamificationRewardEmailTemplate({
-  ...BRAND,
-  studentName:       'خالد إبراهيم',
-  rewardTitle:       'شارة الحافظ الذهبية',
-  rewardDescription: 'حصلت على الشارة الذهبية تقديراً لتميزك المستمر في حفظ القرآن الكريم.',
-  rewardType:        'badge',
-  badgeLevel:        'gold',
-  pointsEarned:      300,
-  totalPoints:       2450,
-  dashboardUrl:      'https://siraja.website/dashboard',
-  preheader: '🥇 مبروك! حصلت على الشارة الذهبية',
-}).html);
+// Tenant-branded (all overrides)
+add('tenant-branded', 'تصميم مخصص للمستأجر',
+  welcomeEmailTemplate({
+    ...TENANT_BRAND,
+    fullName: 'أحمد ناصر',
+    loginUrl: 'https://daralhuffaz.com/login',
+  }));
 
-// 20 — Gamification: Leaderboard
-write('gamification-leaderboard.html', gamificationRewardEmailTemplate({
-  ...BRAND,
-  studentName:       'نورة سالم',
-  rewardTitle:       'المرتبة الأولى هذا الأسبوع! 🏆',
-  rewardDescription: 'تصدّرتِ لوحة الشرف الأسبوعية بجدارة. استمري في هذا الأداء الرائع!',
-  rewardType:        'leaderboard',
-  rank:              1,
-  pointsEarned:      150,
-  totalPoints:       3200,
-  dashboardUrl:      'https://siraja.website/dashboard',
-  preheader: '🏆 أنتِ رقم 1 في لوحة الشرف هذا الأسبوع!',
-}).html);
+// ─── Write output files ───────────────────────────────────────────────────────
 
-// 21 — Tenant-branded Welcome
-write('tenant-branded.html', welcomeEmailTemplate({
-  ...TENANT_BRAND,
-  fullName: 'نورة سالم',
-  loginUrl: 'https://daralhuffaz.com/auth/login',
-  preheader: 'مرحباً بك في دار الحفاظ — حسابك جاهز',
-}).html);
+const outDir = path.join(__dirname, '../../email-previews');
+fs.mkdirSync(outDir, { recursive: true });
 
-// ─── Index gallery ────────────────────────────────────────────────────────────
+for (const p of previews) {
+  fs.writeFileSync(path.join(outDir, `${p.file}.html`), p.html, 'utf8');
+  console.log(`  ✅  ${p.file}.html`);
+}
 
-const PREVIEWS = [
-  // Auth
-  { file: 'welcome.html',                label: 'ترحيب',                   cat: 'auth' },
-  { file: 'verification.html',           label: 'تأكيد البريد',            cat: 'auth' },
-  { file: 'verification-with-otp.html',  label: 'تأكيد البريد + رمز',      cat: 'auth' },
-  { file: 'otp.html',                    label: 'رمز التحقق (OTP)',         cat: 'auth' },
-  { file: 'password-reset.html',         label: 'إعادة تعيين كلمة المرور', cat: 'auth' },
-  { file: 'invitation.html',             label: 'دعوة للانضمام',            cat: 'auth' },
-  // Notifications
-  { file: 'notification-info.html',      label: 'إشعار — معلومات',         cat: 'notification' },
-  { file: 'notification-success.html',   label: 'إشعار — نجاح',            cat: 'notification' },
-  { file: 'notification-warning.html',   label: 'إشعار — تحذير',           cat: 'notification' },
-  // Security
-  { file: 'security-alert-login.html',   label: 'تنبيه — دخول جديد',       cat: 'security' },
-  { file: 'security-alert-suspicious.html', label: 'تنبيه — نشاط مريب',   cat: 'security' },
-  // Progress
-  { file: 'weekly-summary.html',         label: 'ملخص أسبوعي',             cat: 'progress' },
-  { file: 'monthly-report.html',         label: 'تقرير شهري',              cat: 'progress' },
-  // Achievements
-  { file: 'achievement-juz.html',        label: 'إنجاز — حفظ جزء',         cat: 'achievement' },
-  { file: 'achievement-streak.html',     label: 'إنجاز — سلسلة متواصلة',   cat: 'achievement' },
-  { file: 'gamification-badge.html',     label: 'مكافأة — شارة ذهبية',     cat: 'achievement' },
-  { file: 'gamification-leaderboard.html', label: 'مكافأة — لوحة الشرف',   cat: 'achievement' },
-  // System
-  { file: 'system-alert-info.html',      label: 'تنبيه نظام — معلومات',    cat: 'system' },
-  { file: 'system-alert-warning.html',   label: 'تنبيه نظام — تحذير',      cat: 'system' },
-  { file: 'system-alert-critical.html',  label: 'تنبيه نظام — حرج',        cat: 'system' },
-  // Tenant
-  { file: 'tenant-branded.html',         label: 'مستأجر مخصص (دار الحفاظ)', cat: 'tenant' },
-];
+// ─── Generate index.html ──────────────────────────────────────────────────────
 
-const CAT_LABELS: Record<string, string> = {
-  auth:         '🔐 المصادقة والوصول',
-  notification: '📢 الإشعارات',
-  security:     '🛡️ التنبيهات الأمنية',
-  progress:     '📊 تقارير التقدم',
-  achievement:  '🏆 الإنجازات والمكافآت',
-  system:       '🚨 تنبيهات النظام',
-  tenant:       '🏫 العلامة التجارية المخصصة',
-};
+const primaryColor = '#1A6B4A';
+const accentColor  = '#C9A84C';
 
-const cats    = ['auth', 'notification', 'security', 'progress', 'achievement', 'system', 'tenant'];
-const COUNT   = PREVIEWS.length;
-const NOW_STR = new Date().toLocaleDateString('ar-SA');
-
-const sections = cats.map(cat => {
-  const items = PREVIEWS.filter(p => p.cat === cat);
-  const cards = items.map(p => `
-    <a href="${p.file}" target="${p.file.replace('.html', '')}"
-       style="text-decoration:none;display:block;background:#fff;border:1px solid #DDE6E0;
-              border-radius:10px;overflow:hidden;transition:box-shadow 0.15s,transform 0.15s;
-              box-shadow:0 2px 8px rgba(26,107,74,0.07);">
-      <div style="background:linear-gradient(135deg,#0d4a32,#1A6B4A);height:4px;"></div>
-      <div style="padding:14px 16px;font-family:'Cairo',Arial,sans-serif;font-size:13.5px;
-                  color:#1A6B4A;font-weight:600;direction:rtl;">${p.label}</div>
-      <div style="padding:0 12px 12px;font-size:11px;color:#9CA3AF;direction:ltr;">${p.file}</div>
-    </a>`).join('');
-  return `
-    <div style="margin-bottom:32px;">
-      <h2 style="font-size:15px;color:#1A6B4A;margin:0 0 14px;
-                 font-family:'Cairo',Arial,sans-serif;font-weight:700;">${CAT_LABELS[cat]}</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
-        ${cards}
-      </div>
-    </div>`;
-}).join('');
+const cards = previews.map(p => `
+  <a href="${p.file}.html" class="card" target="_blank">
+    <div class="card-icon">✉️</div>
+    <div class="card-label">${p.label}</div>
+    <div class="card-file">${p.file}.html</div>
+  </a>`).join('');
 
 const indexHtml = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Siraja — Email Preview Gallery</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-  body { margin:0;padding:32px 24px 64px;background:#F8F7F3;font-family:'Cairo',Arial,sans-serif;direction:rtl; }
-  .hdr { background:linear-gradient(135deg,#0d4a32,#1A6B4A);color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:32px;box-shadow:0 4px 24px rgba(26,107,74,0.16); }
-  .hdr h1 { margin:0 0 6px;font-size:26px;letter-spacing:0.5px; }
-  .hdr p  { margin:0;font-size:12.5px;color:rgba(201,168,76,0.92); }
-  .badge  { display:inline-block;background:rgba(201,168,76,0.22);color:#C9A84C;font-size:11px;padding:3px 12px;border-radius:20px;margin-left:10px;font-weight:600; }
-  a:hover { transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,107,74,0.15)!important; }
-  .cmd    { background:#1F2937;color:#D1FAE5;font-family:monospace;font-size:12px;padding:10px 16px;border-radius:8px;margin:0 0 28px;display:block;direction:ltr;text-align:left; }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siraja Email Preview Catalogue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background: #F8F7F3;
+      font-family: 'Cairo', Tahoma, Arial, sans-serif;
+      direction: rtl;
+      color: #1F2937;
+    }
+    .header {
+      background: linear-gradient(160deg, #0d4a32 0%, ${primaryColor} 55%, #22896a 100%);
+      padding: 48px 32px;
+      text-align: center;
+      color: #fff;
+    }
+    .header h1 { margin: 0 0 8px; font-size: 36px; font-weight: 900; letter-spacing: -0.5px; }
+    .header p  { margin: 0; color: ${accentColor}; font-size: 15px; font-weight: 500; }
+    .badge {
+      display: inline-block;
+      background: ${accentColor}22; color: ${accentColor};
+      border: 1.5px solid ${accentColor}55; border-radius: 99px;
+      font-size: 12px; font-weight: 700; padding: 3px 14px; margin-top: 14px;
+    }
+    .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+    .meta {
+      background: #fff; border: 1px solid #EEF0EC; border-radius: 12px;
+      padding: 18px 24px; margin: 0 0 32px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .meta-dot { width: 10px; height: 10px; border-radius: 50%; background: ${primaryColor}; flex-shrink: 0; }
+    .meta p { margin: 0; font-size: 13.5px; color: #4B5563; line-height: 1.6; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      display: flex; flex-direction: column; align-items: center;
+      background: #fff; border: 1px solid #EEF0EC; border-radius: 16px;
+      padding: 28px 16px 22px;
+      text-decoration: none; color: inherit;
+      transition: all 0.18s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .card:hover {
+      border-color: ${primaryColor}55;
+      box-shadow: 0 8px 24px rgba(26,107,74,0.14);
+      transform: translateY(-2px);
+    }
+    .card-icon  { font-size: 32px; margin: 0 0 10px; }
+    .card-label { font-size: 14px; font-weight: 700; color: #1F2937; margin: 0 0 6px; text-align: center; }
+    .card-file  { font-size: 11px; color: #9CA3AF; font-family: monospace; }
+    .footer {
+      text-align: center; padding: 32px; font-size: 12px; color: #9CA3AF;
+      border-top: 1px solid #EEF0EC; margin-top: 48px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0a1a11; color: #D1FAE5; }
+      .meta, .card { background: #0f1e16; border-color: #1a3828; }
+      .card-label  { color: #D1FAE5; }
+    }
+  </style>
 </head>
 <body>
-<div class="hdr">
-  <h1>📧 معرض قوالب البريد — سراج</h1>
-  <p>
-    <span class="badge">${COUNT} قالب</span>
-    Siraja Email Design System · Generated ${NOW_STR}
-  </p>
-</div>
-<code class="cmd">cd backend &amp;&amp; npm run email:preview</code>
-${sections}
+  <div class="header">
+    <h1>📧 Siraja Email Previews</h1>
+    <p>كتالوج تصاميم البريد الإلكتروني — Premium Edition</p>
+    <div class="badge">${previews.length} قالب</div>
+  </div>
+  <div class="container">
+    <div class="meta">
+      <div class="meta-dot"></div>
+      <p>
+        جميع القوالب مُصمَّمة لأعلى معايير التوافق مع Outlook · Gmail · Apple Mail · Yahoo · Samsung Mail.
+        يمكنك فتح أي قالب في متصفحك لمعاينته — وللاختبار الكامل استخدم أداة مثل Litmus أو Email on Acid.
+        لإعادة توليد جميع الملفات: <strong>npm run email:preview</strong>
+      </p>
+    </div>
+    <div class="grid">${cards}</div>
+  </div>
+  <div class="footer">
+    Siraja Platform · Generated ${new Date().toLocaleDateString('ar-SA')} ·
+    <a href="https://siraja.website" style="color:${primaryColor};">siraja.website</a>
+  </div>
 </body>
 </html>`;
 
-write('index.html', indexHtml);
+fs.writeFileSync(path.join(outDir, 'index.html'), indexHtml, 'utf8');
 
-console.log(`\n✅  Done — ${COUNT + 1} files written to email-previews/\n`);
-console.log(`   Open email-previews/index.html in your browser to explore.\n`);
+console.log(`\n✨ Generated ${previews.length} email previews + index.html`);
+console.log(`📁 Output: ${outDir}`);
+console.log(`🌐 Open: email-previews/index.html\n`);

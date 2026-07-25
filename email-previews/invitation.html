@@ -563,129 +563,82 @@
     
 <!--[if !mso]><!-->
 <div style="text-align:center;margin:0 0 24px;mso-hide:all;" aria-hidden="true">
-  <svg xmlns="http://www.w3.org/2000/svg" width="110" height="90" viewBox="0 0 110 90" aria-hidden="true">
-  <!-- Book glow -->
-  <ellipse cx="55" cy="78" rx="36" ry="8" fill="#1A6B4A" opacity="0.08"/>
-  <!-- Left page -->
-  <path d="M12 16 Q12 8 20 8 L52 12 L52 76 Q40 72 20 76 Q12 74 12 66 Z"
-        fill="#1A6B4A12" stroke="#1A6B4A" stroke-width="1.8" stroke-linejoin="round"/>
-  <!-- Right page -->
-  <path d="M98 16 Q98 8 90 8 L58 12 L58 76 Q70 72 90 76 Q98 74 98 66 Z"
-        fill="#1A6B4A12" stroke="#1A6B4A" stroke-width="1.8" stroke-linejoin="round"/>
-  <!-- Spine -->
-  <path d="M52 12 L58 12 L58 76 L52 76 Z" fill="#1A6B4A" opacity="0.18"/>
-  <!-- Left page lines -->
-  <line x1="20" y1="28" x2="49" y2="25" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="20" y1="37" x2="49" y2="34" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="20" y1="46" x2="49" y2="43" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="20" y1="55" x2="49" y2="52" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="20" y1="64" x2="49" y2="61" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <!-- Right page lines -->
-  <line x1="61" y1="25" x2="90" y2="28" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="61" y1="34" x2="90" y2="37" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="61" y1="43" x2="90" y2="46" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="61" y1="52" x2="90" y2="55" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <line x1="61" y1="61" x2="90" y2="64" stroke="#1A6B4A" stroke-width="1.2" opacity="0.30"/>
-  <!-- Radiant light rays from spine -->
-  <line x1="55" y1="44" x2="55" y2="3"  stroke="#C9A84C" stroke-width="1.6" opacity="0.55" stroke-linecap="round"/>
-  <line x1="55" y1="44" x2="38" y2="10" stroke="#C9A84C" stroke-width="1.2" opacity="0.35" stroke-linecap="round"/>
-  <line x1="55" y1="44" x2="72" y2="10" stroke="#C9A84C" stroke-width="1.2" opacity="0.35" stroke-linecap="round"/>
-  <line x1="55" y1="44" x2="28" y2="20" stroke="#C9A84C" stroke-width="0.9" opacity="0.22" stroke-linecap="round"/>
-  <line x1="55" y1="44" x2="82" y2="20" stroke="#C9A84C" stroke-width="0.9" opacity="0.22" stroke-linecap="round"/>
-  <!-- Stars -->
-  <circle cx="55" cy="3"  r="3.5" fill="#C9A84C"/>
-  <circle cx="38" cy="8"  r="2.2" fill="#C9A84C" opacity="0.70"/>
-  <circle cx="72" cy="8"  r="2.2" fill="#C9A84C" opacity="0.70"/>
-  <circle cx="26" cy="18" r="1.6" fill="#C9A84C" opacity="0.45"/>
-  <circle cx="84" cy="18" r="1.6" fill="#C9A84C" opacity="0.45"/>
-  <circle cx="18" cy="32" r="1.2" fill="#C9A84C" opacity="0.28"/>
-  <circle cx="92" cy="32" r="1.2" fill="#C9A84C" opacity="0.28"/>
+  <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" aria-hidden="true">
+  <!-- Floor shadow -->
+  <ellipse cx="50" cy="94" rx="38" ry="5" fill="#1A6B4A" opacity="0.10"/>
+  <!-- Door frame -->
+  <rect x="18" y="12" width="64" height="78" rx="6" fill="#1A6B4A12" stroke="#1A6B4A" stroke-width="2.2"/>
+  <!-- Arch top -->
+  <path d="M18 28 Q18 12 50 12 Q82 12 82 28" fill="#1A6B4A" opacity="0.12" stroke="#1A6B4A" stroke-width="2.2"/>
+  <!-- Door open (left panel) -->
+  <rect x="22" y="30" width="25" height="58" rx="3" fill="#1A6B4A" opacity="0.08" stroke="#1A6B4A" stroke-width="1.5"/>
+  <!-- Golden light beam from open door -->
+  <path d="M47 30 L64 42 L64 88 L47 88 Z" fill="#C9A84C" opacity="0.12"/>
+  <path d="M47 35 L80 52 L80 88" fill="#C9A84C" opacity="0.07"/>
+  <!-- Doorknob -->
+  <circle cx="40" cy="60" r="3.5" fill="#C9A84C" stroke="#C9A84C" stroke-width="1"/>
+  <!-- Stars / sparkles around door -->
+  <circle cx="14" cy="18" r="2.5" fill="#C9A84C" opacity="0.65"/>
+  <circle cx="86" cy="18" r="2.5" fill="#C9A84C" opacity="0.65"/>
+  <circle cx="10" cy="50" r="1.8" fill="#C9A84C" opacity="0.45"/>
+  <circle cx="90" cy="50" r="1.8" fill="#C9A84C" opacity="0.45"/>
+  <circle cx="50" cy="5"  r="3"   fill="#C9A84C"/>
+  <!-- Welcome path on floor -->
+  <path d="M30 94 L70 94" stroke="#C9A84C" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.50"/>
 </svg>
 </div>
 <!--<![endif]-->
 
     <h2 style="color:#1A6B4A;font-size:23px;font-weight:800;margin:0 0 8px;
-               font-family:'Cairo',Tahoma,Arial,sans-serif;letter-spacing:-0.2px;">
-      أهلاً وسهلاً، أحمد محمد الشمري! 🌙
+               font-family:'Cairo',Tahoma,Arial,sans-serif;">
+      أنت مدعو للانضمام! 🎉
     </h2>
-    <div class="heading-rule" style="width:52px;height:3px;
-         background:linear-gradient(to left,transparent,#C9A84C,#1A6B4A);
-         border-radius:99px;margin:0 0 24px;"></div>
+    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,#C9A84C,#1A6B4A);
+                border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 16px;color:#4B5563;font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      يسعدنا انضمامك إلى <strong style="color:#1F2937;font-weight:700;">سِراجا</strong> —
-      منصتك الذكية لحفظ القرآن الكريم وتتبع تقدمك مع شيخك وحلقتك.
+      مرحباً <strong style="color:#1F2937;">نورة الزهراني</strong>،
     </p>
-
-    <p style="margin:0 0 16px;color:#4B5563;font-size:15px;
+    <p style="margin:0 0 20px;color:#4B5563;font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      حسابك جاهز الآن ويمكنك البدء فوراً بكل هذه المزايا:
+      يدعوك <strong style="color:#1F2937;">الشيخ عبدالله القحطاني</strong>
+      للانضمام إلى <strong style="color:#1F2937;">دار الحفاظ</strong>
+      على منصة سِراجا بدور <span style="display:inline-block;background:#C9A84C22;color:#C9A84C;
+                    border:1px solid #C9A84C44;border-radius:99px;
+                    font-size:12px;font-weight:700;padding:3px 12px;margin-right:6px;
+                    font-family:'Cairo',Tahoma,Arial,sans-serif;">طالبة</span>.
     </p>
 
-    <!-- Feature list -->
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
-           style="background:#F8F7F3;border-radius:16px;overflow:hidden;
-                  border:1px solid #EEF0EC;margin:0 0 28px;">
-      
-    <tr>
-      <td style="padding:11px 14px;border-bottom:1px solid #EEF0EC;
-                 font-size:14px;color:#4B5563;
-                 font-family:'Cairo',Tahoma,Arial,sans-serif;">
-        <span style="margin-left:10px;font-size:18px;">📖</span>
-        تتبع حفظك وتسميعك يومياً مع شيخك
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:11px 14px;border-bottom:1px solid #EEF0EC;
-                 font-size:14px;color:#4B5563;
-                 font-family:'Cairo',Tahoma,Arial,sans-serif;">
-        <span style="margin-left:10px;font-size:18px;">🧑‍🏫</span>
-        التواصل مع شيخك ومتابعة تقييماتك
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:11px 14px;border-bottom:1px solid #EEF0EC;
-                 font-size:14px;color:#4B5563;
-                 font-family:'Cairo',Tahoma,Arial,sans-serif;">
-        <span style="margin-left:10px;font-size:18px;">📊</span>
-        تحليل ذكي لأخطائك وتقدمك في الحفظ
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:11px 14px;border-bottom:1px solid #EEF0EC;
-                 font-size:14px;color:#4B5563;
-                 font-family:'Cairo',Tahoma,Arial,sans-serif;">
-        <span style="margin-left:10px;font-size:18px;">🏆</span>
-        مشاركة في لوحات الشرف والإنجازات
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:11px 14px;border-bottom:1px solid #EEF0EC;
-                 font-size:14px;color:#4B5563;
-                 font-family:'Cairo',Tahoma,Arial,sans-serif;">
-        <span style="margin-left:10px;font-size:18px;">🤖</span>
-        مساعد ذكاء اصطناعي لدعم رحلة الحفظ
-      </td>
-    </tr>
-    </table>
+    
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
+       style="margin:18px 0;border-radius:12px;overflow:hidden;
+              box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+  <tr>
+    <td width="5" style="width:5px;min-width:5px;background-color:#1A6B4A;font-size:0;line-height:0;border-radius:12px 0 0 12px;">&nbsp;</td>
+    <td style="padding:16px 20px;background-color:#EEF7F2;color:#1F2937;
+               font-size:13.5px;line-height:1.75;font-family:'Cairo',Tahoma,Arial,sans-serif;
+               border-top:1px solid #1A6B4A20;border-bottom:1px solid #1A6B4A20;
+               border-right:1px solid #1A6B4A20;border-radius:0 12px 12px 0;">💬 <em style="font-style:italic;">"يسعدني دعوتك للانضمام إلى حلقتنا المتميزة في حفظ القرآن الكريم."</em> — <strong>الشيخ عبدالله القحطاني</strong></td>
+  </tr>
+</table>
 
     
 <div class="btn-wrap" style="text-align:center;margin:28px 0;">
 <!--[if mso]>
 <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word"
-  href="https://siraja.website/login"
-  style="height:52px;v-text-anchor:middle;width:270px;"
+  href="https://siraja.website/invite?token=inv_abc"
+  style="height:52px;v-text-anchor:middle;width:240px;"
   arcsize="50%"
   strokecolor="#C9A84C"
   strokeweight="1.5px"
   fillcolor="#1A6B4A">
   <w:anchorlock/>
-  <center style="color:#ffffff;font-family:Tahoma,sans-serif;font-size:15px;font-weight:bold;letter-spacing:0.5px;">🚀 ابدأ رحلتك مع القرآن</center>
+  <center style="color:#ffffff;font-family:Tahoma,sans-serif;font-size:15px;font-weight:bold;letter-spacing:0.5px;">🌟 قبول الدعوة</center>
 </v:roundrect>
 <![endif]-->
 <!--[if !mso]><!-->
-<a href="https://siraja.website/login" target="_blank" rel="noopener noreferrer"
+<a href="https://siraja.website/invite?token=inv_abc" target="_blank" rel="noopener noreferrer"
    class="btn-primary"
    style="background:linear-gradient(145deg,#1A6B4Add 0%,#1A6B4A 60%,#0d4a32 100%);
           border:1.5px solid #C9A84C;
@@ -701,7 +654,7 @@
           text-decoration:none;
           transition:all 0.2s ease;
           box-shadow:0 4px 20px rgba(26,107,74,0.35),0 1px 4px rgba(0,0,0,0.12);"
-   aria-label="🚀 ابدأ رحلتك مع القرآن">🚀 ابدأ رحلتك مع القرآن</a>
+   aria-label="🌟 قبول الدعوة">🌟 قبول الدعوة</a>
 <!--<![endif]-->
 </div>
 
@@ -709,15 +662,27 @@
        style="text-align:center;font-size:12px;color:#9CA3AF;
               margin:-8px 0 24px;word-break:break-all;direction:ltr;
               font-family:Tahoma,Arial,sans-serif;">
-      أو انسخ هذا الرابط في متصفحك: <a href="https://siraja.website/login" style="color:#1A6B4A;text-decoration:underline;">https://siraja.website/login</a>
+      <a href="https://siraja.website/invite?token=inv_abc" style="color:#1A6B4A;text-decoration:underline;">https://siraja.website/invite?token=inv_abc</a>
     </p>
 
-    <hr style="border:none;border-top:1px solid #EEF0EC;margin:28px 0 22px;"/>
+    
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
+       style="margin:18px 0;border-radius:12px;overflow:hidden;
+              box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+  <tr>
+    <td width="5" style="width:5px;min-width:5px;background-color:#D97706;font-size:0;line-height:0;border-radius:12px 0 0 12px;">&nbsp;</td>
+    <td style="padding:16px 20px;background-color:#FFFBEB;color:#78350F;
+               font-size:13.5px;line-height:1.75;font-family:'Cairo',Tahoma,Arial,sans-serif;
+               border-top:1px solid #D9770620;border-bottom:1px solid #D9770620;
+               border-right:1px solid #D9770620;border-radius:0 12px 12px 0;">⏱ تنتهي صلاحية هذه الدعوة خلال <strong>7 أيام</strong>.</td>
+  </tr>
+</table>
 
-    <p style="font-size:14px;color:#9CA3AF;text-align:center;margin:0;
+    <hr style="border:none;border-top:1px solid #EEF0EC;margin:26px 0 18px;"/>
+
+    <p style="font-size:13px;color:#9CA3AF;margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.8;">
-      بارك الله فيك ووفقك لما يحبه ويرضاه 🤲<br/>
-      <span style="font-size:13px;">فريق منصة سِراجا</span>
+      إذا لم تكن تتوقع هذه الدعوة، يمكنك تجاهل هذا البريد بأمان.
     </p>
   
           </td>
