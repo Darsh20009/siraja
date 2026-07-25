@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getCardHtml, SIRAJA_BRAND_DEFAULTS } from '../brand/brand-config';
+import { getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface SystemAlertTemplateData extends BaseTemplateData {
   severity: 'info' | 'warning' | 'critical';
@@ -31,41 +31,45 @@ export function systemAlertEmailTemplate(data: SystemAlertTemplateData): {
     timestamp,
     tenantName   = SIRAJA_BRAND_DEFAULTS.tenantName,
     primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
+    accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
     supportEmail = SIRAJA_BRAND_DEFAULTS.supportEmail,
   } = data;
 
   const cfg     = SEVERITY_CONFIG[severity] ?? SEVERITY_CONFIG.info;
   const subject = `${cfg.subject} — ${title}`;
 
-  // ── Details table ──────────────────────────────────────────────────────────
+  const illustration = getEmailIllustration('system-alert', primaryColor, accentColor);
+
+  // ── Details table ────────────────────────────────────────────────────────────
   let detailsHtml = '';
   if (details && Object.keys(details).length > 0) {
     const rows = Object.entries(details).map(([k, v]) => `
       <tr>
-        <td style="padding:9px 14px;font-weight:600;color:#374151;background:#F9FAFB;
-                   border-bottom:1px solid #E5E7EB;font-family:'Cairo',Tahoma,Arial,sans-serif;
+        <td style="padding:9px 14px;font-weight:600;color:${SIRAJA_COLORS.textPrimary};background:${SIRAJA_COLORS.bgPage};
+                   border-bottom:1px solid ${SIRAJA_COLORS.borderLight};font-family:'Cairo',Tahoma,Arial,sans-serif;
                    font-size:13.5px;white-space:nowrap;">${k}</td>
-        <td style="padding:9px 14px;color:#1F2937;background:#ffffff;
-                   border-bottom:1px solid #E5E7EB;font-family:Tahoma,Arial,sans-serif;
+        <td style="padding:9px 14px;color:${SIRAJA_COLORS.textSecondary};background:${SIRAJA_COLORS.bgCard};
+                   border-bottom:1px solid ${SIRAJA_COLORS.borderLight};font-family:Tahoma,Arial,sans-serif;
                    font-size:13.5px;direction:ltr;text-align:left;">${v}</td>
       </tr>`).join('');
 
     detailsHtml = `
       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
-             style="margin:20px 0;border-radius:8px;overflow:hidden;border:1px solid #E5E7EB;">
+             style="margin:20px 0;border-radius:8px;overflow:hidden;border:1px solid ${SIRAJA_COLORS.borderLight};">
         <tbody>${rows}</tbody>
       </table>`;
   }
 
-  // ── Timestamp card ─────────────────────────────────────────────────────────
   const timestampCard = getCardHtml(`🕐&nbsp; وقت التنبيه: <strong>${timestamp}</strong>`, 'info');
 
   const body = `
-    <!-- Severity badge + title block -->
+    ${illustration}
+
+    <!-- Severity badge + title -->
     <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"
-           style="border-right:4px solid ${cfg.badgeColor};margin-bottom:20px;">
+           style="border-right:4px solid ${cfg.badgeColor};margin-bottom:24px;">
       <tr>
-        <td style="padding:2px 16px;">
+        <td style="padding:4px 16px;">
           <table cellpadding="0" cellspacing="0" border="0" role="presentation">
             <tr>
               <td style="padding:0 0 10px;">
@@ -78,7 +82,7 @@ export function systemAlertEmailTemplate(data: SystemAlertTemplateData): {
             </tr>
             <tr>
               <td>
-                <h2 style="margin:0;font-size:20px;font-weight:700;color:#1F2937;
+                <h2 style="margin:0;font-size:20px;font-weight:700;color:${SIRAJA_COLORS.textPrimary};
                            font-family:'Cairo',Tahoma,Arial,sans-serif;">${title}</h2>
               </td>
             </tr>
@@ -87,14 +91,16 @@ export function systemAlertEmailTemplate(data: SystemAlertTemplateData): {
       </tr>
     </table>
 
-    <p style="font-size:15px;line-height:1.9;color:#4B5563;margin:0 0 16px;
+    <p style="font-size:15px;line-height:1.9;color:${SIRAJA_COLORS.textSecondary};margin:0 0 16px;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">${message}</p>
 
     ${detailsHtml}
 
     ${timestampCard}
 
-    <p style="font-size:12px;color:#9CA3AF;margin:16px 0 0;
+    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:26px 0 16px;"/>
+
+    <p style="font-size:12px;color:${SIRAJA_COLORS.textMuted};margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
       هذا تنبيه تلقائي من نظام منصة ${tenantName}. لا يتطلب رداً.
       للمساعدة: <a href="mailto:${supportEmail}" style="color:${primaryColor};">${supportEmail}</a>

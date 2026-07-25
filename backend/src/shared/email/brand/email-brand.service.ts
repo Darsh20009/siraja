@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BaseTemplateData } from '../templates/base.template';
-import { SIRAJA_BRAND_DEFAULTS, isSafeLogoUrl } from './brand-config';
+import { SIRAJA_BRAND_DEFAULTS, isSafeLogoUrl, SocialLink } from './brand-config';
 
 /**
  * Minimal projection of TenantBranding data needed for email rendering.
@@ -14,7 +14,7 @@ export interface TenantBrandingInput {
   name?: string;
   /**
    * Publicly-reachable HTTPS logo image URL (Cloudflare R2, CDN …).
-   * Use isSafeLogoUrl() to validate before passing. Absent → Siraja SVG.
+   * Validated by isSafeLogoUrl(). Absent → Siraja inline SVG.
    */
   logoUrl?: string;
   /** Optional tagline replacing the Siraja default */
@@ -30,6 +30,17 @@ export interface TenantBrandingInput {
    * When present, websiteUrl becomes https://<customDomain>.
    */
   customDomain?: string;
+  /**
+   * Optional social / quick-link rows in the email footer.
+   * Each entry: { label: string; url: string }
+   * Example: [{ label: 'تويتر', url: 'https://twitter.com/...' }]
+   */
+  socialLinks?: SocialLink[];
+  /**
+   * Optional custom text shown in the footer below the copyright line.
+   * Useful for regulatory / tenant-specific notices.
+   */
+  footerText?: string;
 }
 
 /**
@@ -71,7 +82,9 @@ export class EmailBrandService {
       accentColor:   tenantBranding.colors?.accent  || SIRAJA_BRAND_DEFAULTS.accentColor,
       supportEmail:  tenantBranding.supportEmail || SIRAJA_BRAND_DEFAULTS.supportEmail,
       websiteUrl,
-      year: new Date().getFullYear(),
+      year:          new Date().getFullYear(),
+      socialLinks:   tenantBranding.socialLinks  || [],
+      footerText:    tenantBranding.footerText   || undefined,
     };
   }
 
@@ -83,10 +96,11 @@ export class EmailBrandService {
       accentColor:  SIRAJA_BRAND_DEFAULTS.accentColor,
       supportEmail: SIRAJA_BRAND_DEFAULTS.supportEmail,
       websiteUrl:   SIRAJA_BRAND_DEFAULTS.websiteUrl,
-      year: new Date().getFullYear(),
+      year:         new Date().getFullYear(),
+      socialLinks:  [],
     };
   }
 }
 
-// Re-export isSafeLogoUrl so callers can validate without importing brand-config directly
+// Re-export so callers can validate without importing brand-config directly
 export { isSafeLogoUrl };

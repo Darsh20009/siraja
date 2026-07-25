@@ -18,7 +18,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed:permissions": "ts-node -r tsconfig-paths/register src/database/seeders/run-permission-seeder.ts",
     "seed:beta-demo": "ts-node -r tsconfig-paths/register src/database/seeders/seed-beta-demo.ts",
-    "seed:quran": "ts-node -r tsconfig-paths/register src/database/seeders/run-quran-seeder.ts"
+    "seed:quran": "ts-node -r tsconfig-paths/register src/database/seeders/run-quran-seeder.ts",
+    "email:preview": "ts-node -P tsconfig.json --require tsconfig-paths/register scripts/generate-email-previews.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1085.0",

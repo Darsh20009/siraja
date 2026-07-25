@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getCodeBoxHtml, getCardHtml, SIRAJA_BRAND_DEFAULTS } from '../brand/brand-config';
+import { getCodeBoxHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface OtpTemplateData extends BaseTemplateData {
   /** Recipient's display name */
@@ -26,15 +26,16 @@ export function otpEmailTemplate(data: OtpTemplateData): {
     otpCode,
     expiresInMinutes = 10,
     purpose = 'تأكيد الهوية',
-    tenantName = SIRAJA_BRAND_DEFAULTS.tenantName,
+    tenantName   = SIRAJA_BRAND_DEFAULTS.tenantName,
     primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
 
   const subject = `🔑 رمز التحقق الخاص بك — ${tenantName}`;
 
-  const codeBox    = getCodeBoxHtml(otpCode, primaryColor);
-  const expiryCard = getCardHtml(
+  const illustration = getEmailIllustration('otp', primaryColor, accentColor);
+  const codeBox      = getCodeBoxHtml(otpCode, primaryColor);
+  const expiryCard   = getCardHtml(
     `⏱&nbsp; هذا الرمز صالح لمدة <strong>${expiresInMinutes} دقيقة</strong> فقط من لحظة إرساله.`,
     'info',
   );
@@ -43,26 +44,30 @@ export function otpEmailTemplate(data: OtpTemplateData): {
     'warning',
   );
 
+  const headingRule = `<div style="width:48px;height:3px;background:${accentColor};background:linear-gradient(to left,transparent,${accentColor},${primaryColor});border-radius:2px;margin:0 0 22px;"></div>`;
+
   const body = `
-    <h2 style="color:${primaryColor};font-size:21px;font-weight:700;margin:0 0 20px;
-               padding-bottom:10px;border-bottom:2px solid #EEF0EC;
+    ${illustration}
+
+    <h2 style="color:${primaryColor};font-size:22px;font-weight:700;margin:0 0 6px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       🔑 رمز التحقق الخاص بك
     </h2>
+    ${headingRule}
 
-    <p style="margin:0 0 16px;color:#4B5563;font-size:15px;line-height:1.9;
+    <p style="margin:0 0 8px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:#1F2937;">${fullName}</strong>،
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${fullName}</strong>،
     </p>
 
-    <p style="margin:0 0 8px;color:#4B5563;font-size:15px;line-height:1.9;
+    <p style="margin:0 0 8px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      استخدم رمز التحقق أدناه لإتمام عملية <strong style="color:#1F2937;">${purpose}</strong>:
+      استخدم رمز التحقق أدناه لإتمام عملية <strong style="color:${SIRAJA_COLORS.textPrimary};">${purpose}</strong>:
     </p>
 
     ${codeBox}
 
-    <p style="text-align:center;font-size:12.5px;color:#9CA3AF;margin:-8px 0 20px;
+    <p style="text-align:center;font-size:12.5px;color:${SIRAJA_COLORS.textMuted};margin:-8px 0 20px;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
       أدخل هذا الرمز في التطبيق للمتابعة
     </p>
@@ -70,15 +75,15 @@ export function otpEmailTemplate(data: OtpTemplateData): {
     ${expiryCard}
     ${securityCard}
 
-    <hr style="border:none;border-top:1px solid #EEF0EC;margin:24px 0;"/>
+    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:26px 0;"/>
 
-    <p style="font-size:13px;color:#9CA3AF;margin:0;
+    <p style="font-size:13px;color:${SIRAJA_COLORS.textMuted};margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
       إذا لم تطلب هذا الرمز، تجاهل هذه الرسالة بأمان — لن يحدث أي تغيير في حسابك.
     </p>
   `;
 
-  const text = `رمز التحقق الخاص بك — ${tenantName}\n\nمرحباً ${fullName}،\n\nرمز التحقق الخاص بك هو:\n\n${otpCode}\n\nصالح لمدة ${expiresInMinutes} دقيقة.\n\nلا تشارك هذا الرمز مع أحد.\n\nإذا لم تطلب هذا الرمز، تجاهل هذه الرسالة.\n\nفريق ${tenantName}`;
+  const text = `رمز التحقق الخاص بك — ${tenantName}\n\nمرحباً ${fullName}،\n\nرمز التحقق الخاص بك هو:\n\n${otpCode}\n\nصالح لمدة ${expiresInMinutes} دقيقة.\n\nلا تشارك هذا الرمز مع أحد.\n\nفريق ${tenantName}`;
 
   return { subject, html: baseEmailTemplate(body, data), text };
 }

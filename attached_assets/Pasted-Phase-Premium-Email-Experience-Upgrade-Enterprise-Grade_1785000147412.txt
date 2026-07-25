@@ -1,0 +1,352 @@
+Phase: Premium Email Experience Upgrade (Enterprise Grade)
+
+The current Siraja email system is functional and already includes:
+- Multi-tenant branding
+- RTL Arabic support
+- Cairo font
+- Dark mode
+- VML Outlook buttons
+- Welcome
+- Email Verification
+- OTP
+- Password Reset
+- Notifications
+- System Alerts
+
+I do NOT want another basic email template.
+
+I want a world-class email experience comparable to Stripe, Notion, GitHub, Linear, and Apple.
+
+Goals:
+
+1. Completely redesign every email visually while keeping the existing API.
+
+2. The design must feel premium, modern, elegant, trustworthy, and human.
+
+3. Every template must use the Siraja brand identity.
+
+Brand:
+
+Primary:
+#1A6B4A
+
+Gold:
+#C9A84C
+
+Background:
+#F8F7F3
+
+Text:
+#1F2937
+
+Accent:
+#2F855A
+
+Typography:
+Google Cairo
+Tahoma fallback
+
+Requirements
+
+-----------------------------------
+Header
+-----------------------------------
+
+Replace the current header with:
+
+• Beautiful Islamic geometric SVG artwork
+
+• Premium lantern logo
+
+• Soft radial lighting
+
+• subtle gradients
+
+• decorative divider
+
+• optional tenant logo
+
+• premium spacing
+
+-----------------------------------
+Cards
+-----------------------------------
+
+Every email must use elegant cards with:
+
+- 16px radius
+
+- soft shadows
+
+- layered backgrounds
+
+- smooth separators
+
+- premium spacing
+
+-----------------------------------
+Buttons
+-----------------------------------
+
+Buttons should have:
+
+rounded pill design
+
+gradient
+
+hover animation
+
+focus states
+
+accessible contrast
+
+Outlook VML fallback
+
+-----------------------------------
+Illustrations
+-----------------------------------
+
+Create lightweight inline SVG illustrations for:
+
+Welcome
+
+Verification
+
+OTP
+
+Password Reset
+
+Notifications
+
+System Alerts
+
+No external images.
+
+Everything inline.
+
+-----------------------------------
+Animations
+-----------------------------------
+
+For supported clients:
+
+soft fade
+
+button glow
+
+hover transition
+
+animated SVG if possible
+
+Fallback gracefully.
+
+-----------------------------------
+Dark Mode
+-----------------------------------
+
+Perfect dark mode support.
+
+Apple Mail
+
+Gmail
+
+Outlook
+
+Yahoo
+
+Samsung Mail
+
+No broken colors.
+
+-----------------------------------
+Footer
+-----------------------------------
+
+Premium footer containing:
+
+Quran verse
+
+Support email
+
+Website
+
+Social links
+
+Copyright
+
+Tenant branding
+
+Beautiful divider
+
+-----------------------------------
+Accessibility
+-----------------------------------
+
+WCAG AA
+
+Semantic HTML
+
+Screen readers
+
+Keyboard navigation
+
+High contrast
+
+-----------------------------------
+Mobile
+-----------------------------------
+
+Perfect on:
+
+iPhone
+
+Android
+
+Outlook Mobile
+
+Gmail App
+
+Yahoo App
+
+-----------------------------------
+Performance
+-----------------------------------
+
+Minimize HTML size.
+
+Inline CSS.
+
+No unnecessary markup.
+
+Avoid email clipping.
+
+-----------------------------------
+Compatibility
+-----------------------------------
+
+Must render correctly in:
+
+Outlook
+
+Apple Mail
+
+Gmail
+
+Yahoo
+
+Thunderbird
+
+Samsung Mail
+
+Proton Mail
+
+Fastmail
+
+-----------------------------------
+Brand Service
+-----------------------------------
+
+Enhance EmailBrandService so every tenant can override:
+
+logo
+
+primary color
+
+secondary color
+
+support email
+
+website
+
+social links
+
+footer text
+
+custom domain
+
+without modifying templates.
+
+-----------------------------------
+Templates
+-----------------------------------
+
+Upgrade all templates:
+
+Welcome
+
+Verification
+
+OTP
+
+Password Reset
+
+Notification
+
+System Alert
+
+Invitation
+
+Weekly Summary
+
+Monthly Report
+
+Security Alert
+
+New Memorization Achievement
+
+Gamification Rewards
+
+-----------------------------------
+Developer Experience
+-----------------------------------
+
+Generate preview HTML for every template.
+
+Create preview index.
+
+Allow:
+
+npm run email:preview
+
+to regenerate everything.
+
+-----------------------------------
+Documentation
+-----------------------------------
+
+Produce:
+
+docs/email-design-system.md
+
+including:
+
+Design tokens
+
+Brand guidelines
+
+Component library
+
+Template catalogue
+
+Accessibility
+
+Dark mode
+
+Compatibility matrix
+
+Developer guide
+
+Customization guide
+
+-----------------------------------
+Important
+
+Keep all current APIs unchanged.
+
+Keep all DTOs unchanged.
+
+Keep all services unchanged.
+
+Only improve visuals, branding, maintainability, documentation, previews, accessibility, and email client compatibility.
+
+The final result should look like a premium SaaS product worth millions of dollars—not like a standard generated email template.

@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, SIRAJA_BRAND_DEFAULTS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface NotificationTemplateData extends BaseTemplateData {
   recipientName: string;
@@ -33,7 +33,8 @@ export function notificationEmailTemplate(data: NotificationTemplateData): {
 
   const subject = `${icon} ${title} — ${tenantName}`;
 
-  // Map notification type to card type (success → success, warning → warning, info → info)
+  const illustration = getEmailIllustration('notification', primaryColor, accentColor);
+
   const cardType = type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
   const messageCard = getCardHtml(message, cardType);
 
@@ -47,25 +48,29 @@ export function notificationEmailTemplate(data: NotificationTemplateData): {
        </table>`
     : '';
 
+  const headingRule = `<div style="width:48px;height:3px;background:${accentColor};background:linear-gradient(to left,transparent,${accentColor},${primaryColor});border-radius:2px;margin:0 0 22px;"></div>`;
+
   const body = `
-    <h2 style="color:${primaryColor};font-size:21px;font-weight:700;margin:0 0 20px;
-               padding-bottom:10px;border-bottom:2px solid #EEF0EC;
+    ${illustration}
+
+    <h2 style="color:${primaryColor};font-size:22px;font-weight:700;margin:0 0 6px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       ${icon} ${title}
     </h2>
+    ${headingRule}
 
-    <p style="margin:0 0 16px;color:#4B5563;font-size:15px;line-height:1.9;
+    <p style="margin:0 0 16px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:#1F2937;">${recipientName}</strong>،
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${recipientName}</strong>،
     </p>
 
     ${messageCard}
 
     ${actionTable}
 
-    <hr style="border:none;border-top:1px solid #EEF0EC;margin:24px 0;"/>
+    <hr style="border:none;border-top:1px solid ${SIRAJA_COLORS.borderLight};margin:26px 0;"/>
 
-    <p style="font-size:13px;color:#9CA3AF;margin:0;
+    <p style="font-size:13px;color:${SIRAJA_COLORS.textMuted};margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
       للمساعدة تواصل معنا على
       <a href="mailto:${supportEmail}" style="color:${primaryColor};">${supportEmail}</a>
