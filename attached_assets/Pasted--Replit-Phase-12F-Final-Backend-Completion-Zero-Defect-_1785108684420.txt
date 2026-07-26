@@ -1,0 +1,233 @@
+انسخ هذا النص بالكامل إلى Replit:
+
+---
+
+# Phase 12F — Final Backend Completion & Zero-Defect Audit
+
+We are **NOT** starting frontend yet.
+
+The objective of this phase is to make the backend **100% production-ready** with **zero known defects** before Flutter development begins.
+
+## Rules
+
+* Do NOT create placeholders.
+* Do NOT simplify implementations.
+* Do NOT remove existing features.
+* Do NOT break APIs.
+* Keep Clean Architecture and DDD.
+* Keep multi-tenancy.
+* Keep enterprise quality.
+* Do not stop after a partial audit.
+
+---
+
+## Step 1 — Complete Backend Audit
+
+Audit the entire backend module by module.
+
+Check every controller, service, use case, DTO, entity, repository, middleware, guard, interceptor, cron, queue, scheduler, cache, storage provider, email provider, AI module, admin module, notifications, donations, reports, analytics, presentation, support, feature voting, Smart Mushaf, memorization, reviews, mistakes, forecast, gamification, and authentication.
+
+For each module verify:
+
+* Implementation completeness
+* Business logic
+* Error handling
+* Validation
+* Security
+* Tenant isolation
+* Ownership rules
+* Permission checks
+* Performance
+* Swagger
+* Unit tests
+* Integration tests
+
+---
+
+## Step 2 — Find Every Remaining Bug
+
+Search the entire project for:
+
+TODO
+
+FIXME
+
+HACK
+
+TEMP
+
+PLACEHOLDER
+
+MOCK
+
+NOT_IMPLEMENTED
+
+DISABLED
+
+DEPRECATED
+
+EXPERIMENTAL
+
+Remove or complete every remaining item.
+
+---
+
+## Step 3 — Security Audit
+
+Perform a complete security audit.
+
+Verify:
+
+* JWT
+* Refresh Tokens
+* RBAC
+* Permission Guards
+* Ownership Guards
+* Tenant Isolation
+* DTO Validation
+* NoSQL Injection
+* XSS
+* Rate Limiting
+* File Upload Validation
+* Password Hashing
+* Headers
+* Authentication
+* Authorization
+
+Fix every issue found.
+
+---
+
+## Step 4 — Database Audit
+
+Verify:
+
+* Indexes
+* Unique Constraints
+* References
+* Tenant Isolation
+* Soft Delete
+* Timestamp Consistency
+* Seeder Safety
+* Migration Safety
+
+Optimize where needed.
+
+---
+
+## Step 5 — Performance Audit
+
+Check:
+
+* MongoDB queries
+* Aggregations
+* Duplicate queries
+* Missing indexes
+* Memory usage
+* Cache usage
+* Queue performance
+* Compression
+* Payload sizes
+
+Optimize everything.
+
+---
+
+## Step 6 — Audit Logging
+
+Verify that every operation changing system state creates an AuditLog.
+
+Include:
+
+* Create
+* Update
+* Delete
+* Login
+* Password Reset
+* Permission Changes
+* Role Changes
+* Settings Changes
+* Admin Actions
+* Student Actions
+* Teacher Actions
+* Donations
+
+Implement missing audit logs.
+
+---
+
+## Step 7 — Complete Testing
+
+Run:
+
+* TypeScript
+* ESLint
+* Unit Tests
+* Integration Tests
+* End-to-End Tests
+* Smoke Tests
+
+Fix every failure.
+
+---
+
+## Step 8 — Production Verification
+
+Verify:
+
+* MongoDB
+* Redis
+* SMTP
+* Storage
+* Scheduler
+* BullMQ
+* Startup
+* Shutdown
+* Health Endpoints
+
+Everything must work correctly or fail gracefully.
+
+---
+
+## Step 9 — AI Preparation
+
+Do **NOT** integrate any external AI service.
+
+Do **NOT** use:
+
+* OpenAI
+* Moonshot
+* Claude
+* Gemini
+* Grok
+* DeepSeek
+* Any hosted AI API
+
+Instead prepare only the internal architecture required for a future local Siraja AI engine.
+
+---
+
+## Deliverables
+
+Generate:
+
+* docs/audits/backend-final-audit.md
+* docs/audits/security-final-audit.md
+* docs/audits/performance-final-audit.md
+* docs/audits/production-final.md
+
+At the end provide:
+
+1. Exact backend completion percentage.
+2. Total API routes.
+3. Total tests.
+4. Test results.
+5. Security score.
+6. Performance score.
+7. Production readiness score.
+8. Every remaining blocker (if any).
+9. A clear statement whether the backend is truly complete and ready for frontend development.
+
+Do not stop until every audit is complete and every fix has been applied or documented.
+
+**Important:** Do not start frontend development. Finish the backend completely first.
