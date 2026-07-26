@@ -20,3 +20,4 @@
 - [Siraja @Public() decorator pattern](siraja-public-decorator-pattern.md) — JwtAuthGuard is global; @Public() must be explicit on every anonymous endpoint.
 - [Siraja Email Branding System](siraja-email-branding.md) — brand/, EmailBrandService, dark mode CSS, tenant logo override, Cairo font; read before touching any email template or base shell.
 - [Siraja repository typing pattern](siraja-repo-typing-pattern.md) — FlattenMaps<T> gotchas for Map/Record fields; toRecord/toItem call-site rules; supertest import style; Role enum values.
+- [Native Node dependency rebuilds](native-node-dependency-rebuild.md) — lifecycle-disabled installs can leave incompatible native binaries that crash on require; rebuild in the package directory.
