@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, getCodeBoxHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getCodeBoxHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface VerificationTemplateData extends BaseTemplateData {
   fullName: string;
@@ -23,6 +23,10 @@ export function verificationEmailTemplate(data: VerificationTemplateData): {
     accentColor       = SIRAJA_BRAND_DEFAULTS.accentColor,
     supportEmail      = SIRAJA_BRAND_DEFAULTS.supportEmail,
   } = data;
+
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sFull   = escapeHtml(fullName);
+  const sTenant = escapeHtml(tenantName);
 
   const subject = `✉️ تأكيد بريدك الإلكتروني — ${tenantName}`;
 
@@ -56,13 +60,13 @@ export function verificationEmailTemplate(data: VerificationTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       تحقق من بريدك الإلكتروني
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 16px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${fullName}</strong>،
-      خطوة واحدة تفصلك عن الانضمام إلى <strong style="color:${SIRAJA_COLORS.textPrimary};">${tenantName}</strong>.
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${sFull}</strong>،
+      خطوة واحدة تفصلك عن الانضمام إلى <strong style="color:${SIRAJA_COLORS.textPrimary};">${sTenant}</strong>.
       اضغط الزر أدناه لتأكيد بريدك وتفعيل حسابك.
     </p>
 

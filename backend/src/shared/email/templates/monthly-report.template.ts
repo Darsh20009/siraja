@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface MonthlyReportSummary {
   totalSessions: number;
@@ -34,6 +34,11 @@ export function monthlyReportEmailTemplate(data: MonthlyReportTemplateData): {
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
 
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sStudent = escapeHtml(studentName);
+  const sMonth   = escapeHtml(monthLabel);
+  const sTenant  = escapeHtml(tenantName);
+
   const subject = `📅 تقريرك الشهري — ${monthLabel} | ${tenantName}`;
 
   const illustration = getEmailIllustration('monthly-report', primaryColor, accentColor);
@@ -59,7 +64,7 @@ export function monthlyReportEmailTemplate(data: MonthlyReportTemplateData): {
     return `<td align="center" valign="top" width="33%"
                 style="padding:18px 8px;border-left:1px solid ${SIRAJA_COLORS.borderLight};">
       <p style="margin:0 0 4px;font-size:22px;line-height:1;">${s.icon}</p>
-      <p style="margin:0 0 3px;font-size:24px;font-weight:900;color:${primaryColor};
+      <p class="stat-value" style="margin:0 0 3px;font-size:24px;font-weight:900;color:${primaryColor};
                 font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1;">${s.value}</p>
       <p style="margin:0;font-size:11px;color:${SIRAJA_COLORS.textMuted};
                 font-family:'Cairo',Tahoma,Arial,sans-serif;font-weight:500;">${s.label}</p>
@@ -90,7 +95,7 @@ export function monthlyReportEmailTemplate(data: MonthlyReportTemplateData): {
          ${highlights.map(h => `
            <p style="margin:0 0 8px;font-size:14px;color:${SIRAJA_COLORS.textSecondary};
                      font-family:'Cairo',Tahoma,Arial,sans-serif;padding-right:20px;position:relative;">
-             <span style="color:${accentColor};font-weight:700;margin-left:8px;">✦</span>${h}
+             <span style="color:${accentColor};font-weight:700;margin-left:8px;">✦</span>${escapeHtml(h)}
            </p>`).join('')}
        </div>`
     : '';
@@ -108,13 +113,13 @@ export function monthlyReportEmailTemplate(data: MonthlyReportTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       تقريرك الشهري 📅
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      بارك الله فيك <strong style="color:${SIRAJA_COLORS.textPrimary};">${studentName}</strong>،
-      إليك تقرير أدائك الشهري لشهر <strong style="color:${SIRAJA_COLORS.textPrimary};">${monthLabel}</strong>:
+      بارك الله فيك <strong style="color:${SIRAJA_COLORS.textPrimary};">${sStudent}</strong>،
+      إليك تقرير أدائك الشهري لشهر <strong style="color:${SIRAJA_COLORS.textPrimary};">${sMonth}</strong>:
     </p>
 
     ${statsGrid}

@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface WelcomeTemplateData extends BaseTemplateData {
   fullName: string;
@@ -19,6 +19,10 @@ export function welcomeEmailTemplate(data: WelcomeTemplateData): {
     primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
+
+  // ── HTML-safe aliases (prevent XSS injection) ──────────────────────────────
+  const sFull   = escapeHtml(fullName);
+  const sTenant = escapeHtml(tenantName);
 
   const subject = `🌟 مرحباً بك في ${tenantName} — حسابك جاهز!`;
 
@@ -56,7 +60,7 @@ export function welcomeEmailTemplate(data: WelcomeTemplateData): {
 
     <h2 style="color:${primaryColor};font-size:23px;font-weight:800;margin:0 0 8px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;letter-spacing:-0.2px;">
-      أهلاً وسهلاً، ${fullName}! 🌙
+      أهلاً وسهلاً، ${sFull}! 🌙
     </h2>
     <div class="heading-rule" style="width:52px;height:3px;
          background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
@@ -64,7 +68,7 @@ export function welcomeEmailTemplate(data: WelcomeTemplateData): {
 
     <p style="margin:0 0 16px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      يسعدنا انضمامك إلى <strong style="color:${SIRAJA_COLORS.textPrimary};font-weight:700;">${tenantName}</strong> —
+      يسعدنا انضمامك إلى <strong style="color:${SIRAJA_COLORS.textPrimary};font-weight:700;">${sTenant}</strong> —
       منصتك الذكية لحفظ القرآن الكريم وتتبع تقدمك مع شيخك وحلقتك.
     </p>
 
@@ -94,7 +98,7 @@ export function welcomeEmailTemplate(data: WelcomeTemplateData): {
     <p style="font-size:14px;color:${SIRAJA_COLORS.textMuted};text-align:center;margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.8;">
       بارك الله فيك ووفقك لما يحبه ويرضاه 🤲<br/>
-      <span style="font-size:13px;">فريق منصة ${tenantName}</span>
+      <span style="font-size:13px;">فريق منصة ${sTenant}</span>
     </p>
   `;
 

@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface NotificationTemplateData extends BaseTemplateData {
   recipientName: string;
@@ -27,6 +27,11 @@ export function notificationEmailTemplate(data: NotificationTemplateData): {
     accentColor    = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
 
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sRecipient = escapeHtml(recipientName);
+  const sTitle     = escapeHtml(title);
+  const sTenant    = escapeHtml(tenantName);
+
   const icons: Record<string, string> = {
     info:    '📢',
     success: '✅',
@@ -49,14 +54,14 @@ export function notificationEmailTemplate(data: NotificationTemplateData): {
 
     <h2 style="color:${primaryColor};font-size:23px;font-weight:800;margin:0 0 8px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      ${icon}&nbsp; ${title}
+      ${icon}&nbsp; ${sTitle}
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${recipientName}</strong>،
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${sRecipient}</strong>،
     </p>
 
     ${messageCard}
@@ -67,7 +72,7 @@ export function notificationEmailTemplate(data: NotificationTemplateData): {
 
     <p style="font-size:13px;color:${SIRAJA_COLORS.textMuted};text-align:center;margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      هذا إشعار تلقائي من منصة ${tenantName}
+      هذا إشعار تلقائي من منصة ${sTenant}
     </p>
   `;
 

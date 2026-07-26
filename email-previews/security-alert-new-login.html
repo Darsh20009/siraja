@@ -199,9 +199,16 @@
       .stat-value     { color: #6EE7B7              !important; }
       .link-fallback  { color: #9DC4B0            !important; }
       .heading-rule   { opacity: 0.70 !important; }
+      /* ── Accent cards ── */
+      .card-bg-info    { background-color: #132d22 !important; color: #D1FAE5    !important; }
+      .card-bg-success { background-color: #0d2418                         !important; color: #bbf7d0                      !important; }
+      .card-bg-warning { background-color: #1C1500 !important; color: #FDE68A                     !important; }
+      .card-bg-danger  { background-color: #1A0808   !important; color: #FCA5A5                     !important; }
+      /* ── Code box (OTP / verification) ── */
+      .code-box-value  { color: #6EE7B7              !important; }
     }
 
-    /* ═══ DARK MODE — Gmail web ([data-ogsc]) ════════════════════════════════════ */
+    /* ═══ DARK MODE — Gmail web / Outlook.com ([data-ogsc]) ══════════════════════ */
     [data-ogsc] body            { background-color: #0a1a11   !important; }
     [data-ogsc] .outer-wrapper  { background-color: #0a1a11   !important; }
     [data-ogsc] .email-body     { background-color: #0f1e16   !important;
@@ -218,6 +225,16 @@
     [data-ogsc] .stat-value     { color: #6EE7B7              !important; }
     [data-ogsc] .stat-label     { color: #9DC4B0            !important; }
     [data-ogsc] .feature-list li{ color: #9DC4B0            !important; }
+    [data-ogsc] .card-bg-info    { background-color: #132d22 !important; color: #D1FAE5  !important; }
+    [data-ogsc] .card-bg-success { background-color: #0d2418                         !important; color: #bbf7d0                    !important; }
+    [data-ogsc] .card-bg-warning { background-color: #1C1500 !important; color: #FDE68A                   !important; }
+    [data-ogsc] .card-bg-danger  { background-color: #1A0808   !important; color: #FCA5A5                   !important; }
+    [data-ogsc] .code-box-value  { color: #6EE7B7               !important; }
+
+    /* ═══ CODE BOX — mobile ═════════════════════════════════════════════════════ */
+    @media only screen and (max-width: 620px) {
+      .code-box-value { font-size: 26px !important; letter-spacing: 10px !important; }
+    }
   </style>
 </head>
 <body style="margin:0;padding:0;background-color:#F8F7F3;" bgcolor="#F8F7F3">
@@ -240,7 +257,7 @@
 
         <!-- ── Gold top accent bar ──────────────────────────────────────────── -->
         <tr>
-          <td height="4" style="height:4px;line-height:4px;font-size:0;
+          <td height="4" bgcolor="#C9A84C" style="height:4px;line-height:4px;font-size:0;
                                 background:linear-gradient(90deg,#C9A84C,#E2C472,#C9A84C);">&nbsp;</td>
         </tr>
 
@@ -596,7 +613,7 @@
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       تسجيل دخول جديد
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,#DC262660,#DC2626);
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,#DC262660,#DC2626);
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 8px;color:#4B5563;font-size:15px;line-height:1.9;
@@ -642,7 +659,7 @@
                      border-bottom:1px solid #EEF0EC;width:40%;white-space:nowrap;">الوقت</td>
           <td style="padding:9px 16px;font-size:13px;color:#1F2937;
                      font-family:Tahoma,Arial,sans-serif;direction:ltr;
-                     border-bottom:1px solid #EEF0EC;">٢٥‏/٧‏/٢٠٢٦، ١١:٠١:٥٢ م</td>
+                     border-bottom:1px solid #EEF0EC;">٢٦‏/٧‏/٢٠٢٦، ١٠:٤١:٤٣ ص</td>
         </tr>
        </table>
     
@@ -650,11 +667,11 @@
        style="margin:18px 0;border-radius:12px;overflow:hidden;
               box-shadow:0 2px 8px rgba(0,0,0,0.06);">
   <tr>
-    <td width="5" style="width:5px;min-width:5px;background-color:#DC2626;font-size:0;line-height:0;border-radius:12px 0 0 12px;">&nbsp;</td>
-    <td style="padding:16px 20px;background-color:#FEF2F2;color:#7F1D1D;
+    <td width="5" style="width:5px;min-width:5px;background-color:#DC2626;font-size:0;line-height:0;border-radius:0 12px 12px 0;">&nbsp;</td>
+    <td class="card-bg-danger" style="padding:16px 20px;background-color:#FEF2F2;color:#7F1D1D;
                font-size:13.5px;line-height:1.75;font-family:'Cairo',Tahoma,Arial,sans-serif;
                border-top:1px solid #DC262620;border-bottom:1px solid #DC262620;
-               border-right:1px solid #DC262620;border-radius:0 12px 12px 0;">🚨 <strong>لم تكن أنت؟</strong> أمّن حسابك فوراً بتغيير كلمة المرور والتواصل مع الدعم على
+               border-left:1px solid #DC262620;border-radius:12px 0 0 12px;">🚨 <strong>لم تكن أنت؟</strong> أمّن حسابك فوراً بتغيير كلمة المرور والتواصل مع الدعم على
      <a href="mailto:support@siraja.website" style="color:#DC2626;font-weight:700;">support@siraja.website</a></td>
   </tr>
 </table>

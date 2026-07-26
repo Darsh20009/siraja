@@ -283,9 +283,16 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
       .stat-value     { color: ${SIRAJA_COLORS.darkHeading}              !important; }
       .link-fallback  { color: ${SIRAJA_COLORS.darkTextMuted}            !important; }
       .heading-rule   { opacity: 0.70 !important; }
+      /* ── Accent cards ── */
+      .card-bg-info    { background-color: ${SIRAJA_COLORS.darkBgInfoCard} !important; color: ${SIRAJA_COLORS.darkText}    !important; }
+      .card-bg-success { background-color: #0d2418                         !important; color: #bbf7d0                      !important; }
+      .card-bg-warning { background-color: ${SIRAJA_COLORS.darkBgWarnCard} !important; color: #FDE68A                     !important; }
+      .card-bg-danger  { background-color: ${SIRAJA_COLORS.darkBgDanger}   !important; color: #FCA5A5                     !important; }
+      /* ── Code box (OTP / verification) ── */
+      .code-box-value  { color: ${SIRAJA_COLORS.darkHeading}              !important; }
     }
 
-    /* ═══ DARK MODE — Gmail web ([data-ogsc]) ════════════════════════════════════ */
+    /* ═══ DARK MODE — Gmail web / Outlook.com ([data-ogsc]) ══════════════════════ */
     [data-ogsc] body            { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
     [data-ogsc] .outer-wrapper  { background-color: ${SIRAJA_COLORS.darkBgPage}   !important; }
     [data-ogsc] .email-body     { background-color: ${SIRAJA_COLORS.darkBgCard}   !important;
@@ -302,6 +309,16 @@ export function baseEmailTemplate(body: string, data: BaseTemplateData = {}): st
     [data-ogsc] .stat-value     { color: ${SIRAJA_COLORS.darkHeading}              !important; }
     [data-ogsc] .stat-label     { color: ${SIRAJA_COLORS.darkTextMuted}            !important; }
     [data-ogsc] .feature-list li{ color: ${SIRAJA_COLORS.darkTextMuted}            !important; }
+    [data-ogsc] .card-bg-info    { background-color: ${SIRAJA_COLORS.darkBgInfoCard} !important; color: ${SIRAJA_COLORS.darkText}  !important; }
+    [data-ogsc] .card-bg-success { background-color: #0d2418                         !important; color: #bbf7d0                    !important; }
+    [data-ogsc] .card-bg-warning { background-color: ${SIRAJA_COLORS.darkBgWarnCard} !important; color: #FDE68A                   !important; }
+    [data-ogsc] .card-bg-danger  { background-color: ${SIRAJA_COLORS.darkBgDanger}   !important; color: #FCA5A5                   !important; }
+    [data-ogsc] .code-box-value  { color: ${SIRAJA_COLORS.darkHeading}               !important; }
+
+    /* ═══ CODE BOX — mobile ═════════════════════════════════════════════════════ */
+    @media only screen and (max-width: 620px) {
+      .code-box-value { font-size: 26px !important; letter-spacing: 10px !important; }
+    }
   </style>
 </head>
 <body style="margin:0;padding:0;background-color:${SIRAJA_COLORS.bgPage};" bgcolor="${SIRAJA_COLORS.bgPage}">
@@ -324,7 +341,7 @@ ${preheaderHtml}
 
         <!-- ── Gold top accent bar ──────────────────────────────────────────── -->
         <tr>
-          <td height="4" style="height:4px;line-height:4px;font-size:0;
+          <td height="4" bgcolor="${accentColor}" style="height:4px;line-height:4px;font-size:0;
                                 background:linear-gradient(90deg,${accentColor},${SIRAJA_COLORS.accentLight},${accentColor});">&nbsp;</td>
         </tr>
 

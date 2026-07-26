@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export type SecurityAlertType =
   | 'new-login'
@@ -38,6 +38,10 @@ export function securityAlertEmailTemplate(data: SecurityAlertTemplateData): {
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
     supportEmail = SIRAJA_BRAND_DEFAULTS.supportEmail,
   } = data;
+
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sFull   = escapeHtml(fullName);
+  const sTenant = escapeHtml(tenantName);
 
   const alerts: Record<SecurityAlertType, { icon: string; title: string; body: string; defaultAction: string }> = {
     'new-login':          { icon: '🔓', title: 'تسجيل دخول جديد',       body: 'تم تسجيل الدخول إلى حسابك من جهاز أو موقع جديد.',     defaultAction: 'هذا أنا — لا مشكلة' },
@@ -114,12 +118,12 @@ export function securityAlertEmailTemplate(data: SecurityAlertTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       ${cfg.title}
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,#DC262660,#DC2626);
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,#DC262660,#DC2626);
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 8px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${fullName}</strong>،
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${sFull}</strong>،
     </p>
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">

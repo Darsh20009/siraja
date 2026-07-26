@@ -254,6 +254,22 @@ export function isSafeLogoUrl(url: string | undefined): boolean {
   try { return new URL(url).protocol === 'https:'; } catch { return false; }
 }
 
+// ─── HTML escape helper ───────────────────────────────────────────────────────
+/**
+ * Escapes HTML special characters in user-provided text values.
+ * Apply to all untrusted string fields before interpolating into HTML.
+ * Do NOT apply to URLs (href attributes) or pre-built HTML content strings.
+ */
+export function escapeHtml(s: string | number | undefined | null): string {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
 // ─── Social link type ─────────────────────────────────────────────────────────
 
 export interface SocialLink {
@@ -366,11 +382,11 @@ export function getCardHtml(content: string, type: CardType = 'info'): string {
        style="margin:18px 0;border-radius:12px;overflow:hidden;
               box-shadow:0 2px 8px rgba(0,0,0,0.06);">
   <tr>
-    <td width="5" style="width:5px;min-width:5px;background-color:${c.border};font-size:0;line-height:0;border-radius:12px 0 0 12px;">&nbsp;</td>
-    <td style="padding:16px 20px;background-color:${c.bg};color:${c.text};
+    <td width="5" style="width:5px;min-width:5px;background-color:${c.border};font-size:0;line-height:0;border-radius:0 12px 12px 0;">&nbsp;</td>
+    <td class="card-bg-${type}" style="padding:16px 20px;background-color:${c.bg};color:${c.text};
                font-size:13.5px;line-height:1.75;font-family:'Cairo',Tahoma,Arial,sans-serif;
                border-top:1px solid ${c.border}20;border-bottom:1px solid ${c.border}20;
-               border-right:1px solid ${c.border}20;border-radius:0 12px 12px 0;">${content}</td>
+               border-left:1px solid ${c.border}20;border-radius:12px 0 0 12px;">${content}</td>
   </tr>
 </table>`;
 }
@@ -387,7 +403,8 @@ export function getCodeBoxHtml(code: string, primaryColor: string): string {
         style="background:linear-gradient(135deg,${primaryColor}0a 0%,${primaryColor}18 100%);
                border:2px solid ${primaryColor}44;border-radius:16px;padding:26px 32px;
                box-shadow:0 4px 16px ${primaryColor}18 inset;">
-      <div style="font-size:40px;letter-spacing:18px;font-weight:900;color:${primaryColor};
+      <div class="code-box-value"
+           style="font-size:40px;letter-spacing:18px;font-weight:900;color:${primaryColor};
                   font-family:'Courier New',Courier,monospace;direction:ltr;
                   text-shadow:0 2px 8px ${primaryColor}30;">${code}</div>
     </td>
@@ -498,7 +515,7 @@ export function getEmailIllustration(
         fill="${bg}" stroke="${P}" stroke-width="2.2" stroke-linejoin="round"/>
   <!-- Inner shield -->
   <path d="M45 16 L70 28 L70 52 C70 65 57 75 45 82 C33 75 20 65 20 52 L20 28 Z"
-        fill="${P}" opacity="0.08" stroke="${P}" stroke-width="1" opacity2="0.40"/>
+        fill="${P}" opacity="0.08" stroke="${P}" stroke-width="1"/>
   <!-- Check mark -->
   <path d="M28 50 L40 63 L64 34"
         stroke="${P}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>

@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export type RewardType =
   | 'points'
@@ -43,6 +43,12 @@ export function gamificationRewardEmailTemplate(data: GamificationRewardTemplate
     primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
+
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sStudent = escapeHtml(studentName);
+  const sTitle   = escapeHtml(rewardTitle);
+  const sDesc    = escapeHtml(rewardDescription);
+  const sTenant  = escapeHtml(tenantName);
 
   const typeIcons: Record<RewardType, string> = {
     'points':      '💎',
@@ -121,12 +127,12 @@ export function gamificationRewardEmailTemplate(data: GamificationRewardTemplate
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       مكافأة جديدة! ${icon}
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      تهانينا <strong style="color:${SIRAJA_COLORS.textPrimary};">${studentName}</strong>!
+      تهانينا <strong style="color:${SIRAJA_COLORS.textPrimary};">${sStudent}</strong>!
       حصلت على مكافأة جديدة تقديراً لجهودك:
     </p>
 
@@ -140,9 +146,9 @@ export function gamificationRewardEmailTemplate(data: GamificationRewardTemplate
         <td style="padding:24px 28px;text-align:center;">
           <p style="margin:0 0 8px;font-size:44px;line-height:1;">${icon}</p>
           <p style="margin:0 0 8px;font-size:19px;font-weight:800;color:${primaryColor};
-                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.3;">${rewardTitle}</p>
+                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.3;">${sTitle}</p>
           <p style="margin:0;font-size:14px;color:${SIRAJA_COLORS.textSecondary};
-                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.7;">${rewardDescription}</p>
+                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.7;">${sDesc}</p>
           ${badgeChip}
         </td>
       </tr>

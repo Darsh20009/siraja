@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export type AchievementType =
   | 'memorization'
@@ -38,6 +38,13 @@ export function achievementEmailTemplate(data: AchievementTemplateData): {
     primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
+
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sStudent = escapeHtml(studentName);
+  const sTitle   = escapeHtml(achievementTitle);
+  const sDesc    = escapeHtml(achievementDescription);
+  const sLevel   = level ? escapeHtml(level) : '';
+  const sTenant  = escapeHtml(tenantName);
 
   const typeIcons: Record<AchievementType, string> = {
     memorization: '📖',
@@ -82,7 +89,7 @@ export function achievementEmailTemplate(data: AchievementTemplateData): {
     ? `<span style="display:inline-block;background:${primaryColor}15;color:${primaryColor};
                     border:1px solid ${primaryColor}30;border-radius:99px;
                     font-size:12px;font-weight:700;padding:4px 14px;
-                    font-family:'Cairo',Tahoma,Arial,sans-serif;">${level}</span>`
+                    font-family:'Cairo',Tahoma,Arial,sans-serif;">${sLevel}</span>`
     : '';
 
   const body = `
@@ -92,12 +99,12 @@ export function achievementEmailTemplate(data: AchievementTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       مبروك! إنجاز جديد 🎉
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      أحسنت <strong style="color:${SIRAJA_COLORS.textPrimary};">${studentName}</strong>!
+      أحسنت <strong style="color:${SIRAJA_COLORS.textPrimary};">${sStudent}</strong>!
       لقد حققت إنجازاً رائعاً يُفخر به:
     </p>
 
@@ -111,9 +118,9 @@ export function achievementEmailTemplate(data: AchievementTemplateData): {
         <td style="padding:24px 28px;text-align:center;">
           <p style="margin:0 0 8px;font-size:44px;line-height:1;">${icon}</p>
           <p style="margin:0 0 8px;font-size:20px;font-weight:800;color:${primaryColor};
-                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.3;">${achievementTitle}</p>
+                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.3;">${sTitle}</p>
           <p style="margin:0 0 16px;font-size:14px;color:${SIRAJA_COLORS.textSecondary};
-                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.7;">${achievementDescription}</p>
+                    font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.7;">${sDesc}</p>
           <div style="margin:0;">${pointsChip}${levelChip}</div>
         </td>
       </tr>

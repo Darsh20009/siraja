@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface PasswordResetTemplateData extends BaseTemplateData {
   fullName: string;
@@ -23,6 +23,10 @@ export function passwordResetEmailTemplate(data: PasswordResetTemplateData): {
     accentColor      = SIRAJA_BRAND_DEFAULTS.accentColor,
     supportEmail     = SIRAJA_BRAND_DEFAULTS.supportEmail,
   } = data;
+
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sFull   = escapeHtml(fullName);
+  const sTenant = escapeHtml(tenantName);
 
   const subject = `🔐 إعادة تعيين كلمة المرور — ${tenantName}`;
 
@@ -55,16 +59,16 @@ export function passwordResetEmailTemplate(data: PasswordResetTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       إعادة تعيين كلمة المرور
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 8px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${fullName}</strong>،
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${sFull}</strong>،
     </p>
     <p style="margin:0 0 24px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك في <strong style="color:${SIRAJA_COLORS.textPrimary};">${tenantName}</strong>.
+      تلقينا طلباً لإعادة تعيين كلمة المرور الخاصة بحسابك في <strong style="color:${SIRAJA_COLORS.textPrimary};">${sTenant}</strong>.
       اضغط الزر أدناه لاختيار كلمة مرور جديدة:
     </p>
 

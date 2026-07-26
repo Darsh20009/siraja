@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface InvitationTemplateData extends BaseTemplateData {
   inviteeName: string;
@@ -30,6 +30,15 @@ export function invitationEmailTemplate(data: InvitationTemplateData): {
   } = data;
 
   const displayAcademy = academyName ?? tenantName;
+
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sInvitee  = escapeHtml(inviteeName);
+  const sInviter  = escapeHtml(inviterName);
+  const sAcademy  = escapeHtml(displayAcademy);
+  const sTenant   = escapeHtml(tenantName);
+  const sRole     = role ? escapeHtml(role) : '';
+  const sPersonal = personalMessage ? escapeHtml(personalMessage) : '';
+
   const subject = `🌟 دعوة للانضمام إلى ${displayAcademy}`;
 
   const illustration = getEmailIllustration('invitation', primaryColor, accentColor);
@@ -42,9 +51,6 @@ export function invitationEmailTemplate(data: InvitationTemplateData): {
     width: 240,
   });
 
-  const personalCard = personalMessage
-    ? getCardHtml(`💬 <em style="font-style:italic;">"${personalMessage}"</em> — <strong>${inviterName}</strong>`, 'info')
-    : '';
 
   const expiryCard = getCardHtml(
     `⏱ تنتهي صلاحية هذه الدعوة خلال <strong>${expiresInDays} أيام</strong>.`,
@@ -55,7 +61,11 @@ export function invitationEmailTemplate(data: InvitationTemplateData): {
     ? `<span style="display:inline-block;background:${accentColor}22;color:${accentColor};
                     border:1px solid ${accentColor}44;border-radius:99px;
                     font-size:12px;font-weight:700;padding:3px 12px;margin-right:6px;
-                    font-family:'Cairo',Tahoma,Arial,sans-serif;">${role}</span>`
+                    font-family:'Cairo',Tahoma,Arial,sans-serif;">${sRole}</span>`
+    : '';
+
+  const personalCard = personalMessage
+    ? getCardHtml(`💬 <em style="font-style:italic;">"${sPersonal}"</em> — <strong>${sInviter}</strong>`, 'info')
     : '';
 
   const body = `
@@ -65,18 +75,18 @@ export function invitationEmailTemplate(data: InvitationTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       أنت مدعو للانضمام! 🎉
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 16px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${inviteeName}</strong>،
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${sInvitee}</strong>،
     </p>
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      يدعوك <strong style="color:${SIRAJA_COLORS.textPrimary};">${inviterName}</strong>
-      للانضمام إلى <strong style="color:${SIRAJA_COLORS.textPrimary};">${displayAcademy}</strong>
-      على منصة ${tenantName}${role ? ` بدور ${roleChip}` : ''}.
+      يدعوك <strong style="color:${SIRAJA_COLORS.textPrimary};">${sInviter}</strong>
+      للانضمام إلى <strong style="color:${SIRAJA_COLORS.textPrimary};">${sAcademy}</strong>
+      على منصة ${sTenant}${role ? ` بدور ${roleChip}` : ''}.
     </p>
 
     ${personalCard}

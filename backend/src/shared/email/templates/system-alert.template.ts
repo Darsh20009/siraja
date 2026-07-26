@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getCardHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface SystemAlertTemplateData extends BaseTemplateData {
   severity: 'info' | 'warning' | 'critical';
@@ -24,6 +24,10 @@ export function systemAlertEmailTemplate(data: SystemAlertTemplateData): {
     primaryColor = SIRAJA_BRAND_DEFAULTS.primaryColor,
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
+
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sTitle  = escapeHtml(title);
+  const sTenant = escapeHtml(tenantName);
 
   const cfg = {
     info:     { icon: 'ℹ️', label: 'معلومة',  badge: primaryColor,  cardType: 'info'    as const, subject: `ℹ️ تنبيه نظام — ` },
@@ -72,9 +76,9 @@ export function systemAlertEmailTemplate(data: SystemAlertTemplateData): {
 
     <h2 style="color:${primaryColor};font-size:23px;font-weight:800;margin:0 0 8px;
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      ${title}
+      ${sTitle}
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     ${messageCard}
@@ -85,7 +89,7 @@ export function systemAlertEmailTemplate(data: SystemAlertTemplateData): {
 
     <p style="font-size:13px;color:${SIRAJA_COLORS.textMuted};margin:0;
               font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1.8;">
-      هذا تنبيه آلي من نظام مراقبة منصة ${tenantName}. لا يلزم الرد على هذا البريد.
+      هذا تنبيه آلي من نظام مراقبة منصة ${sTenant}. لا يلزم الرد على هذا البريد.
     </p>
   `;
 

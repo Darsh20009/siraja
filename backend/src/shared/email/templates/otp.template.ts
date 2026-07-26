@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getCardHtml, getCodeBoxHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getCardHtml, getCodeBoxHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface OtpTemplateData extends BaseTemplateData {
   fullName: string;
@@ -23,6 +23,11 @@ export function otpEmailTemplate(data: OtpTemplateData): {
     accentColor      = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
 
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sFull    = escapeHtml(fullName);
+  const sPurpose = escapeHtml(purpose);
+  const sTenant  = escapeHtml(tenantName);
+
   const subject = `🔑 رمز التحقق الخاص بك — ${tenantName}`;
 
   const illustration = getEmailIllustration('otp', primaryColor, accentColor);
@@ -35,7 +40,7 @@ export function otpEmailTemplate(data: OtpTemplateData): {
   );
 
   const securityCard = getCardHtml(
-    `🔒 <strong>تنبيه أمني:</strong> لا تشارك هذا الرمز مع أحد. لن يطلب منك فريق ${tenantName} هذا الرمز أبداً عبر الهاتف أو البريد الإلكتروني.`,
+    `🔒 <strong>تنبيه أمني:</strong> لا تشارك هذا الرمز مع أحد. لن يطلب منك فريق ${sTenant} هذا الرمز أبداً عبر الهاتف أو البريد الإلكتروني.`,
     'danger'
   );
 
@@ -46,16 +51,16 @@ export function otpEmailTemplate(data: OtpTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       رمز التحقق الخاص بك
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 8px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${fullName}</strong>،
+      مرحباً <strong style="color:${SIRAJA_COLORS.textPrimary};">${sFull}</strong>،
     </p>
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      استخدم الرمز أدناه لإتمام عملية <strong style="color:${SIRAJA_COLORS.textPrimary};">${purpose}</strong>:
+      استخدم الرمز أدناه لإتمام عملية <strong style="color:${SIRAJA_COLORS.textPrimary};">${sPurpose}</strong>:
     </p>
 
     ${codeBox}

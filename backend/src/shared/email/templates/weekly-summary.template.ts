@@ -1,5 +1,5 @@
 import { baseEmailTemplate, BaseTemplateData } from './base.template';
-import { getButtonHtml, getCardHtml, getEmailIllustration, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
+import { getButtonHtml, getCardHtml, getEmailIllustration, escapeHtml, SIRAJA_BRAND_DEFAULTS, SIRAJA_COLORS } from '../brand/brand-config';
 
 export interface WeeklySummaryStats {
   sessionsCompleted: number;
@@ -35,6 +35,11 @@ export function weeklySummaryEmailTemplate(data: WeeklySummaryTemplateData): {
     accentColor  = SIRAJA_BRAND_DEFAULTS.accentColor,
   } = data;
 
+  // ── HTML-safe aliases ──────────────────────────────────────────────────────
+  const sStudent = escapeHtml(studentName);
+  const sWeek    = escapeHtml(weekLabel);
+  const sTenant  = escapeHtml(tenantName);
+
   const subject = `📊 ملخص أسبوعك في ${tenantName} — ${weekLabel}`;
 
   const illustration = getEmailIllustration('weekly-summary', primaryColor, accentColor);
@@ -64,7 +69,7 @@ export function weeklySummaryEmailTemplate(data: WeeklySummaryTemplateData): {
     return `<td align="center" valign="top" width="33%"
                 style="padding:18px 8px;border-left:1px solid ${SIRAJA_COLORS.borderLight};">
       <p style="margin:0 0 4px;font-size:22px;line-height:1;">${s.icon}</p>
-      <p style="margin:0 0 3px;font-size:22px;font-weight:900;color:${primaryColor};
+      <p class="stat-value" style="margin:0 0 3px;font-size:22px;font-weight:900;color:${primaryColor};
                 font-family:'Cairo',Tahoma,Arial,sans-serif;line-height:1;">${s.value}</p>
       <p style="margin:0;font-size:11px;color:${SIRAJA_COLORS.textMuted};
                 font-family:'Cairo',Tahoma,Arial,sans-serif;font-weight:500;">${s.label}</p>
@@ -89,11 +94,11 @@ export function weeklySummaryEmailTemplate(data: WeeklySummaryTemplateData): {
 </table>`;
 
   const achievementCard = topAchievement
-    ? getCardHtml(`🏆 <strong>أبرز إنجازات الأسبوع:</strong> ${topAchievement}`, 'success')
+    ? getCardHtml(`🏆 <strong>أبرز إنجازات الأسبوع:</strong> ${escapeHtml(topAchievement)}`, 'success')
     : '';
 
   const goalCard = nextGoal
-    ? getCardHtml(`🎯 <strong>هدف الأسبوع القادم:</strong> ${nextGoal}`, 'info')
+    ? getCardHtml(`🎯 <strong>هدف الأسبوع القادم:</strong> ${escapeHtml(nextGoal)}`, 'info')
     : '';
 
   const body = `
@@ -103,13 +108,13 @@ export function weeklySummaryEmailTemplate(data: WeeklySummaryTemplateData): {
                font-family:'Cairo',Tahoma,Arial,sans-serif;">
       ملخص أسبوعك 📊
     </h2>
-    <div style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
+    <div class="heading-rule" style="width:52px;height:3px;background:linear-gradient(to left,transparent,${accentColor},${primaryColor});
                 border-radius:99px;margin:0 0 24px;"></div>
 
     <p style="margin:0 0 20px;color:${SIRAJA_COLORS.textSecondary};font-size:15px;line-height:1.9;
               font-family:'Cairo',Tahoma,Arial,sans-serif;">
-      أحسنت <strong style="color:${SIRAJA_COLORS.textPrimary};">${studentName}</strong>!
-      إليك ملخص أدائك خلال الأسبوع <strong style="color:${SIRAJA_COLORS.textPrimary};">${weekLabel}</strong>:
+      أحسنت <strong style="color:${SIRAJA_COLORS.textPrimary};">${sStudent}</strong>!
+      إليك ملخص أدائك خلال الأسبوع <strong style="color:${SIRAJA_COLORS.textPrimary};">${sWeek}</strong>:
     </p>
 
     ${statsGrid}
