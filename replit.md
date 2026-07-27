@@ -12,10 +12,10 @@ Siraja is a Quran education & memorization platform with a multi-tenant NestJS b
 
 ## How to run
 
-The **Start application** workflow starts the backend. It compiles TypeScript with the NestJS CLI and listens on port 5000.
+The **Start application** workflow starts the backend in watch mode. It compiles TypeScript with the NestJS CLI and listens on port 3000.
 
 ```
-cd backend && nest start
+cd backend && npm run start:dev
 ```
 
 - **API docs (Swagger)**: `/docs`

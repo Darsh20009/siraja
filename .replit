@@ -33,6 +33,10 @@ DEFAULT_TENANT_SLUG = "platform"
 TENANCY_STRATEGY = "header"
 
 [[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
 localPort = 5000
 externalPort = 80
 
