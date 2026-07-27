@@ -8,9 +8,9 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-PORT = "5000"
+PORT = "3000"
 API_PREFIX = "api/v1"
-CORS_ORIGINS = "*"
+CORS_ORIGINS = "http://localhost:3000,http://localhost:5000"
 NODE_ENV = "development"
 JWT_ACCESS_EXPIRES_IN = "15m"
 JWT_REFRESH_EXPIRES_IN = "30d"
@@ -29,6 +29,8 @@ STORAGE_REGION = "auto"
 SUPPORT_EMAIL = "support@siraja.website"
 STORAGE_ENDPOINT = ""
 STORAGE_BUCKET = "siraja-media"
+DEFAULT_TENANT_SLUG = "platform"
+TENANCY_STRATEGY = "header"
 
 [[ports]]
 localPort = 5000
@@ -59,5 +61,5 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && PATH=\"/home/runner/workspace/backend/node_modules/.bin:$PATH\" nest start"
-waitForPort = 5000
+args = "cd backend && npm run start:dev"
+waitForPort = 3000
