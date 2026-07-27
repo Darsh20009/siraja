@@ -72,10 +72,10 @@ export class AiInsightOrchestratorService {
       maxTokens,
     });
 
-    const priceIn = this.configService.get<number>('moonshot.pricePerMillionInputTokensUsd', 2);
-    const priceOut = this.configService.get<number>('moonshot.pricePerMillionOutputTokensUsd', 10);
-    const estimatedCostUsd =
-      (result.usage.promptTokens / 1_000_000) * priceIn + (result.usage.completionTokens / 1_000_000) * priceOut;
+    // The current local-engine boundary has no vendor billing. Keep the
+    // usage ledger populated with token counts while recording zero external
+    // cost until a future local engine defines its own accounting model.
+    const estimatedCostUsd = 0;
 
     await this.usageRepo.record({
       tenantId: params.tenantId,

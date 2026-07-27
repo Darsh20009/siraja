@@ -10,9 +10,30 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
 import { HttpExceptionFilter } from '../../src/common/filters/http-exception.filter';
 import { ConfigService } from '@nestjs/config';
+import { getModelToken } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Tenant, TenantDocument } from '../../src/database/mongoose/schemas';
+import { TenantStatus, TenantType } from '../../src/shared/enums/tenant-status.enum';
 
 let sharedApp: INestApplication | null = null;
 let sharedModule: TestingModule | null = null;
+
+export async function ensureTestTenant(slug: string): Promise<void> {
+  if (!sharedModule) throw new Error('Test app not initialised — call createTestApp() first.');
+  const tenantModel = sharedModule.get<Model<TenantDocument>>(getModelToken(Tenant.name));
+  await tenantModel.updateOne(
+    { slug },
+    {
+      $setOnInsert: {
+        name: `Test ${slug}`,
+        slug,
+        type: TenantType.ACADEMY,
+        status: TenantStatus.ACTIVE,
+      },
+    },
+    { upsert: true },
+  );
+}
 
 export async function createTestApp(): Promise<INestApplication> {
   if (sharedApp) return sharedApp;
@@ -34,6 +55,9 @@ export async function createTestApp(): Promise<INestApplication> {
 
   await app.init();
   sharedApp = app;
+  for (const slug of ['auth-e2e-tenant', 'rbac-e2e-tenant', 'admin-e2e-tenant', 'mem-e2e-tenant']) {
+    await ensureTestTenant(slug);
+  }
   return app;
 }
 

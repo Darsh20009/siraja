@@ -61,13 +61,13 @@ async function registerDemoUser(user: { email: string; fullName: string; role: s
     body: JSON.stringify({ email: user.email, password: DEMO_PASSWORD, fullName: user.fullName, role: user.role }),
   });
   if (res.status === 201) {
-    console.log(`  created ${user.role.padEnd(12)} ${user.email}`);
+    console.log(`  created ${user.role.padEnd(12)}`);
     return;
   }
   const body: Record<string, unknown> = await res.json().catch(() => ({}));
   const innerMessage = typeof body.message === 'object' ? (body.message as Record<string, unknown>)?.message : body.message;
   if (res.status === 400 && String(innerMessage || '').includes('already exists')) {
-    console.log(`  exists  ${user.role.padEnd(12)} ${user.email} (skipped)`);
+    console.log(`  exists  ${user.role.padEnd(12)} (skipped)`);
     return;
   }
   throw new Error(`Failed to register ${user.email}: ${res.status} ${JSON.stringify(body)}`);
@@ -106,10 +106,8 @@ async function bootstrap() {
 
   await markDemoUsersVerifiedAndActive();
 
-  console.log('\nDone. Demo login credentials (send X-Tenant-Slug: ' + TENANT_SLUG + '):');
-  for (const user of DEMO_USERS) {
-    console.log(`  ${user.role.padEnd(12)} ${user.email} / ${DEMO_PASSWORD}`);
-  }
+  console.log(`\nDone. Demo users are ready for tenant "${TENANT_SLUG}".`);
+  console.log('Demo credentials are intentionally omitted from logs.');
 
   await mongoose.disconnect();
 }

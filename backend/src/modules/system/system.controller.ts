@@ -183,10 +183,9 @@ export class SystemController {
   }
 
   private async checkAi(): Promise<HealthDetail> {
-    const apiKey = this.configService.get<string>('moonshot.apiKey', '');
-    if (!apiKey) {
-      return { status: 'unavailable', message: 'MOONSHOT_API_KEY not configured' };
-    }
-    return { status: 'ok', message: 'moonshot configured' };
+    return {
+      status: 'unavailable',
+      message: 'The local Siraja AI engine is not configured',
+    };
   }
 }

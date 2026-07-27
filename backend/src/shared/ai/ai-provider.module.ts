@@ -1,22 +1,21 @@
 import { Global, Module } from '@nestjs/common';
 import { LLM_PROVIDER } from './llm-provider.interface';
-import { MoonshotProvider } from './providers/moonshot.provider';
+import { LocalSirajaAiProvider } from './providers/local-siraja-ai.provider';
 
 /**
  * AiProviderModule — global module providing ILlmProvider via DI.
  *
  * Marked @Global so every feature module can inject LLM_PROVIDER without
- * importing this module explicitly (same pattern as EmailModule). Swap
- * MoonshotProvider for a different concrete class here to change the LLM
- * vendor without touching any call site — though per Phase 11 scope,
- * Moonshot is the only vendor coded against.
+ * importing this module explicitly. The provider is intentionally a local,
+ * unavailable adapter until the future Siraja AI engine is implemented.
+ * No external AI service is contacted by this module.
  */
 @Global()
 @Module({
   providers: [
     {
       provide: LLM_PROVIDER,
-      useClass: MoonshotProvider,
+      useClass: LocalSirajaAiProvider,
     },
   ],
   exports: [LLM_PROVIDER],

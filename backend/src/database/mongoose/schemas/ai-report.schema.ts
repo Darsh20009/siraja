@@ -45,7 +45,7 @@ export class AiReport extends BaseSchema {
   @Prop({ type: String, required: true, index: true })
   sourceDataHash: string;
 
-  /** Moonshot model identifier used to generate this report, for audit/debugging. */
+  /** Local engine identifier used to generate this report, for audit/debugging. */
   @Prop({ type: String, required: false, default: null })
   modelVersion: string | null;
 

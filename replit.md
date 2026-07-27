@@ -8,7 +8,7 @@ Siraja is a Quran education & memorization platform with a multi-tenant NestJS b
 - **Cache/Queues**: Redis via Upstash + BullMQ
 - **Auth**: JWT (access + refresh), Google OAuth, Apple OAuth
 - **Storage**: Cloudflare R2 (S3-compatible)
-- **AI**: Moonshot AI for learning intelligence
+- **AI**: Internal Siraja AI engine boundary (not configured yet)
 
 ## How to run
 
@@ -26,22 +26,27 @@ All tenant-scoped routes require the `X-Tenant-Slug` header.
 
 ## Environment
 
-All env vars are configured in `.replit` under `[userenv.shared]`. Key ones:
+Non-sensitive environment settings are configured in `.replit` under
+`[userenv.shared]`. Credentials and signing keys must be stored in Replit
+Secrets, not in project configuration. Key ones:
 
 | Variable | Purpose |
 |---|---|
-| `MONGODB_URI` | MongoDB Atlas connection string |
-| `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` | JWT signing keys |
-| `REDIS_URL` | Upstash Redis (used by cache + BullMQ queues) |
-| `MOONSHOT_API_KEY` | AI learning intelligence |
+| `MONGODB_URI` | MongoDB Atlas connection string (Secret) |
+| `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` | JWT signing keys (Secrets) |
+| `REDIS_URL` | Redis connection string (Secret) |
+| `SESSION_SECRET` | Session signing secret (Secret) |
 | `STORAGE_*` | Cloudflare R2 file storage |
 | `EMAIL_*` | SMTP email delivery |
 
-Optional (app starts without them): Google/Apple OAuth, SMS provider.
+Optional (app starts without them): Google/Apple OAuth, SMS provider,
+external AI providers. The local Siraja AI engine currently reports
+`AI_UNAVAILABLE` without making external network calls.
 
 ## Notable quirks
 - `argon2` v0.45+ changed its TypeScript types — `password.service.ts` uses named imports (`hash`, `verify`, `argon2id`, `HashOptions`) instead of the namespace import.
-- The Upstash Redis free tier has a 500k requests/month limit. BullMQ workers emit `ReplyError: ERR max requests limit exceeded` in the logs when the limit is hit — the API itself continues to serve requests normally (graceful fallback).
+- A Redis quota or connectivity failure disables BullMQ queues and uses the
+  in-process cache fallback; the API itself continues to serve requests.
 
 ## Seeding
 ```bash

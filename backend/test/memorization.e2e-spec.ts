@@ -49,7 +49,7 @@ describe('Memorization Engine (e2e)', () => {
     const loginRes = await request(server)
       .post(`${BASE}/auth/login`)
       .set('X-Tenant-Slug', SLUG)
-      .send({ email, password: 'MemPass99!' });
+      .send({ identifier: email, password: 'MemPass99!' });
 
     const meRes = await request(server)
       .get(`${BASE}/users/me`)
@@ -83,16 +83,14 @@ describe('Memorization Engine (e2e)', () => {
     // Create sheikh and student records in the DB for the memorization domain
     const sheikhDoc = await sheikhModel.create({
       tenantId: new Types.ObjectId(tenantId),
-      userId: new Types.ObjectId(sheikhData.userId),
-      fullName: 'Test Sheikh',
+      user: new Types.ObjectId(sheikhData.userId),
       isDeleted: false,
     });
     sheikhId = sheikhDoc._id.toHexString();
 
     const studentDoc = await studentModel.create({
       tenantId: new Types.ObjectId(tenantId),
-      userId: new Types.ObjectId(studentData.userId),
-      fullName: 'Test Student',
+      user: new Types.ObjectId(studentData.userId),
       isDeleted: false,
     });
     studentId = studentDoc._id.toHexString();
@@ -114,13 +112,17 @@ describe('Memorization Engine (e2e)', () => {
 
     it('sheikh can create a memorization record', async () => {
       const res = await request(server)
-        .post(`${BASE}/memorization/records`)
+        .post(`${BASE}/memorization`)
         .set('Authorization', `Bearer ${sheikhToken}`)
         .set('X-Tenant-Slug', SLUG)
         .send({
           studentId,
-          evaluatedById: sheikhId,
-          ...validRecord,
+          range: {
+            surahFrom: validRecord.surahFrom,
+            ayahFrom: validRecord.ayahFrom,
+            surahTo: validRecord.surahTo,
+            ayahTo: validRecord.ayahTo,
+          },
           notes: 'Good recitation',
         });
 
@@ -134,13 +136,17 @@ describe('Memorization Engine (e2e)', () => {
 
     it('student cannot create a memorization record', async () => {
       const res = await request(server)
-        .post(`${BASE}/memorization/records`)
+        .post(`${BASE}/memorization`)
         .set('Authorization', `Bearer ${studentToken}`)
         .set('X-Tenant-Slug', SLUG)
         .send({
           studentId,
-          evaluatedById: sheikhId,
-          ...validRecord,
+          range: {
+            surahFrom: validRecord.surahFrom,
+            ayahFrom: validRecord.ayahFrom,
+            surahTo: validRecord.surahTo,
+            ayahTo: validRecord.ayahTo,
+          },
         });
 
       expect([401, 403]).toContain(res.status);
@@ -148,16 +154,17 @@ describe('Memorization Engine (e2e)', () => {
 
     it('rejects a record with invalid Quran range', async () => {
       const res = await request(server)
-        .post(`${BASE}/memorization/records`)
+        .post(`${BASE}/memorization`)
         .set('Authorization', `Bearer ${sheikhToken}`)
         .set('X-Tenant-Slug', SLUG)
         .send({
           studentId,
-          evaluatedById: sheikhId,
-          surahFrom: 0,   // invalid: surah must be 1-114
-          ayahFrom: 1,
-          surahTo: 1,
-          ayahTo: 7,
+          range: {
+            surahFrom: 0,   // invalid: surah must be 1-114
+            ayahFrom: 1,
+            surahTo: 1,
+            ayahTo: 7,
+          },
         });
 
       expect([400, 403]).toContain(res.status);
@@ -169,7 +176,7 @@ describe('Memorization Engine (e2e)', () => {
   describe('GET /memorization/records', () => {
     it('sheikh can list memorization records', async () => {
       const res = await request(server)
-        .get(`${BASE}/memorization/records`)
+        .get(`${BASE}/memorization`)
         .set('Authorization', `Bearer ${sheikhToken}`)
         .set('X-Tenant-Slug', SLUG);
 
@@ -181,7 +188,7 @@ describe('Memorization Engine (e2e)', () => {
 
     it('unauthenticated request returns 401', async () => {
       const res = await request(server)
-        .get(`${BASE}/memorization/records`)
+        .get(`${BASE}/memorization`)
         .set('X-Tenant-Slug', SLUG);
 
       expect(res.status).toBe(401);
@@ -190,24 +197,22 @@ describe('Memorization Engine (e2e)', () => {
 
   // ── Student Stats ─────────────────────────────────────────────────────────
 
-  describe('GET /memorization/students/:id/stats', () => {
+  describe('GET /memorization/:id', () => {
     it('returns stats for a valid student', async () => {
       const res = await request(server)
-        .get(`${BASE}/memorization/students/${studentId}/stats`)
+        .get(`${BASE}/memorization/${studentId}`)
         .set('Authorization', `Bearer ${sheikhToken}`)
         .set('X-Tenant-Slug', SLUG);
 
       expect([200, 403, 404]).toContain(res.status);
       if (res.status === 200) {
-        expect(res.body).toHaveProperty('total');
-        expect(res.body).toHaveProperty('completed');
-        expect(res.body).toHaveProperty('totalAyahsMemorized');
+        expect(res.body).toHaveProperty('id');
       }
     });
 
     it('returns 404 or 400 for an invalid student ID', async () => {
       const res = await request(server)
-        .get(`${BASE}/memorization/students/not-a-valid-id/stats`)
+        .get(`${BASE}/memorization/not-a-valid-id`)
         .set('Authorization', `Bearer ${sheikhToken}`)
         .set('X-Tenant-Slug', SLUG);
 

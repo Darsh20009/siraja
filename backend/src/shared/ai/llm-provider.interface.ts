@@ -1,10 +1,9 @@
 /**
- * ILlmProvider — vendor-agnostic LLM chat contract, mirroring the
- * `IEmailProvider` pattern (see `shared/email/email-provider.interface.ts`):
- * calling code never knows which vendor is bound, only `AiProviderModule`
- * does. Exactly one concrete implementation exists in Phase 11 —
- * `MoonshotProvider` — no other vendor is coded against; the interface
- * exists purely so a future vendor swap doesn't touch call sites.
+ * Internal LLM boundary for the future local Siraja AI engine.
+ *
+ * Application services depend on this contract rather than an AI runtime or
+ * provider implementation. The current adapter is intentionally unavailable
+ * until the local engine is implemented.
  */
 export interface LlmChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -25,7 +24,7 @@ export interface LlmChatResult {
     promptTokens: number;
     completionTokens: number;
   };
-  /** Vendor model identifier actually used, for audit (`AiReport.modelVersion`). */
+  /** Internal engine/model identifier used for audit (`AiReport.modelVersion`). */
   modelVersion: string;
 }
 

@@ -43,8 +43,9 @@ describe('Admin Module (e2e)', () => {
     const loginRes = await request(server)
       .post(`${BASE}/auth/login`)
       .set('X-Tenant-Slug', SLUG)
-      .send({ email, password: 'AdminPass99!' });
+      .send({ identifier: email, password: 'AdminPass99!' });
 
+    if (loginRes.status !== 200) throw new Error(`Login failed: ${JSON.stringify(loginRes.body)}`);
     return loginRes.body.accessToken;
   }
 
@@ -69,7 +70,7 @@ describe('Admin Module (e2e)', () => {
   describe('GET /admin/dashboard', () => {
     it('super-admin can access dashboard', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/dashboard`)
+        .get(`${BASE}/admin/dashboard/overview`)
         .set('Authorization', `Bearer ${superAdminToken}`)
         .set('X-Tenant-Slug', SLUG);
 
@@ -78,7 +79,7 @@ describe('Admin Module (e2e)', () => {
 
     it('regular user cannot access admin dashboard', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/dashboard`)
+        .get(`${BASE}/admin/dashboard/overview`)
         .set('Authorization', `Bearer ${regularToken}`)
         .set('X-Tenant-Slug', SLUG);
 
@@ -87,7 +88,7 @@ describe('Admin Module (e2e)', () => {
 
     it('unauthenticated request returns 401', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/dashboard`)
+        .get(`${BASE}/admin/dashboard/overview`)
         .set('X-Tenant-Slug', SLUG);
 
       expect(res.status).toBe(401);
@@ -99,7 +100,7 @@ describe('Admin Module (e2e)', () => {
   describe('Feedback', () => {
     it('POST /admin/feedback - any authenticated user can submit feedback', async () => {
       const res = await request(server)
-        .post(`${BASE}/admin/feedback`)
+        .post(`${BASE}/feedback`)
         .set('Authorization', `Bearer ${regularToken}`)
         .set('X-Tenant-Slug', SLUG)
         .send({
@@ -113,7 +114,7 @@ describe('Admin Module (e2e)', () => {
 
     it('GET /admin/feedback - admin can list feedback', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/feedback`)
+        .get(`${BASE}/feedback`)
         .set('Authorization', `Bearer ${adminToken}`)
         .set('X-Tenant-Slug', SLUG);
 
@@ -122,7 +123,7 @@ describe('Admin Module (e2e)', () => {
 
     it('GET /admin/feedback - regular user cannot list feedback', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/feedback`)
+        .get(`${BASE}/feedback`)
         .set('Authorization', `Bearer ${regularToken}`)
         .set('X-Tenant-Slug', SLUG);
 
@@ -135,7 +136,7 @@ describe('Admin Module (e2e)', () => {
   describe('Support Tickets', () => {
     it('authenticated user can create a support ticket', async () => {
       const res = await request(server)
-        .post(`${BASE}/admin/support/tickets`)
+        .post(`${BASE}/support/tickets`)
         .set('Authorization', `Bearer ${regularToken}`)
         .set('X-Tenant-Slug', SLUG)
         .send({
@@ -148,12 +149,12 @@ describe('Admin Module (e2e)', () => {
 
     it('GET /admin/support/tickets - only admin can list all tickets', async () => {
       const adminRes = await request(server)
-        .get(`${BASE}/admin/support/tickets`)
+        .get(`${BASE}/support/admin/tickets`)
         .set('Authorization', `Bearer ${adminToken}`)
         .set('X-Tenant-Slug', SLUG);
 
       const regularRes = await request(server)
-        .get(`${BASE}/admin/support/tickets`)
+        .get(`${BASE}/support/admin/tickets`)
         .set('Authorization', `Bearer ${regularToken}`)
         .set('X-Tenant-Slug', SLUG);
 
@@ -168,7 +169,7 @@ describe('Admin Module (e2e)', () => {
   describe('Donation Campaigns', () => {
     it('GET /admin/donations/campaigns/public - publicly accessible', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/donations/campaigns/public`)
+        .get(`${BASE}/donations/public`)
         .set('X-Tenant-Slug', SLUG);
 
       expect([200, 404]).toContain(res.status);
@@ -176,13 +177,13 @@ describe('Admin Module (e2e)', () => {
 
     it('POST /admin/donations/campaigns - only admin can create a campaign', async () => {
       const adminRes = await request(server)
-        .post(`${BASE}/admin/donations/campaigns`)
+        .post(`${BASE}/donations/campaigns`)
         .set('Authorization', `Bearer ${adminToken}`)
         .set('X-Tenant-Slug', SLUG)
         .send({ name: 'Test Campaign', targetAmount: 10000, description: 'Test' });
 
       const regularRes = await request(server)
-        .post(`${BASE}/admin/donations/campaigns`)
+        .post(`${BASE}/donations/campaigns`)
         .set('Authorization', `Bearer ${regularToken}`)
         .set('X-Tenant-Slug', SLUG)
         .send({ name: 'Unauthorized Campaign', targetAmount: 10000 });
@@ -197,7 +198,7 @@ describe('Admin Module (e2e)', () => {
   describe('Audit Logs', () => {
     it('GET /admin/audit-logs - super-admin can read audit logs', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/audit-logs`)
+        .get(`${BASE}/admin/audit`)
         .set('Authorization', `Bearer ${superAdminToken}`)
         .set('X-Tenant-Slug', SLUG);
 
@@ -206,7 +207,7 @@ describe('Admin Module (e2e)', () => {
 
     it('GET /admin/audit-logs - regular user is blocked', async () => {
       const res = await request(server)
-        .get(`${BASE}/admin/audit-logs`)
+        .get(`${BASE}/admin/audit`)
         .set('Authorization', `Bearer ${regularToken}`)
         .set('X-Tenant-Slug', SLUG);
 

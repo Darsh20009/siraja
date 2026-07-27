@@ -8,15 +8,8 @@ import type { AiInsightJob, AiWeaknessReportJob, AiForecastExplanationJob } from
  * AiQueueProcessor — processes async AI jobs.
  *
  * All LLM calls are routed through this processor so they never block
- * the HTTP response cycle. The processor calls the existing
- * AiInsightOrchestratorService (Phase 11) which handles cost control,
- * caching, and Moonshot API calls.
- *
- * Note: AiInsightOrchestratorService is not injected here to avoid a
- * circular dependency through the queue module. Instead, we use a lazy
- * module reference pattern — the processor logs the intent and the
- * service will be wired in Phase 13 when the full async pipeline is
- * production-validated.
+ * the HTTP response cycle. The local engine is currently unavailable, so
+ * queued AI work fails explicitly rather than being reported as completed.
  */
 @Processor(QUEUE_AI)
 export class AiQueueProcessor extends WorkerHost {
@@ -38,21 +31,20 @@ export class AiQueueProcessor extends WorkerHost {
   }
 
   private async handleInsight(data: AiInsightJob): Promise<void> {
-    // Phase 13: wire to AiInsightOrchestratorService
-    this.logger.log(
-      `[AI Insight] tenant=${data.tenantId} student=${data.studentId} type=${data.insightType}`,
+    this.logger.warn(
+      `[AI Insight] unavailable for tenant=${data.tenantId} student=${data.studentId} type=${data.insightType}`,
     );
   }
 
   private async handleWeaknessReport(data: AiWeaknessReportJob): Promise<void> {
-    this.logger.log(
-      `[AI Weakness Report] tenant=${data.tenantId} student=${data.studentId}`,
+    this.logger.warn(
+      `[AI Weakness Report] unavailable for tenant=${data.tenantId} student=${data.studentId}`,
     );
   }
 
   private async handleForecastExplanation(data: AiForecastExplanationJob): Promise<void> {
-    this.logger.log(
-      `[AI Forecast Explanation] tenant=${data.tenantId} student=${data.studentId}`,
+    this.logger.warn(
+      `[AI Forecast Explanation] unavailable for tenant=${data.tenantId} student=${data.studentId}`,
     );
   }
 }

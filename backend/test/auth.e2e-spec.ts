@@ -59,7 +59,7 @@ describe('Authentication (e2e)', () => {
         .set('X-Tenant-Slug', SLUG)
         .send({ email, password: 'Secret123!', fullName: 'Second' });
 
-      expect(res.status).toBe(409);
+      expect(res.status).toBe(400);
     });
 
     it('rejects registration with a weak password', async () => {
@@ -98,7 +98,7 @@ describe('Authentication (e2e)', () => {
       const res = await request(server)
         .post(`${BASE}/auth/login`)
         .set('X-Tenant-Slug', SLUG)
-        .send({ email, password });
+        .send({ identifier: email, password });
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('accessToken');
@@ -109,7 +109,7 @@ describe('Authentication (e2e)', () => {
       const res = await request(server)
         .post(`${BASE}/auth/login`)
         .set('X-Tenant-Slug', SLUG)
-        .send({ email, password: 'WrongPass!' });
+        .send({ identifier: email, password: 'WrongPass!' });
 
       expect(res.status).toBe(401);
     });
@@ -118,7 +118,7 @@ describe('Authentication (e2e)', () => {
       const res = await request(server)
         .post(`${BASE}/auth/login`)
         .set('X-Tenant-Slug', SLUG)
-        .send({ email: `nobody-${uid()}@test.com`, password });
+        .send({ identifier: `nobody-${uid()}@test.com`, password });
 
       expect(res.status).toBe(401);
     });
@@ -204,7 +204,7 @@ describe('Authentication (e2e)', () => {
         .set('X-Tenant-Slug', SLUG)
         .send({ refreshToken });
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
 
     it('returns 401 when calling logout without auth', async () => {

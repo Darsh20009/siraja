@@ -6,14 +6,12 @@ import { AiFeatureType } from '@shared/enums/ai.enum';
 /**
  * Collection: ai_usage_ledger
  *
- * One row per Moonshot AI call (successful or not — failed calls that
- * still consumed tokens are recorded too). This is the cost-control audit
- * trail: `AiCostGuardService` sums recent rows against the configured
- * daily/monthly budgets (`MOONSHOT_DAILY_BUDGET_USD` /
- * `MOONSHOT_MONTHLY_BUDGET_USD`) before allowing a new call, and Super
- * Admin can inspect per-tenant, per-feature spend from this collection
- * directly. Never aggregated/rolled up elsewhere — this is the source of
- * truth for AI spend.
+ * One row per local AI engine call (successful or not). This is the
+ * cost-control audit trail: `AiCostGuardService` sums recent rows against
+ * the configured daily/monthly budgets before allowing a new call, and Super
+ * Admin can inspect per-tenant, per-feature usage from this collection.
+ * Never aggregated/rolled up elsewhere — this is the source of truth for
+ * AI usage accounting.
  */
 @Schema({ timestamps: true, collection: 'ai_usage_ledger' })
 export class AiUsageLedger extends BaseSchema {

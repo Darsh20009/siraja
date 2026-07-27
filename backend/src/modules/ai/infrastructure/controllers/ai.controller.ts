@@ -17,7 +17,7 @@ import { AcknowledgeAiInsightUseCase } from '../../application/use-cases/acknowl
  *
  * Every GET route auto-generates on cache miss (gated by budget) and
  * returns the cached report otherwise — clients never need to know
- * whether a call reached Moonshot or not. `force=true` bypasses the
+ * whether a call reached the local engine or not. `force=true` bypasses the
  * cache and is restricted to Sheikh/Supervisor/Admin (enforced inside
  * each use-case) to keep AI spend predictable.
  *

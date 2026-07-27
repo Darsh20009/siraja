@@ -40,10 +40,9 @@ import { ForecastModule } from '@modules/forecast/forecast.module';
  * Memorization Recommendations, Completion Forecast Explanations, and
  * Sheikh/Parent AI Reports, plus a thin AI Insights history endpoint.
  *
- * Depends on `AiProviderModule` (global, provides `LLM_PROVIDER` —
- * `MoonshotProvider`) being registered in AppModule; does not import it
- * directly since @Global() modules are available everywhere once
- * registered once.
+ * Depends on `AiProviderModule` (global, provides `LLM_PROVIDER`) being
+ * registered in AppModule; does not import it directly since @Global()
+ * modules are available everywhere once registered.
  *
  * Imports the existing Students/Sheikhs/Parents modules for ownership
  * checks, and Mistakes/Reviews/Progress/AyahPerformance/Forecast modules

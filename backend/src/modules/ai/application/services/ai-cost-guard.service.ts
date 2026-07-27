@@ -7,8 +7,8 @@ import {
 import { AiUnavailableException } from '@shared/ai/ai-unavailable.exception';
 
 /**
- * AiCostGuardService — enforces the conservative $50–100/month AI budget
- * approved for Phase 11 before any Moonshot call is made. Two independent
+ * AiCostGuardService — enforces the conservative AI budget before any local
+ * engine call is made. Two independent
  * caps (daily + monthly) so a single burst can't exhaust the whole
  * month's budget in one day.
  */

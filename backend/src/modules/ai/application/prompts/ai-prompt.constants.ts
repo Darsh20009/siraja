@@ -1,7 +1,8 @@
 /**
  * Shared system-prompt preamble for every Phase 11 AI feature. Establishes
  * the hard "assistant, never source of truth" boundary approved by the
- * user: Moonshot may only summarize/explain/recommend from the exact data
+ * user: the future local Siraja engine may only summarize/explain/recommend
+ * from the exact data
  * it is given — it must never invent facts, numbers, or Quranic text, and
  * its output is never itself written back as authoritative platform data
  * (memorization/review/mistake/exam records remain the sole source of

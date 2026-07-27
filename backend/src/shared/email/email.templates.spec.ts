@@ -15,6 +15,7 @@ import { verificationEmailTemplate } from './templates/verification.template';
 import { passwordResetEmailTemplate } from './templates/password-reset.template';
 import { notificationEmailTemplate } from './templates/notification.template';
 import { EmailTemplateService } from './email-template.service';
+import { SIRAJA_BRAND_DEFAULTS } from './brand/brand-config';
 
 // ─── Silence logger during tests ─────────────────────────────────────────────
 
@@ -61,7 +62,7 @@ describe('baseEmailTemplate', () => {
 
   it('uses default tenantName "Siraja" when omitted', () => {
     const html = baseEmailTemplate(body);
-    expect(html).toContain('Siraja');
+    expect(html).toContain(SIRAJA_BRAND_DEFAULTS.tenantName);
   });
 
   it('renders valid DOCTYPE HTML', () => {

@@ -27,7 +27,6 @@ const mockConfigService = {
     const values: Record<string, unknown> = {
       'storage.driver': 's3',
       'email.host': 'smtp.example.com',
-      'moonshot.apiKey': 'test-key',
     };
     return values[key] ?? fallback;
   }),
@@ -94,7 +93,6 @@ describe('SystemController', () => {
       if (key === 'email.host') return '';
       const values: Record<string, unknown> = {
         'storage.driver': 's3',
-        'moonshot.apiKey': 'test-key',
       };
       return values[key] ?? fallback;
     });
@@ -107,7 +105,6 @@ describe('SystemController', () => {
       const values: Record<string, unknown> = {
         'storage.driver': 's3',
         'email.host': 'smtp.example.com',
-        'moonshot.apiKey': 'test-key',
       };
       return values[key] ?? fallback;
     });
