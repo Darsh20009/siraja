@@ -237,6 +237,14 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.READ,
     PermissionAction.EXPORT,
   ],
+  // Phase 13A — Siraja Intelligence Platform.
+  // READ: student/parent/sheikh access their own intelligence profile and
+  //       recommendations (ownership enforced in each use-case).
+  // EXPORT: sheikh, supervisor, admin — class-level analytics export.
+  [PermissionCategory.INTELLIGENCE]: [
+    PermissionAction.READ,
+    PermissionAction.EXPORT,
+  ],
 };
 
 export interface PermissionDefinition {

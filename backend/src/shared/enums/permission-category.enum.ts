@@ -43,4 +43,6 @@ export enum PermissionCategory {
   FEATURE_VOTING = 'feature_voting',
   SUPPORT_ADMIN = 'support_admin',
   AUDIT = 'audit',
+  // Phase 13A — Siraja Intelligence Platform (local rule-based engine)
+  INTELLIGENCE = 'intelligence',
 }

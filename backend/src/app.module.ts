@@ -70,6 +70,7 @@ import { GamificationModule } from './modules/gamification/gamification.module';
 
 // Admin Operations (Phase 12D/12E)
 import { AdminModule } from './modules/admin/admin.module';
+import { IntelligenceModule } from './modules/intelligence/intelligence.module';
 
 /**
  * Root application module.
@@ -180,6 +181,7 @@ import { AdminModule } from './modules/admin/admin.module';
     // Admin Operations — Audit, Dashboard, Donations, Feedback, Support,
     // System Alerts, Tenant Branding, Analytics, Feature Voting (Phase 12D/12E)
     AdminModule,
+    IntelligenceModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],
