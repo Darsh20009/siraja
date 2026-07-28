@@ -8,48 +8,63 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
-PORT = "3000"
-API_PREFIX = "api/v1"
-CORS_ORIGINS = "http://localhost:3000,http://localhost:5000"
-NODE_ENV = "development"
-JWT_ACCESS_EXPIRES_IN = "15m"
+# ── Runtime ──────────────────────────────────────────────────────────────────
+NODE_ENV            = "development"
+PORT                = "3000"
+API_PREFIX          = "api/v1"
+
+# ── Token lifetimes (non-secret) ─────────────────────────────────────────────
+JWT_ACCESS_EXPIRES_IN  = "15m"
 JWT_REFRESH_EXPIRES_IN = "30d"
-LOG_LEVEL = "debug"
+
+# ── Database defaults (URI is a Secret) ──────────────────────────────────────
 MONGODB_DB_NAME = "siraja"
-THROTTLE_LIMIT = "100"
-THROTTLE_TTL = "60"
-EMAIL_FROM = "noreply@siraja.website"
-EMAIL_FROM_NAME = "Siraja"
-EMAIL_HOST = "server222.web-hosting.com"
-EMAIL_PORT = "465"
-EMAIL_SECURE = "true"
-EMAIL_USER = "noreply@siraja.website"
-STORAGE_DRIVER = "s3"
-STORAGE_REGION = "auto"
-SUPPORT_EMAIL = "support@siraja.website"
-STORAGE_ENDPOINT = ""
-STORAGE_BUCKET = "siraja-media"
+
+# ── Multi-tenancy ─────────────────────────────────────────────────────────────
+TENANCY_STRATEGY    = "header"
 DEFAULT_TENANT_SLUG = "platform"
-TENANCY_STRATEGY = "header"
+
+# ── Rate limiting ─────────────────────────────────────────────────────────────
+THROTTLE_TTL   = "60"
+THROTTLE_LIMIT = "100"
+
+# ── CORS ─────────────────────────────────────────────────────────────────────
+CORS_ORIGINS = "http://localhost:3000,http://localhost:5000"
+
+# ── Logging ──────────────────────────────────────────────────────────────────
+LOG_LEVEL = "debug"
+
+# ── Storage driver (credentials are Secrets) ─────────────────────────────────
+STORAGE_DRIVER = "noop"
+STORAGE_REGION = "auto"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# All credentials are stored in Replit Secrets — never in this file.
+# Required secrets: MONGODB_URI, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET,
+#   SESSION_SECRET, REDIS_URL, EMAIL_HOST, EMAIL_PORT, EMAIL_SECURE,
+#   EMAIL_USER, EMAIL_PASS, EMAIL_FROM, SUPPORT_EMAIL,
+#   STORAGE_ACCESS_KEY_ID, STORAGE_SECRET_ACCESS_KEY,
+#   STORAGE_BUCKET, STORAGE_ENDPOINT, STORAGE_PUBLIC_URL
+# ─────────────────────────────────────────────────────────────────────────────
 
 [[ports]]
-localPort = 3000
+localPort   = 3000
 externalPort = 3000
 
 [[ports]]
-localPort = 5000
+localPort   = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 8899
+localPort   = 8899
 externalPort = 3001
 
 [workflows]
 runButton = "Project"
 
 [[workflows.workflow]]
-name = "Project"
-mode = "parallel"
+name   = "Project"
+mode   = "parallel"
 author = "agent"
 
 [[workflows.workflow.tasks]]
@@ -57,13 +72,13 @@ task = "workflow.run"
 args = "Start application"
 
 [[workflows.workflow]]
-name = "Start application"
+name   = "Start application"
 author = "agent"
 
 [workflows.workflow.metadata]
 outputType = "console"
 
 [[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && npm run start:dev"
+task        = "shell.exec"
+args        = "cd backend && npm run start:dev"
 waitForPort = 3000
