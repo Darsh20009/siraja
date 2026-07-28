@@ -21,3 +21,4 @@
 - [Siraja Email Branding System](siraja-email-branding.md) — brand/, EmailBrandService, dark mode CSS, tenant logo override, Cairo font; read before touching any email template or base shell.
 - [Siraja repository typing pattern](siraja-repo-typing-pattern.md) — FlattenMaps<T> gotchas for Map/Record fields; toRecord/toItem call-site rules; supertest import style; Role enum values.
 - [Native Node dependency rebuilds](native-node-dependency-rebuild.md) — lifecycle-disabled installs can leave incompatible native binaries that crash on require; rebuild in the package directory.
+- [Siraja Phase 13A Intelligence Platform](siraja-phase13a-intelligence-platform.md) — 8 engines, 4 rule sets, advisory-only boundary, 99 tests; read before touching IntelligenceModule or adding new intelligence features.
