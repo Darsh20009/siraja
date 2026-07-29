@@ -45,4 +45,6 @@ export enum PermissionCategory {
   AUDIT = 'audit',
   // Phase 13A — Siraja Intelligence Platform (local rule-based engine)
   INTELLIGENCE = 'intelligence',
+  // Phase 13B — Local Quran Audio Intelligence (local audio analysis pipeline)
+  AUDIO_INTELLIGENCE = 'audio_intelligence',
 }
