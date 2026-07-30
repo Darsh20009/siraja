@@ -47,4 +47,6 @@ export enum PermissionCategory {
   INTELLIGENCE = 'intelligence',
   // Phase 13B — Local Quran Audio Intelligence (local audio analysis pipeline)
   AUDIO_INTELLIGENCE = 'audio_intelligence',
+  // Phase 13C — Siraja Native AI Core (deterministic, no external AI)
+  NATIVE_AI = 'native_ai',
 }
