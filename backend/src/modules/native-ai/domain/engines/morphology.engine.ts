@@ -124,7 +124,6 @@ export class MorphologyEngine {
   }
 
   isVerb(word: string): boolean {
-    const { normalized } = this.normalizer.normalizeAll(word);
     return this.matchesVerbalPattern(this.normalizer.toRootForm(word));
   }
 

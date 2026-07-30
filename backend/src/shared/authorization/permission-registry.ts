@@ -254,6 +254,13 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.READ,
     PermissionAction.DELETE,
   ],
+  // Native AI — internal Arabic NLP engine.
+  // READ: access morphology/segmentation results.
+  // CREATE: trigger analysis jobs.
+  [PermissionCategory.NATIVE_AI]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+  ],
 };
 
 export interface PermissionDefinition {
