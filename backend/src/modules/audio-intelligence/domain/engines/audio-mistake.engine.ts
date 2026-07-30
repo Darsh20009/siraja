@@ -46,7 +46,7 @@ export class AudioMistakeEngine {
     if (wordAlignments.length === 0) return [];
 
     const raw = this.detectRaw(wordAlignments, sessionId);
-    return this.flagRecurrence(raw);
+    return this.flagRecurrence(raw) as unknown as MistakeDetection[];
   }
 
   /**
@@ -100,10 +100,12 @@ export class AudioMistakeEngine {
       }
     }
 
-    // Detect skipped ayahs (all words in the ayah are deletions)
+    // Detect skipped ayahs (all words in the ayah are deletions).
+    // Require at least 2 words so a single missing word is not mistaken for
+    // a fully skipped ayah — that case is handled by the word-level loop below.
     for (const [key, ayahWords] of ayahWordMap) {
       const allDeleted = ayahWords.every((wa) => wa.recognisedText === '');
-      if (allDeleted && ayahWords.length > 0) {
+      if (allDeleted && ayahWords.length > 1) {
         const [surah, ayah] = key.split(':').map(Number);
         mistakes.push({
           sessionId,

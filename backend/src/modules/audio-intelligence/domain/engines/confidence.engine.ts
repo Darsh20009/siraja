@@ -99,8 +99,10 @@ export class ConfidenceEngine {
    * Used by AudioScoreEngine to detect inconsistent ASR output.
    */
   standardDeviation(wordAlignments: WordAlignment[]): number {
+    // Include all words with non-empty recognised text — confidence 0 is a
+    // valid (if low) confidence value and must not be excluded here.
     const recognised = wordAlignments.filter(
-      (wa) => wa.recognisedText !== '' && wa.confidence > 0,
+      (wa) => wa.recognisedText !== undefined && wa.recognisedText !== '',
     );
     if (recognised.length < 2) return 0;
     const mean = recognised.reduce((sum, wa) => sum + wa.confidence, 0) / recognised.length;

@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { CurrentUser } from '@modules/auth/infrastructure/decorators/current-user.decorator';
 import { AccessTokenPayload } from '@modules/auth/domain/value-objects/jwt-payload';
-import { RequirePermissions } from '@shared/authorization/require-permissions.decorator';
+import { RequirePermissions } from '@common/decorators/require-permissions.decorator';
 import { PERMISSIONS } from '@shared/authorization/permission-registry';
 
 import { UploadAudioSessionUseCase } from '../../application/use-cases/upload-audio-session.use-case';

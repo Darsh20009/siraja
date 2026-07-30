@@ -245,6 +245,15 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.READ,
     PermissionAction.EXPORT,
   ],
+  // Phase 13B — Local Quran Audio Intelligence.
+  // CREATE: upload and trigger processing of an audio session.
+  // READ: student/parent/sheikh/supervisor access audio sessions and insights.
+  // DELETE: admin/supervisor purge audio sessions.
+  [PermissionCategory.AUDIO_INTELLIGENCE]: [
+    PermissionAction.CREATE,
+    PermissionAction.READ,
+    PermissionAction.DELETE,
+  ],
 };
 
 export interface PermissionDefinition {

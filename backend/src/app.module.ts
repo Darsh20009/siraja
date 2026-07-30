@@ -72,6 +72,9 @@ import { GamificationModule } from './modules/gamification/gamification.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { IntelligenceModule } from './modules/intelligence/intelligence.module';
 
+// Local Quran Audio Intelligence (Phase 13B)
+import { AudioIntelligenceModule } from './modules/audio-intelligence/audio-intelligence.module';
+
 /**
  * Root application module.
  *
@@ -182,6 +185,9 @@ import { IntelligenceModule } from './modules/intelligence/intelligence.module';
     // System Alerts, Tenant Branding, Analytics, Feature Voting (Phase 12D/12E)
     AdminModule,
     IntelligenceModule,
+
+    // Local Quran Audio Intelligence (Phase 13B)
+    AudioIntelligenceModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],

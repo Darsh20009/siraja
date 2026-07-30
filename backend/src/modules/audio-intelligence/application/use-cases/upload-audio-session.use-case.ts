@@ -97,7 +97,7 @@ export class UploadAudioSessionUseCase {
     if (!student) throw new NotFoundException('Student not found.');
 
     const isStudent = roles.includes(Role.STUDENT);
-    const isSelf = isStudent && String(student.user) === user.sub;
+    const isSelf = isStudent && String(student.userId) === user.sub;
     const isAdmin =
       roles.includes(Role.TENANT_ADMIN) || roles.includes(Role.SUPERVISOR);
     const isSheikh = roles.includes(Role.SHEIKH);

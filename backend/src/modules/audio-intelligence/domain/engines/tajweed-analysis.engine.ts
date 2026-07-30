@@ -369,9 +369,13 @@ export class TajweedAnalysisEngine {
     return /[\u0627\u0648\u064A]\u0621/.test(text);
   }
 
-  /** Noon or meem with shadda (ّ = U+0651) */
+  /**
+   * Noon or meem with shadda (ّ = U+0651).
+   * An optional vowel diacritic (U+064B–U+0652) may appear between the letter
+   * and the shadda, e.g. إِنَّ = noon + fatha + shadda.
+   */
   private hasGhunna(text: string): boolean {
-    return /[\u0646\u0645]\u0651/.test(text);
+    return /[\u0646\u0645][\u064B-\u0652]?\u0651/.test(text);
   }
 
   /** Qalqala letters: ق ط ب ج د */
