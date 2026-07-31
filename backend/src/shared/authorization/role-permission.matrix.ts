@@ -28,7 +28,7 @@ function pick(category: PermissionCategory, actions: PermissionAction[]): string
   return actions.map((action) => `${category}.${action}`).filter((key) => PERMISSION_KEYS.has(key));
 }
 
-const { CREATE, READ, UPDATE, DELETE, EXPORT, APPROVE, ASSIGN } = PermissionAction;
+const { CREATE, READ, UPDATE, DELETE, EXPORT, APPROVE, ASSIGN, VOTE } = PermissionAction;
 const C = PermissionCategory;
 
 export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
@@ -64,6 +64,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     ...pick(C.USER_PREFERENCES, [READ, UPDATE]),
     // Phase 11: Supervisors have read-only oversight of AI insights/reports.
     ...pick(C.AI, [READ]),
+    // Phase 13C: Supervisors can run text analysis and view learning insights.
+    ...pick(C.NATIVE_AI, [READ]),
   ],
 
   [Role.SHEIKH]: [
@@ -92,6 +94,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     // Phase 11: Sheikhs can trigger/regenerate AI insights for their
     // students and acknowledge AI-generated reports into the record.
     ...pick(C.AI, [CREATE, READ, APPROVE]),
+    // Phase 13C: Sheikhs can classify mistakes and run all analysis endpoints.
+    ...pick(C.NATIVE_AI, [CREATE, READ]),
   ],
 
   [Role.PARENT]: [
@@ -118,6 +122,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     // (read-only — generation is triggered by Sheikh/Admin to keep AI
     // spend controllable, see AI Safety & Cost Control strategy).
     ...pick(C.AI, [READ]),
+    // Phase 13C: Parents can access text analysis and learning insight endpoints.
+    ...pick(C.NATIVE_AI, [READ]),
   ],
 
   [Role.STUDENT]: [
@@ -144,6 +150,8 @@ export const ROLE_PERMISSION_MATRIX: Record<Role, string[]> = {
     // Phase 11: Students may read their own AI insights/recommendations
     // (read-only — same rationale as Parent, see above).
     ...pick(C.AI, [READ]),
+    // Phase 13C: Students can access text analysis and learning insight endpoints.
+    ...pick(C.NATIVE_AI, [READ]),
   ],
 };
 

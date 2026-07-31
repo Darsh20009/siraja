@@ -75,6 +75,9 @@ import { IntelligenceModule } from './modules/intelligence/intelligence.module';
 // Local Quran Audio Intelligence (Phase 13B)
 import { AudioIntelligenceModule } from './modules/audio-intelligence/audio-intelligence.module';
 
+// Siraja Native AI Core (Phase 13C)
+import { NativeAiModule } from './modules/native-ai/native-ai.module';
+
 /**
  * Root application module.
  *
@@ -188,6 +191,9 @@ import { AudioIntelligenceModule } from './modules/audio-intelligence/audio-inte
 
     // Local Quran Audio Intelligence (Phase 13B)
     AudioIntelligenceModule,
+
+    // Siraja Native AI Core (Phase 13C)
+    NativeAiModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }, TenantMiddleware, PermissionContextMiddleware],
