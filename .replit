@@ -38,25 +38,16 @@ LOG_LEVEL = "debug"
 STORAGE_DRIVER = "noop"
 STORAGE_REGION = "auto"
 
-# ─────────────────────────────────────────────────────────────────────────────
-# All credentials are stored in Replit Secrets — never in this file.
-# Required secrets: MONGODB_URI, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET,
-#   SESSION_SECRET, REDIS_URL, EMAIL_HOST, EMAIL_PORT, EMAIL_SECURE,
-#   EMAIL_USER, EMAIL_PASS, EMAIL_FROM, SUPPORT_EMAIL,
-#   STORAGE_ACCESS_KEY_ID, STORAGE_SECRET_ACCESS_KEY,
-#   STORAGE_BUCKET, STORAGE_ENDPOINT, STORAGE_PUBLIC_URL
-# ─────────────────────────────────────────────────────────────────────────────
-
 [[ports]]
-localPort   = 3000
+localPort = 3000
 externalPort = 3000
 
 [[ports]]
-localPort   = 5000
+localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort   = 8899
+localPort = 8899
 externalPort = 3001
 
 [workflows]
