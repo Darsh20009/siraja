@@ -63,22 +63,38 @@ externalPort = 3001
 runButton = "Project"
 
 [[workflows.workflow]]
-name   = "Project"
-mode   = "parallel"
+name = "Project"
+mode = "parallel"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Start application"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Flutter Frontend"
+
 [[workflows.workflow]]
-name   = "Start application"
+name = "Start application"
 author = "agent"
 
 [workflows.workflow.metadata]
 outputType = "console"
 
 [[workflows.workflow.tasks]]
-task        = "shell.exec"
-args        = "cd backend && npm run start:dev"
+task = "shell.exec"
+args = "cd backend && npm run start:dev"
 waitForPort = 3000
+
+[[workflows.workflow]]
+name = "Flutter Frontend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd frontend && flutter pub get && flutter run -d web-server --web-port 5000 --web-hostname 0.0.0.0"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
