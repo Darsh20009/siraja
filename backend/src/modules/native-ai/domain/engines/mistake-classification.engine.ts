@@ -100,7 +100,19 @@ export class MistakeClassificationEngine {
         wordIndex);
     }
 
-    // 6. Tajweed violation — compare rule applications between raw and expected
+    // 6. Word substitution — same word count but different normalized words.
+    // Checked BEFORE phonetic rules: when a word is entirely different (not a
+    // diacritic or madd variation) it is a substitution, not a tajweed violation.
+    if (rawWords.length === expWords.length && !rawWords.every((w, i) => w === expWords[i])) {
+      const substituted = expWords.filter((w, i) => rawWords[i] !== w);
+      return this.buildMistake(raw, expected, 'word_substitution', 'wrong_word',
+        'major', undefined, 85,
+        `Wrong word(s) recited. Expected: "${substituted.join(', ')}". Memorize the exact wording of this ayah.`,
+        ['word_substitution'],
+        wordIndex);
+    }
+
+    // 7. Tajweed violation — words match at each position but a phonetic rule differs
     const tajweedRule = this.detectTajweedViolation(raw, expected);
     if (tajweedRule) {
       const isCriticalRule = (TajweedRules.CRITICAL_RULES as readonly string[]).includes(tajweedRule);
@@ -109,16 +121,6 @@ export class MistakeClassificationEngine {
         severity, tajweedRule, 75,
         `Tajweed rule "${tajweedRule}" was not applied correctly. Review this rule and practice with similar words.`,
         [tajweedRule, ...this.relatedRulesFor(tajweedRule)],
-        wordIndex);
-    }
-
-    // 7. Word substitution — same word count but different words
-    if (rawWords.length === expWords.length && !rawWords.every((w, i) => w === expWords[i])) {
-      const substituted = expWords.filter((w, i) => rawWords[i] !== w);
-      return this.buildMistake(raw, expected, 'word_substitution', 'wrong_word',
-        'major', undefined, 85,
-        `Wrong word(s) recited. Expected: "${substituted.join(', ')}". Memorize the exact wording of this ayah.`,
-        ['word_substitution'],
         wordIndex);
     }
 

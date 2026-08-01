@@ -97,15 +97,18 @@ export class AdaptiveLearningEngine {
       });
     }
 
-    // Rest days (Friday=5, Saturday=6) — light review only
+    // Rest days (Friday=5, Saturday=6) — light review only.
+    // Session length is set to MIN_SESSION_MINUTES so that daily minimums
+    // remain within the valid schedule bounds for all days.
     const restDays: Array<0 | 1 | 2 | 3 | 4 | 5 | 6> = [5, 6];
     for (const day of restDays) {
       weeklySchedule.push({
         dayOfWeek: day,
-        sessionMinutes: 0,
+        sessionMinutes: MemorizationRules.MIN_SESSION_MINUTES,
         newAyahsTarget: 0,
-        reviewAyahsTarget: 0,
+        reviewAyahsTarget: Math.max(1, Math.round(dailyReviewTarget * 0.3)),
         tajweedPractice: false,
+        preferredTimeOfDay: 'morning',
       });
     }
 

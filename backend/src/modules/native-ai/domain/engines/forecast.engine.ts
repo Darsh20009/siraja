@@ -63,7 +63,12 @@ export class ForecastEngine {
       weeksToComplete * MemorizationRules.FORECAST_PESSIMISTIC_MULTIPLIER,
     );
 
-    const isOnTrack = velocity >= MemorizationRules.MIN_ACTIVE_VELOCITY;
+    // Use the raw mean (not the fallback) for the on-track check so that
+    // an actual velocity of 0 correctly reports the student as off-track.
+    const rawMean = windowVelocities.length > 0
+      ? windowVelocities.reduce((a, b) => a + b, 0) / windowVelocities.length
+      : 0;
+    const isOnTrack = rawMean >= MemorizationRules.MIN_ACTIVE_VELOCITY;
 
     // Completion probability from coefficient of variation
     const completionProbability = this.computeCompletionProbability(velocity, stddev);

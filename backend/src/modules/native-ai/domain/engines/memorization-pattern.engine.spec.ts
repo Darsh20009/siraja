@@ -40,7 +40,7 @@ describe('MemorizationPatternEngine', () => {
 
     it('ease factor never drops below SM2_MIN_EASE', () => {
       // Grade 3 repeatedly should floor at SM2_MIN_EASE
-      let ease = SM2_MIN_EASE;
+      const ease = SM2_MIN_EASE;
       const result = engine.computeSm2(ease, 6, 2, 3);
       expect(result.easeFactor).toBeGreaterThanOrEqual(SM2_MIN_EASE);
     });
