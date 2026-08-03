@@ -261,6 +261,15 @@ const CATEGORY_ACTIONS: Record<PermissionCategory, PermissionAction[]> = {
     PermissionAction.READ,
     PermissionAction.CREATE,
   ],
+  // Phase 13D — Native AI Runtime (orchestration, pipelines, risk, dashboards).
+  // READ: access runtime insights, timelines, dashboards, reports.
+  // CREATE: trigger runtime analysis pipelines.
+  // EXPORT: export parent reports and sheikh dashboard data.
+  [PermissionCategory.NATIVE_AI_RUNTIME]: [
+    PermissionAction.READ,
+    PermissionAction.CREATE,
+    PermissionAction.EXPORT,
+  ],
 };
 
 export interface PermissionDefinition {

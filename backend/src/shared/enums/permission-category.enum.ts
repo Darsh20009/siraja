@@ -49,4 +49,6 @@ export enum PermissionCategory {
   AUDIO_INTELLIGENCE = 'audio_intelligence',
   // Phase 13C — Siraja Native AI Core (deterministic, no external AI)
   NATIVE_AI = 'native_ai',
+  // Phase 13D — Siraja Native AI Runtime (orchestration, pipelines, risk, dashboards)
+  NATIVE_AI_RUNTIME = 'native_ai_runtime',
 }
